@@ -439,35 +439,6 @@ int main()
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
-        // Header Menu Bar
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("Exit")) {
-					exit(0);
-                }
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("View")) {
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Help")) {
-                if (ImGui::MenuItem("Github Documentation")) {
-                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
-                }
-                if (ImGui::MenuItem("Report a Bug")) {
-                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
-                }
-                if (ImGui::MenuItem("Download Latest:")) {
-                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
-                }
-                if (ImGui::MenuItem("About")) {
-                    
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-
         const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
         if (gizmoActive)
@@ -490,6 +461,78 @@ int main()
         ImGui::End();
 
         ImGui::ShowDemoWindow();
+
+        // Header Menu Bar
+
+        static bool showAbout = false;
+
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Exit")) {
+                    exit(0);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View")) {
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("Github Documentation")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
+                }
+                if (ImGui::MenuItem("Report a Bug")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
+                }
+                if (ImGui::MenuItem("Download Latest:")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
+                }
+                if (ImGui::MenuItem("About")) {
+                    showAbout = true;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
+        if (showAbout)
+        {
+            ImGui::Begin("About", &showAbout);
+
+            ImGui::Text("JLE Engine v0.1");
+            ImGui::Text("Welcome to the glorious JLE Engine, JLE stands for Jia, Luying and Erik.");
+            ImGui::Text("By Group 1: Jia Hao Zhao Deng, Luying Bao Cheng and Erik Argemí Chinchilla");
+            ImGui::TextUnformatted(R"(3rd Party Libraries Used:
+            - SDL
+            - glm
+            - sdl3
+            - opengl
+            - glad
+            - imgui
+            - imguizmo
+            )");
+            ImGui::TextUnformatted(R"(MIT License
+
+            Copyright (c) 2026 Jia Hao Zhao Deng & Luying Bao Cheng & Erik Argemí Chinchilla
+
+            Permission is hereby granted, free of charge, to any person obtaining a copy
+            of this software and associated documentation files (the "Software"), to deal
+            in the Software without restriction, including without limitation the rights
+            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+            copies of the Software, and to permit persons to whom the Software is
+            furnished to do so, subject to the following conditions:
+
+            The above copyright notice and this permission notice shall be included in all
+            copies or substantial portions of the Software.
+
+            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+            SOFTWARE.)");
+            ImGui::End();
+        }
 
         //Configuration window
         ImGui::Begin("Configuration window", nullptr, flags);
