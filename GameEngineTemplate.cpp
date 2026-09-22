@@ -16,6 +16,9 @@
 
 #include "ImGuizmo.h"
 
+//Additional C++ Headers
+#include <vector>
+
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
 "#version 460 core\n"
@@ -97,6 +100,18 @@ int main()
     const int SCREEN_WIDTH = 1920;
     const int SCREEN_HEIGHT = 1080;
 
+    const ImVec2 windowSizesValues[] = {
+                ImVec2(1080, 720),
+                ImVec2(1920, 1080),
+                ImVec2(2560, 1440),
+                ImVec2(3840, 2160)
+    };
+    const char* windowSizes[] = {
+        "1080x720",
+        "1920x1080",
+        "2560x1440",
+        "3840x2160"
+    };
     // Init SDL
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
@@ -115,7 +130,9 @@ int main()
         SCREEN_WIDTH, SCREEN_HEIGHT,
         SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
     );
-
+    bool fullscreen = false;
+    bool resizable = false;
+    bool borderless = false;
     // Early out if window not valid
     if (window == nullptr)
     {
@@ -273,6 +290,15 @@ int main()
     ImVec2 sceneWindowSize(SCREEN_WIDTH, SCREEN_HEIGHT);
     bool shouldRefreshSceneWindow = false;
 
+    //FPS
+    float fps;
+    int max_fps = 60;
+    std::vector<float> fps_log;
+    std::vector<float> ms_log;
+
+    //Brightness
+    /*FrameBufferObject brightnessFBO;*/
+
     while (isRunning)
     {
         // INPUT
@@ -319,6 +345,18 @@ int main()
         rotation += SPEED * dt;
         prevTime = currentTime;
 
+        //FPS Update
+        fps = 1.0f / dt;
+        if (ms_log.size() > 59) {
+            ms_log.erase(ms_log.begin());
+        }
+        ms_log.emplace_back(dt*1000);
+
+        if (fps_log.size() > 59) {
+            fps_log.erase(fps_log.begin());
+        }
+        fps_log.emplace_back(fps);
+
         // Clear screen color
         glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
 
@@ -329,6 +367,7 @@ int main()
         if (shouldRefreshSceneWindow)
         {
             CreateFBO(sceneWindowSize.x, sceneWindowSize.y, frameBufferObject, true);
+            /*CreateFBO(sceneWindowSize.x, sceneWindowSize.y, brightnessFBO, true);*/
             shouldRefreshSceneWindow = false;
         }
 
@@ -400,6 +439,35 @@ int main()
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
+        // Header Menu Bar
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Exit")) {
+					exit(0);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View")) {
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("Github Documentation")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
+                }
+                if (ImGui::MenuItem("Report a Bug")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
+                }
+                if (ImGui::MenuItem("Download Latest:")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
+                }
+                if (ImGui::MenuItem("About")) {
+                    
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
         const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
         if (gizmoActive)
@@ -423,6 +491,57 @@ int main()
 
         ImGui::ShowDemoWindow();
 
+        //Configuration window
+        ImGui::Begin("Configuration window", nullptr, flags);
+        if (ImGui::CollapsingHeader("Application"))
+        {
+            ImGui::Text("JLE-Engine");
+            ImGui::Text("UPC CITM");
+            ImGui::SliderInt("Max FPS", &max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
+            char title[25];
+            sprintf_s(title, 25, "Framerate %.f", fps_log[fps_log.size()-1]);
+            ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
+            sprintf_s(title, 25, "Milliseconds %.f", ms_log[ms_log.size() - 1]);
+            ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+        }
+        if (ImGui::CollapsingHeader("Window"))
+        {
+
+            //ImGui::SliderFloat("Brightness", ); TODO: Search how
+
+            
+            //Windows size TODO: Keep proportions
+            static int currentSize = 1;
+            if (ImGui::Combo("Window sizes", &currentSize, windowSizes, GLM_COUNTOF(windowSizes))) {
+                SDL_SetWindowSize(window, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
+                glViewport(0, 0, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
+            }
+
+            ImGui::Text("Refresh rate: %i", (int)fps);
+
+            if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
+                SDL_SetWindowFullscreen(window, fullscreen);
+            }
+
+            if (ImGui::Checkbox("Resizable", &resizable)) {
+                SDL_SetWindowResizable(window, resizable);
+            }
+
+            if (ImGui::Checkbox("Borderless", &borderless)) {
+                SDL_SetWindowBordered(window, !borderless);
+            }
+        }
+        if (ImGui::CollapsingHeader("Hardware")) {
+            ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
+            ImGui::Text("System RAM: %i Mb", SDL_GetSystemRAM());
+            /*ImGui::Text("Caps: %s", BuildCapsString());*/
+            ImGui::NewLine();
+            ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
+            ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
+        }
+        ImGui::End();
+
         // Render ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -431,7 +550,18 @@ int main()
         SDL_GL_SwapWindow(window);
 
         // FRAME CONTROL
-        // [...]
+        SDL_GetCurrentTime(&currentTime);
+        float current_dt = (currentTime - prevTime) / 1000000000.0f;
+        prevTime = currentTime;
+        float max_dt;
+        if (max_fps != 0) {
+            max_dt = 1000 / max_fps;
+        }
+        else max_dt = 0;
+
+        if (current_dt < max_dt && max_dt != 0.0f) {
+            SDL_Delay(max_dt - current_dt);
+        }
     }
 
     // Delete VAO, VBO and shader program
