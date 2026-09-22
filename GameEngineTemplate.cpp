@@ -18,6 +18,7 @@
 
 //Additional C++ Headers
 #include <vector>
+#include <dxgi1_4.h> //<----- needed to see VRAM values
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -576,12 +577,31 @@ int main()
             }
         }
         if (ImGui::CollapsingHeader("Hardware")) {
+            //start of stack overflow copy-paste
+            IDXGIFactory4* pFactory;
+            CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
+
+            IDXGIAdapter3* adapter;
+            pFactory->EnumAdapters(0, reinterpret_cast<IDXGIAdapter**>(&adapter));
+
+            DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
+            adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &videoMemoryInfo);
+            size_t usedVRAM = videoMemoryInfo.CurrentUsage / 1024 / 1024;
+            //end of stack overflow copy-paste
+            size_t availableVRAM = videoMemoryInfo.AvailableForReservation / 1024 / 1024;
+            size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
+            size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
+
             ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
             ImGui::Text("System RAM: %i Mb", SDL_GetSystemRAM());
             /*ImGui::Text("Caps: %s", BuildCapsString());*/
             ImGui::NewLine();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
             ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
+            ImGui::Text("VRAM budget: %d", budgetVRAM);
+            ImGui::Text("VRAM usage: %d", usedVRAM);
+            ImGui::Text("VRAM available: %d", availableVRAM);
+            ImGui::Text("VRAM reserved: %d", reservedVRAM);
         }
         ImGui::End();
 

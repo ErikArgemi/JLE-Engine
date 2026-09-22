@@ -28,9 +28,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
+target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 
 # For generating the release, we need to copy assets folder to build folder
-file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})
+# file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})
 
 # Setting custom working directory within root's 'launch.vs.json and copying within .vs folder
 configure_file(
