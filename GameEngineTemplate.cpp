@@ -439,6 +439,35 @@ int main()
         ImGui::NewFrame();
         ImGuizmo::BeginFrame();
 
+        // Header Menu Bar
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Exit")) {
+					exit(0);
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("View")) {
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("Github Documentation")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
+                }
+                if (ImGui::MenuItem("Report a Bug")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
+                }
+                if (ImGui::MenuItem("Download Latest:")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
+                }
+                if (ImGui::MenuItem("About")) {
+                    
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
         const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
         ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
         if (gizmoActive)
