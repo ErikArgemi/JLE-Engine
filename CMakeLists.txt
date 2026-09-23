@@ -28,7 +28,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
+add_subdirectory(cpu_features)
+target_link_libraries(${PROJECT_NAME} PRIVATE CpuFeatures::cpu_features)
 
 # For generating the release, we need to copy assets folder to build folder
 # file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})

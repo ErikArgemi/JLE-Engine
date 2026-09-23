@@ -19,6 +19,7 @@
 //Additional C++ Headers
 #include <vector>
 #include <dxgi1_4.h> //<----- needed to see VRAM values
+#include <cpuinfo_x86.h> //<----- needed to check the caps pf the cpu
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -94,7 +95,37 @@ void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-
+//checks individually each and every feature avalailable from the cpu and returns a string of all of them
+std::string GetCapsFromCpu(const cpu_features::X86Features& features) {
+    std::string listOfFeatures = "";
+    if (features.sse) {listOfFeatures += "SSE, ";}
+    if (features.sse2) { listOfFeatures += "SSE2, "; }
+    if (features.sse3) { listOfFeatures += "SSE3, "; }
+    if (features.ssse3) { listOfFeatures += "SSSE3, "; }
+    if (features.sse4_1) { listOfFeatures += "SSE4.1, "; }
+    if (features.sse4_2) { listOfFeatures += "SSE4.2, "; }
+    if (features.avx) { listOfFeatures += "AVX, "; }
+    if (features.avx2) { listOfFeatures += "AVX2, "; }
+    if (features.avx512f) { listOfFeatures += "AVX-512F, "; }
+    if (features.avx512cd) { listOfFeatures += "AVX-512CD, "; }
+    if (features.avx512er) { listOfFeatures += "AVX-512ER, "; }
+    if (features.avx512pf) { listOfFeatures += "AVX-512PF, "; }
+    if (features.avx512vl) { listOfFeatures += "AVX-512VL, "; }
+    if (features.avx512dq) { listOfFeatures += "AVX-512DQ, "; }
+    if (features.avx512bw) { listOfFeatures += "AVX-512BW, "; }
+    if (features.avx512ifma) { listOfFeatures += "AVX-512IFMA, "; }
+    if (features.avx512vbmi) { listOfFeatures += "AVX-512VBMI, "; }
+    if (features.avx512_4vnniw) { listOfFeatures += "AVX-512 4VNNIW, "; }
+    if (features.avx512_4fmaps) { listOfFeatures += "AVX-512 4FMAPS, "; }
+    if (features.avx512vpopcntdq) { listOfFeatures += "AVX-512VPOPCNTDQ, "; }
+    if (features.avx512vnni) { listOfFeatures += "AVX-512VNNI, "; }
+    if (features.avx512vbmi2) { listOfFeatures += "AVX-512VBMI2, "; }
+    if (features.avx512bitalg) { listOfFeatures += "AVX-512BITALG, "; }
+    if (features.avx512_vp2intersect) { listOfFeatures += "AVX-512 VP2INTERSECT, "; }
+    listOfFeatures.pop_back();
+    listOfFeatures.pop_back();
+    return listOfFeatures;
+}
 int main()
 {
     // Window Resolution
@@ -577,6 +608,9 @@ int main()
             }
         }
         if (ImGui::CollapsingHeader("Hardware")) {
+            //get info from the cpu
+            static const cpu_features::X86Features features = cpu_features::GetX86Info().features;
+            std::string capsCPU = GetCapsFromCpu(features);
             //start of stack overflow copy-paste
             IDXGIFactory4* pFactory;
             CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
@@ -594,7 +628,7 @@ int main()
 
             ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
             ImGui::Text("System RAM: %i Mb", SDL_GetSystemRAM());
-            /*ImGui::Text("Caps: %s", BuildCapsString());*/
+            ImGui::Text("Caps: %s", capsCPU.c_str());
             ImGui::NewLine();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
             ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
