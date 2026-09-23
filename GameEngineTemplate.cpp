@@ -626,10 +626,11 @@ int main()
             size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
             size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
 
+            ImGui::Separator();
             ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
             ImGui::Text("System RAM: %i Mb", SDL_GetSystemRAM());
             ImGui::Text("Caps: %s", capsCPU.c_str());
-            ImGui::NewLine();
+            ImGui::Separator();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
             ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
             ImGui::Text("VRAM budget: %d", budgetVRAM);
