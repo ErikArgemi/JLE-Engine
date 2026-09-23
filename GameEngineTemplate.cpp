@@ -132,6 +132,7 @@ std::string GetCapsFromCpu(const cpu_features::X86Features& features) {
 
 int main()
 {
+    //for the log console
     Log log;
     log.LOG("Hello World!");
     // Window Resolution
