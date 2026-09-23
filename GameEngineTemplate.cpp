@@ -22,7 +22,7 @@
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
 
 //in project files
-//#include "src/Logger.h"
+#include "src/Logger.h"
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -130,15 +130,10 @@ std::string GetCapsFromCpu(const cpu_features::X86Features& features) {
     return listOfFeatures;
 }
 
-//for the log
-static std::vector<std::string> msgLog;
-void LOG(std::string message) {
-    msgLog.push_back(message);
-    msgLog.push_back("\n");
-}
-
 int main()
 {
+    Log log;
+    log.LOG("Hello World!");
     // Window Resolution
     const int SCREEN_WIDTH = 1920;
     const int SCREEN_HEIGHT = 1080;
@@ -158,15 +153,15 @@ int main()
     // Init SDL
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
-        LOG("Failed to init SDL");
+        log.LOG("Failed to init SDL");
         return -1;
     }
-    LOG("SDL initialized");
+    log.LOG("SDL initialized");
 
     // Setup Min/Major version for using OpenGL 4.6
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-    LOG("OpenGL set up version 4.6");
+    log.LOG("OpenGL set up version 4.6");
     // Set Core Profile Mode
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -195,7 +190,7 @@ int main()
         SDL_Quit();
         return -1;
     }
-    LOG("OpenGL linked context to SDL");
+    log.LOG("OpenGL linked context to SDL");
     // Init all OpenGL function pointers at runtime (not linked at compile time)
     gladLoadGL();
     
@@ -208,7 +203,7 @@ int main()
     ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    LOG("ImGui created context");
+    log.LOG("ImGui created context");
     // Setup Platform/Renderer backends
     ImGui_ImplSDL3_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init();
@@ -654,11 +649,8 @@ int main()
         }
         ImGui::End();
         //Draw Console
-        ImGui::Begin("Console", nullptr, flags);
-        for (const auto& a : msgLog) {
-            ImGui::Text(a.c_str());
-        }
-        ImGui::End();
+        log.DrawConsole();
+        //ImGui::End();//uncomment to check the debuglog
 
         // Render ImGui
         ImGui::Render();
