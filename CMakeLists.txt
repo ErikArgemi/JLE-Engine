@@ -32,6 +32,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)
 target_link_libraries(${PROJECT_NAME} PRIVATE CpuFeatures::cpu_features)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} src)
 
 # For generating the release, we need to copy assets folder to build folder
 # file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})
