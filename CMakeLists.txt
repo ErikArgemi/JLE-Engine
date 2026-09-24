@@ -16,8 +16,12 @@ find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
 
+file(GLOB_RECURSE SOURCES
+    src/*.h
+    src/*.cpp
+)
 # Add source to this project's executable.
-add_executable (${PROJECT_NAME} GameEngineTemplate.cpp)
+add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
