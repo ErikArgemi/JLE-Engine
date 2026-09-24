@@ -619,7 +619,7 @@ int main()
         }
         if (ImGui::CollapsingHeader("Hardware")) {
             //get info from the cpu
-            static const cpu_features::X86Features features = cpu_features::GetX86Info().features;
+            const cpu_features::X86Features features = cpu_features::GetX86Info().features;
             std::string capsCPU = GetCapsFromCpu(features);
             //start of stack overflow copy-paste
             IDXGIFactory4* pFactory;
@@ -647,6 +647,8 @@ int main()
             ImGui::Text("VRAM usage: %d", usedVRAM);
             ImGui::Text("VRAM available: %d", availableVRAM);
             ImGui::Text("VRAM reserved: %d", reservedVRAM);
+            free(pFactory);
+            free(adapter);
         }
         ImGui::End();
         //Draw Console
@@ -691,5 +693,6 @@ int main()
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+    log.~Log();//destroy logger
     return 0;
 }
