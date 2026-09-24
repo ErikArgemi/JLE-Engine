@@ -633,10 +633,10 @@ int main()
             ImGui::Separator();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
             ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
-            ImGui::Text("VRAM budget: %d", budgetVRAM);
-            ImGui::Text("VRAM usage: %d", usedVRAM);
-            ImGui::Text("VRAM available: %d", availableVRAM);
-            ImGui::Text("VRAM reserved: %d", reservedVRAM);
+            ImGui::Text("VRAM budget: %d Mb", budgetVRAM);
+            ImGui::Text("VRAM usage: %d Mb", usedVRAM);
+            ImGui::Text("VRAM available: %d Mb", availableVRAM);
+            ImGui::Text("VRAM reserved: %d Mb", reservedVRAM);
         }
         ImGui::End();
 
