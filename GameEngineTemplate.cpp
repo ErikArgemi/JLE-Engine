@@ -23,6 +23,7 @@
 
 //in project files
 #include "src/Logger.h"
+#include "src/WindowManager.h"
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -132,9 +133,13 @@ std::string GetCapsFromCpu(const cpu_features::X86Features& features) {
 
 int main()
 {
+    //windowManager
+    WindowManager windowManager;
+
     //for the log console
     Log log;
     log.LOG("Hello World!");
+    windowManager.AddWindow("Console");
     // Window Resolution
     const int SCREEN_WIDTH = 1920;
     const int SCREEN_HEIGHT = 1080;
@@ -151,6 +156,7 @@ int main()
         "2560x1440",
         "3840x2160"
     };
+    
     // Init SDL
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
@@ -363,6 +369,13 @@ int main()
             {
             }
 
+            if (event.type == SDL_EVENT_WINDOW_RESIZED)
+            {
+                int w, h;
+                SDL_GetWindowSize(window, &w, &h);
+                windowManager.ResizeWindows(ImVec2(w, h));
+            }
+
         }
 
         // SDL KEYS
@@ -488,6 +501,7 @@ int main()
         }
 
         ImGui::Begin("Scene", nullptr, flags);
+        windowManager.AddWindow("Scene");
         ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
         ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
         shouldRefreshSceneWindow = (newSceneWindowSize.x != sceneWindowSize.x || newSceneWindowSize.y != sceneWindowSize.y);
@@ -539,6 +553,7 @@ int main()
         if (showAbout)
         {
             ImGui::Begin("About", &showAbout);
+            windowManager.AddWindow("About");
 
             ImGui::Text("JLE Engine v0.1");
             ImGui::Text("Welcome to the glorious JLE Engine, JLE stands for Jia, Luying and Erik.");
@@ -578,6 +593,7 @@ int main()
 
         //Configuration window
         ImGui::Begin("Configuration window", nullptr, flags);
+        windowManager.AddWindow("Configuration window");
         if (ImGui::CollapsingHeader("Application"))
         {
             ImGui::Text("JLE-Engine");
