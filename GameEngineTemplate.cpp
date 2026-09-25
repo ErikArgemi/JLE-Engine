@@ -344,7 +344,7 @@ int main()
     std::vector<float> ms_log;
 
     //Brightness
-    /*FrameBufferObject brightnessFBO;*/
+    float brightness = 1.0f;
 
     while (isRunning)
     {
@@ -610,7 +610,7 @@ int main()
         {
 
             //ImGui::SliderFloat("Brightness", ); TODO: Search how
-
+            ImGui::SliderFloat("Brightness", &brightness, 0.1, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
             
             //Windows size TODO: Keep proportions
             static int currentSize = 1;
@@ -635,7 +635,7 @@ int main()
         }
         if (ImGui::CollapsingHeader("Hardware")) {
             //get info from the cpu
-            static const cpu_features::X86Features features = cpu_features::GetX86Info().features;
+            const cpu_features::X86Features features = cpu_features::GetX86Info().features;
             std::string capsCPU = GetCapsFromCpu(features);
             //start of stack overflow copy-paste
             IDXGIFactory4* pFactory;
@@ -663,11 +663,18 @@ int main()
             ImGui::Text("VRAM usage: %d Mb", usedVRAM);
             ImGui::Text("VRAM available: %d Mb", availableVRAM);
             ImGui::Text("VRAM reserved: %d Mb", reservedVRAM);
+            free(pFactory);
+            free(adapter);
         }
         ImGui::End();
         //Draw Console
         log.DrawConsole();
         //ImGui::End();//uncomment to check the debuglog
+
+		// Dark block for brightness
+        float darckBlock = 1.0f - brightness;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+        ImGui::GetForegroundDrawList(viewport)->AddRectFilled(viewport->Pos,ImVec2(viewport->Pos.x + viewport->Size.x,viewport->Pos.y + viewport->Size.y),IM_COL32(0, 0, 0, (int) (darckBlock * 255.0f)));
 
         // Render ImGui
         ImGui::Render();
@@ -707,5 +714,6 @@ int main()
     SDL_DestroyWindow(window);
     SDL_Quit();
 
+    log.~Log();//destroy logger
     return 0;
 }
