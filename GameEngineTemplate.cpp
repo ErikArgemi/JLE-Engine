@@ -663,8 +663,7 @@ int main()
             ImGui::Text("VRAM usage: %d Mb", usedVRAM);
             ImGui::Text("VRAM available: %d Mb", availableVRAM);
             ImGui::Text("VRAM reserved: %d Mb", reservedVRAM);
-            free(pFactory);
-            free(adapter);
+            //TODO: free memory. There is a memory leak and it's noticable when uncapping fps 
         }
         ImGui::End();
         //Draw Console
