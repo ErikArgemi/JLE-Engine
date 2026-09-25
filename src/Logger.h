@@ -14,7 +14,7 @@ public:
 	void Clear();
 
 	//Draw the console window where the log is displayed
-	void Log::DrawConsole();
+	void DrawConsole();
 
 	//Get the messages from the log
 	const std::vector<std::string>& GetMessages() const {return msgLog;	}
