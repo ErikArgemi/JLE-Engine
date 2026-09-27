@@ -659,10 +659,10 @@ int main()
             ImGui::Separator();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
             ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
-            ImGui::Text("VRAM budget: %d Mb", budgetVRAM);
-            ImGui::Text("VRAM usage: %d Mb", usedVRAM);
-            ImGui::Text("VRAM available: %d Mb", availableVRAM);
-            ImGui::Text("VRAM reserved: %d Mb", reservedVRAM);
+            ImGui::Text("VRAM budget: %.2f %s", (budgetVRAM > 1024)? (float)budgetVRAM / 1024 : (float)budgetVRAM, (budgetVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
             free(pFactory);
             free(adapter);
             //TODO: free memory. There is a memory leak and it's noticable when uncapping fps 
