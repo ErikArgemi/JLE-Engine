@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <memory>
 
 // OpenGL
 #include <glad/glad.h>
@@ -638,10 +639,10 @@ int main()
             const cpu_features::X86Features features = cpu_features::GetX86Info().features;
             std::string capsCPU = GetCapsFromCpu(features);
             //start of stack overflow copy-paste
-            IDXGIFactory4* pFactory;
+            std::shared_ptr<IDXGIFactory4> pFactory;
             CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
 
-            IDXGIAdapter3* adapter;
+            std::shared_ptr<IDXGIAdapter3> adapter;
             pFactory->EnumAdapters(0, reinterpret_cast<IDXGIAdapter**>(&adapter));
 
             DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
@@ -663,8 +664,7 @@ int main()
             ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
-            free(pFactory);
-            free(adapter);
+            
             //TODO: free memory. There is a memory leak and it's noticable when uncapping fps 
         }
         ImGui::End();
