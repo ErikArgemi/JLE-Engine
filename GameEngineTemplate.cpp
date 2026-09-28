@@ -655,7 +655,7 @@ int main()
 
             ImGui::Separator();
             ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
-            ImGui::Text("System RAM: %i Mb", SDL_GetSystemRAM());
+            ImGui::Text("System RAM: %.2f %s", (SDL_GetSystemRAM() > 1024) ? (float)SDL_GetSystemRAM() / 1024 : (float)SDL_GetSystemRAM(), (SDL_GetSystemRAM() > 1024) ? "Gb" : "Mb");
             ImGui::Text("Caps: %s", capsCPU.c_str());
             ImGui::Separator();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
