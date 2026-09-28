@@ -655,7 +655,8 @@ int main()
 
             ImGui::Separator();
             ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
-            ImGui::Text("System RAM: %.2f %s", (SDL_GetSystemRAM() > 1024) ? (float)SDL_GetSystemRAM() / 1024 : (float)SDL_GetSystemRAM(), (SDL_GetSystemRAM() > 1024) ? "Gb" : "Mb");
+            int systemRAM = SDL_GetSystemRAM();
+            ImGui::Text("System RAM: %.2f %s", (systemRAM > 1024) ? (float)systemRAM / 1024 : (float)systemRAM, (systemRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("Caps: %s", capsCPU.c_str());
             ImGui::Separator();
             ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
@@ -664,7 +665,6 @@ int main()
             ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
-            
             //TODO: free memory. There is a memory leak and it's noticable when uncapping fps 
         }
         ImGui::End();
