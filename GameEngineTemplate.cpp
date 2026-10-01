@@ -236,42 +236,82 @@ int main()
     glDeleteShader(fragmentShader);
 
     // Local Space
-    GLfloat cubeVertices[]
+    //GLfloat cubeVertices[]
+    //{
+    ////  Position                Color
+    //    -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,
+    //    0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
+    //    0.5f, 0.5f, -0.5f,      0.0f, 0.0f, 1.0f,
+    //    -0.5f, 0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
+    //    -0.5f, -0.5f, 0.5f,     0.0f, 1.0f, 1.0f,
+    //    0.5f, -0.5f, 0.5f,      1.0f, 1.0f, 0.0f,
+    //    0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 1.0f,
+    //    -0.5f, 0.5f, 0.5f,      1.0f, 1.0f, 1.0f,
+    //};
+    GLfloat d20Vertices[]
     {
-    //  Position                Color
-        -0.5f, -0.5f, -0.5f,    1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f,      0.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f,     0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f,      1.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f,      1.0f, 1.0f, 1.0f,
+        //  Position                        Color
+            0.0f, 1.0f, 0.0f,               1.0f, 0.0f, 0.0f,
+            -0.276f, 0.447f, 0.851f,        0.0f, 1.0f, 0.0f,
+            0.724f, 0.447f, 0.526f,         0.0f, 0.0f, 1.0f,
+            -0.724f, 0.447f, -0.526f,       1.0f, 0.0f, 0.0f,
+            -0.276f, 0.447f, -0.851f,       0.0f, 1.0f, 1.0f,
+            -0.894f, 0.447f, 0.0f,          1.0f, 1.0f, 0.0f,
+            0.276f, -0.447f, 0.851f,        1.0f, 0.0f, 1.0f,
+            0.894f, -0.447f, 0.0f,          1.0f, 1.0f, 1.0f,
+            0.276f, -0.447f, -0.851f        1.0f, 0.0f, 0.0f,
+            -0.724f, -0.447f, -0.526f       0.0f, 1.0f, 0.0f,
+            -0.724f, -0.447f, 0.526f        0.0f, 0.0f, 1.0f,
+            0.0f, -1.0f, 0.0f,              1.0f, 0.0f, 0.0f,
     };
-
-    const unsigned int NUM_INDICES = 36;
-    GLuint cubeIndices[]
-    {
-        // Top face
-        3, 2, 6,
-        6, 7, 3,
-        // Bottom face
-        0, 1, 5,
-        5, 4, 0,
-        // Left face
-        0, 4, 7,
-        7, 3, 0,
-        // Right face
-        1, 5, 6,
-        6, 2, 1,
-        // Back face
-        0, 1, 2,
-        2, 3, 0,
-        // Front face
-        4, 5, 6,
-        6, 7, 4,
+    //const unsigned int NUM_INDICES = 36;
+    //GLuint cubeIndices[]
+    //{
+    //    // Top face
+    //    3, 2, 6,
+    //    6, 7, 3,
+    //    // Bottom face
+    //    0, 1, 5,
+    //    5, 4, 0,
+    //    // Left face
+    //    0, 4, 7,
+    //    7, 3, 0,
+    //    // Right face
+    //    1, 5, 6,
+    //    6, 2, 1,
+    //    // Back face
+    //    0, 1, 2,
+    //    2, 3, 0,
+    //    // Front face
+    //    4, 5, 6,
+    //    6, 7, 4,
+    //};
+    const unsigned int NUM_INDICES_D20 = 60;
+    GLuint d20Indices[]{
+        //top 5 faces
+        1,2,3,
+        1,3,4,
+        1,4,5,
+        1,5,6,
+        1,6,2,
+        //middle 10 faces
+        2,7,3,
+        3,7,8,
+        4,3,8,
+        4,8,9,
+        5,4,9,
+        5,9,10,
+        6,5,10,
+        6,10,11,
+        2,6,11,
+        2,11,7,
+        //bottom 5 faces
+        12,7,8,
+        12,8,9,
+        12,9,10,
+        12,10,11,
+        12,11,7,
     };
-
     // View Matrix
     glm::vec3 position(0.0f, 0.0f, -5.0f);
     glm::vec3 forward(0.0f, 0.0f, 1.0f);
@@ -305,12 +345,18 @@ int main()
 
     // Link GL_ARRAY_BUFFER to vertices data
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(d20Vertices), d20Vertices, GL_STATIC_DRAW);
+    
+    
     // Link GL_ELEMENT_ARRAY_BUFFER to indices data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(d20Indices), d20Indices, GL_STATIC_DRAW);
+    
+    
     // Define Vertex layout and set attribute index
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -461,7 +507,10 @@ int main()
         glBindVertexArray(VAO);
 
         // 2. Render the first cube
-        glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+        
+        glDrawElements(GL_TRIANGLES, NUM_INDICES_D20, GL_UNSIGNED_INT, 0);
+
 
         // 3. We will compare when rendering 2nd cube if there's value 1 to stencil buffer for all fragments that pass
         // Only write outline to value != 1
@@ -479,7 +528,9 @@ int main()
 
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(modelViewProj));
         glUniform1f(isOutlineLocation, 1.0f);  // set the value
-        glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+
+        glDrawElements(GL_TRIANGLES, NUM_INDICES_D20, GL_UNSIGNED_INT, 0);
 
         // 5. Restore previous state
         glStencilMask(0xFF);
@@ -665,7 +716,6 @@ int main()
             ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
             ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
-            //TODO: free memory. There is a memory leak and it's noticable when uncapping fps 
         }
         ImGui::End();
         //Draw Console
