@@ -33,7 +33,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann-json)
+# target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann-json)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)
