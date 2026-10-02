@@ -141,6 +141,11 @@ int main()
     Log log;
     log.LOG("Hello World!");
     windowManager.AddWindow("Console");
+
+    //variable to put at the bool Start() from the modules
+    std::shared_ptr<IDXGIFactory4> pFactory;
+    std::shared_ptr<IDXGIAdapter3> adapter;
+
     // Window Resolution
     const int SCREEN_WIDTH = 1920;
     const int SCREEN_HEIGHT = 1080;
@@ -689,33 +694,33 @@ int main()
             //get info from the cpu
             const cpu_features::X86Features features = cpu_features::GetX86Info().features;
             std::string capsCPU = GetCapsFromCpu(features);
-            //start of stack overflow copy-paste
-            std::shared_ptr<IDXGIFactory4> pFactory;
-            CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
+            pFactory.reset();
+            adapter.reset();
 
-            std::shared_ptr<IDXGIAdapter3> adapter;
+            HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);//<----memory leak
             pFactory->EnumAdapters(0, reinterpret_cast<IDXGIAdapter**>(&adapter));
+            //IDXGIFactory1::Release();
+            //DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
+            //adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &videoMemoryInfo);
+            //size_t usedVRAM = videoMemoryInfo.CurrentUsage / 1024 / 1024;
+            ////end of stack overflow copy-paste
+            //size_t availableVRAM = videoMemoryInfo.AvailableForReservation / 1024 / 1024;
+            //size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
+            //size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
 
-            DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
-            adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &videoMemoryInfo);
-            size_t usedVRAM = videoMemoryInfo.CurrentUsage / 1024 / 1024;
-            //end of stack overflow copy-paste
-            size_t availableVRAM = videoMemoryInfo.AvailableForReservation / 1024 / 1024;
-            size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
-            size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
-
-            ImGui::Separator();
-            ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
-            int systemRAM = SDL_GetSystemRAM();
-            ImGui::Text("System RAM: %.2f %s", (systemRAM > 1024) ? (float)systemRAM / 1024 : (float)systemRAM, (systemRAM > 1024) ? "Gb" : "Mb");
-            ImGui::Text("Caps: %s", capsCPU.c_str());
-            ImGui::Separator();
-            ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
-            ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
-            ImGui::Text("VRAM budget: %.2f %s", (budgetVRAM > 1024)? (float)budgetVRAM / 1024 : (float)budgetVRAM, (budgetVRAM > 1024) ? "Gb" : "Mb");
-            ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
-            ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
-            ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
+            //ImGui::Separator();
+            //ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
+            //int systemRAM = SDL_GetSystemRAM();
+            //ImGui::Text("System RAM: %.2f %s", (systemRAM > 1024) ? (float)systemRAM / 1024 : (float)systemRAM, (systemRAM > 1024) ? "Gb" : "Mb");
+            //ImGui::Text("Caps: %s", capsCPU.c_str());
+            //ImGui::Separator();
+            //ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
+            //ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
+            //ImGui::Text("VRAM budget: %.2f %s", (budgetVRAM > 1024)? (float)budgetVRAM / 1024 : (float)budgetVRAM, (budgetVRAM > 1024) ? "Gb" : "Mb");
+            //ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
+            //ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
+            //ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
+            
         }
         ImGui::End();
         //Draw Console
