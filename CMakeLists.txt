@@ -15,11 +15,15 @@ find_package(OpenGL REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
+#added vcpkg
+find_package(nlohmann_json CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES
     src/*.h
     src/*.cpp
+    src/*.json
 )
+
 # Add source to this project's executable.
 add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES})
 
@@ -32,8 +36,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
 target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
-
-# target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann-json)
+#added vcpkg
+target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)

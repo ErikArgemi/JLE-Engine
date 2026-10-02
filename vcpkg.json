@@ -1,13 +1,18 @@
 {
-	"dependencies": [
-		"glm",
-		"sdl3",
-		"opengl",
-		"glad",
-		{
-			"name": "imgui",
-			"features": [ "sdl3-binding", "opengl3-binding", "docking-experimental" ]
-		},
-		"imguizmo"
-	] 
+  "dependencies": [
+    "glad",
+    "glm",
+    {
+      "name": "imgui",
+      "features": [
+        "docking-experimental",
+        "opengl3-binding",
+        "sdl3-binding"
+      ]
+    },
+    "imguizmo",
+    "opengl",
+    "sdl3",
+    "nlohmann-json"
+  ]
 }
