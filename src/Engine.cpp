@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include "Engine.h"
+#include "Log.h"
 //Modules includes
 #include "Modules/Windows.h"
 #include "Modules/Render.h"
@@ -35,6 +36,7 @@ void Engine::AddModule(std::shared_ptr<Module> module) {
 }
 
 bool Engine::Awake() {
+	LOG("ENGINE AWAKE----------");
 	bool result = true;
 	for (const auto& module : moduleList) {
 		//module->LoadParameters(configFile.child("config").child(module.get()->name.c_str())); from the json, this is an example code using xml it prob won't work with nlohmann
@@ -47,6 +49,7 @@ bool Engine::Awake() {
 }
 
 bool Engine::Start() {
+	LOG("ENGINE START----------HELLO WORLD");
 	bool result = true;
 	for (const auto& module : moduleList) {
 		result = module->Start();

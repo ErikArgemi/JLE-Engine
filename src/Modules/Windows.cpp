@@ -1,4 +1,6 @@
 #include "Windows.h"
+#include "../Engine.h"
+#include "../Log.h"
 
 #include <iostream>
 #include <memory>
@@ -36,9 +38,11 @@ bool Windows::Awake() {
 	// Init SDL
 	if (!SDL_Init(SDL_INIT_VIDEO))
 	{
+        LOG("Failed to init SDL");
 		return false;
 	}
 	else {
+        LOG("SDL initialized");
 		//Below theres an example code of xml on how to configure the window using xml it prob won't work with nlohmann
 		/*Uint32 flags = 0;
 		bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
@@ -56,6 +60,7 @@ bool Windows::Awake() {
 		// Setup Min/Major version for using OpenGL 4.6
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+        LOG("OpenGL set up version 4.6");
 		// Set Core Profile Mode
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
@@ -241,6 +246,8 @@ bool Windows::Update() {
 
     }
     ImGui::End();
+
+    Engine::GetInstance().log.DrawConsole();
 
     // Dark block for brightness
     float darckBlock = 1.0f - brightness;

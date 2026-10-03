@@ -1,5 +1,6 @@
 #include "Render.h"
 #include "../Engine.h"
+#include "../Log.h"
 #include "Windows.h"
 
 #include <iostream>
@@ -64,7 +65,7 @@ bool Render::Awake() {
 		SDL_Quit();
 		return false;
 	}
-
+    LOG("OpenGL linked context to SDL");
 	gladLoadGL();
 
 	// Used for mapping NDC coordinates (-1.0f to 1.0f) to pixel coordinates (e.g. 1920x1080)
@@ -76,6 +77,7 @@ bool Render::Awake() {
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    LOG("ImGui created context");
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL3_InitForOpenGL(window, glContext);
 	ImGui_ImplOpenGL3_Init();

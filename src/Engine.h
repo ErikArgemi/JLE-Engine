@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>
 #include "Module.h"
+#include "Logger.h"
 
 // Modules
 class Render;
@@ -63,6 +64,8 @@ public:
 		FAIL,
 		EXIT
 	};
+	//Logger
+	Log log;
 
 	//Modules
 	std::shared_ptr<Render> render;
