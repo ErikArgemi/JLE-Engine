@@ -25,6 +25,7 @@
 //in project files
 #include "src/Logger.h"
 #include "src/WindowManager.h"
+#include "src/Engine.h"
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
