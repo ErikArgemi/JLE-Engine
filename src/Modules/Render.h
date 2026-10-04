@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Module.h"
+#include "../Module.h"
 #include "../Engine.h"
-
+#include "Windows.h"
 #include <iostream>
 #include <memory>
 
@@ -47,7 +47,8 @@ public:
     //Create a Frame Buffer Object
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate);
 public:
-
+    SDL_Time prevTime;
+    SDL_Time currentTime;
 private:
     SDL_GLContext glContext;
 
@@ -72,7 +73,7 @@ private:
     //    0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 1.0f,
     //    -0.5f, 0.5f, 0.5f,      1.0f, 1.0f, 1.0f,
     //};
-    GLfloat d20Vertices[]
+    GLfloat d20Vertices[72]
     {
         //  Position                        Color
             0.0f, 1.0f, 0.0f,               1.0f, 0.0f, 0.0f,
@@ -86,7 +87,7 @@ private:
             0.276f, -0.447f, -0.851f,        1.0f, 0.0f, 0.0f,
             -0.724f, -0.447f, -0.526f,       0.0f, 1.0f, 0.0f,
             -0.724f, -0.447f, 0.526f,        0.0f, 0.0f, 1.0f,
-            0.0f, -1.0f, 0.0f,              1.0f, 0.0f, 0.0f,
+            0.0f, -1.0f, 0.0f,              1.0f, 0.0f, 0.0f
     };
     //const unsigned int NUM_INDICES = 36;
     //GLuint cubeIndices[]
@@ -111,7 +112,7 @@ private:
     //    6, 7, 4,
     //};
     const unsigned int NUM_INDICES_D20 = 60;
-    GLuint d20Indices[]{
+    GLuint d20Indices[60]{
         //top 5 faces
         0,1,2,
         0,2,3,
@@ -134,15 +135,9 @@ private:
         11,7,8,
         11,8,9,
         11,9,10,
-        11,10,6,
+        11,10,6
     };
-    // View Matrix
-    glm::vec3 position(0.0f, 0.0f, -5.0f);
-    glm::vec3 forward(0.0f, 0.0f, 1.0f);
-    glm::vec3 up(0.0f, 1.0f, 0.0f);
-    glm::mat4 viewMatrix = glm::lookAt(position             // Camera Position
-        , position + forward   // Target Position
-        , up);                 // Up Vector
+    glm::mat4 viewMatrix;
     // Projection Matrix
     const float FOV = 45.0f;
     const float NEAR_PLANE = 0.1f;
@@ -160,10 +155,12 @@ private:
     GLuint EBO;
 
     // Rotate the cube over time
-    SDL_Time prevTime;
+    
     float rotation = 0.0f;
     const float SPEED = 100.0f;
 
     bool isRunning = true;
     FrameBufferObject frameBufferObject;
+    ImVec2 sceneWindowSize;
+    bool shouldRefreshSceneWindow = false;
 };

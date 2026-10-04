@@ -2,6 +2,7 @@
 
 #include <string>
 class Module {
+public:
 	//Start with false as maybe the module is activated later
 	Module() : active(false) {}
 

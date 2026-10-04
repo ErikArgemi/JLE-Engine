@@ -1,6 +1,7 @@
 #include "Windows.h"
 #include "../Engine.h"
 #include "../Log.h"
+#include "Render.h"
 
 #include <iostream>
 #include <memory>
@@ -264,9 +265,9 @@ bool Windows::Update() {
 
 bool Windows::PostUpdate() {
     // FRAME CONTROL
-    SDL_GetCurrentTime(&currentTime);
-    float current_dt = (currentTime - prevTime) / 1000000000.0f;
-    prevTime = currentTime;
+    SDL_GetCurrentTime(&Engine::GetInstance().render->currentTime);
+    float current_dt = (Engine::GetInstance().render->currentTime - Engine::GetInstance().render->prevTime) / 1000000000.0f;
+    Engine::GetInstance().render->prevTime = Engine::GetInstance().render->currentTime;
     float max_dt;
     if (max_fps != 0) {
         max_dt = 1000 / max_fps;
@@ -276,10 +277,12 @@ bool Windows::PostUpdate() {
     if (current_dt < max_dt && max_dt != 0.0f) {
         SDL_Delay(max_dt - current_dt);
     }
+    return true;
 }
 
 bool Windows::CleanUp() {
 	SDL_DestroyWindow(window);
+    return true;
 }
 
 void Windows::AddWindow(std::string newWindow) {

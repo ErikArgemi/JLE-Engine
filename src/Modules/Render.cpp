@@ -138,8 +138,16 @@ bool Render::Awake() {
     SDL_GetCurrentTime(&prevTime);
 
     CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject, false);
-    ImVec2 sceneWindowSize(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT);
-    bool shouldRefreshSceneWindow = false;
+    sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
+    sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
+
+    // View Matrix
+    glm::vec3 position(0.0f, 0.0f, -5.0f);
+    glm::vec3 forward(0.0f, 0.0f, 1.0f);
+    glm::vec3 up(0.0f, 1.0f, 0.0f);
+    viewMatrix = glm::lookAt(position             // Camera Position
+        , position + forward   // Target Position
+        , up);                 // Up Vector
 }
 
 bool Render::Update() {
@@ -150,7 +158,6 @@ bool Render::Update() {
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
 
     // Perform Rotation
-    SDL_Time currentTime;
     SDL_GetCurrentTime(&currentTime);
 
     const float dt = (currentTime - prevTime) / 1000000000.0f;
@@ -250,7 +257,7 @@ bool Render::Update() {
         Engine::GetInstance().windows->flags |= ImGuiWindowFlags_NoMove;
     }
 
-    ImGui::Begin("Scene", nullptr, flags);
+    ImGui::Begin("Scene", nullptr, Engine::GetInstance().windows->flags);
     Engine::GetInstance().windows->AddWindow("Scene");
     ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
     ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
@@ -279,6 +286,7 @@ bool Render::CleanUp() {
 
     SDL_GL_DestroyContext(glContext);
     SDL_Quit();
+    return true;
 }
 
 void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate)

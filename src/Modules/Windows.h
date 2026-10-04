@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "Module.h"
+#include "../Module.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include <SDL3/SDL.h>
@@ -53,7 +53,7 @@ public:
     const int SCREEN_HEIGHT = 1080;
 
     //ImGui flags
-    ImGuiWindowFlags flags
+    ImGuiWindowFlags flags;
 private:
 	std::vector<std::string> windows;
 	ImVec2 currentWindowSize;
@@ -63,13 +63,13 @@ private:
     std::shared_ptr<IDXGIFactory4> pFactory;
     std::shared_ptr<IDXGIAdapter3> adapter;
 
-    const ImVec2 windowSizesValues[] = {
+    const ImVec2 windowSizesValues[4] = {
                 ImVec2(1080, 720),
                 ImVec2(1920, 1080),
                 ImVec2(2560, 1440),
                 ImVec2(3840, 2160)
     };
-    const char* windowSizes[] = {
+    const char* windowSizes[4] = {
         "1080x720",
         "1920x1080",
         "2560x1440",
@@ -82,6 +82,7 @@ private:
     bool borderless = false;
 
     //FPS
+    float dt;
     float fps;
     int max_fps = 60;
     std::vector<float> fps_log;
@@ -89,4 +90,5 @@ private:
 
     //Brightness
     float brightness = 1.0f;
+
 };

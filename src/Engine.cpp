@@ -75,6 +75,7 @@ bool Engine::Update() {
 }
 
 bool Engine::CleanUp() {
+	LOG("ENGINE CLEAN UP----------");
 	bool result = true;
 	for (const auto& module : moduleList) {
 		result = module->CleanUp();
@@ -82,6 +83,7 @@ bool Engine::CleanUp() {
 			break;
 		}
 	}
+	log.~Log();
 	return result;
 }
 
