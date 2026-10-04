@@ -203,7 +203,7 @@ bool Windows::PostUpdate() {
 
         char title[30];
         sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
-        ImGui::PlotHistogram("##framerate", &Engine::GetInstance().Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
+        ImGui::PlotHistogram("##framerate", &Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
         sprintf_s(title, 30, "Milliseconds %.f", Engine::GetInstance().ms_log[Engine::GetInstance().ms_log.size() - 1]);
         ImGui::PlotHistogram("##milliseconds", &Engine::GetInstance().ms_log[0], Engine::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
     }
