@@ -81,13 +81,6 @@ private:
     bool resizable = false;
     bool borderless = false;
 
-    //FPS
-    float dt;
-    float fps;
-    int max_fps = 60;
-    std::vector<float> fps_log;
-    std::vector<float> ms_log;
-
     //Brightness
     float brightness = 1.0f;
 

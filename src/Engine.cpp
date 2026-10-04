@@ -12,15 +12,14 @@
 
 
 Engine::Engine() {
+	std::cout << "adding modules-----------" << std::endl;
 	//Modules
 	windows = std::make_shared<Windows>();
-	render = std::make_shared<Render>();
 	input = std::make_shared<Input>();
-
+	render = std::make_shared<Render>();
 	//add the modules in the list
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
-
 		//Render last
 	AddModule(std::static_pointer_cast<Module>(render));
 }
@@ -62,6 +61,8 @@ bool Engine::Start() {
 
 bool Engine::Update() {
 	bool result = true;
+	PrepareUpdate();
+
 	if (result) {
 		result = PreUpdate();
 	}
@@ -71,6 +72,8 @@ bool Engine::Update() {
 	if (result) {
 		result = PostUpdate();
 	}
+
+	FinishUpdate();
 	return result;
 }
 
@@ -85,6 +88,36 @@ bool Engine::CleanUp() {
 	}
 	log.~Log();
 	return result;
+}
+void Engine::PrepareUpdate() {
+	SDL_GetCurrentTime(&currentTime);
+	//FPS Update
+	fps = 1.0f / dt;
+	if (ms_log.size() > 59) {
+		ms_log.erase(ms_log.begin());
+	}
+	ms_log.emplace_back(dt * 1000);
+
+	if (fps_log.size() > 59) {
+		fps_log.erase(fps_log.begin());
+	}
+	fps_log.emplace_back(fps);
+}
+
+void Engine::FinishUpdate() {
+	prevTime = currentTime;
+	SDL_GetCurrentTime(&currentTime);
+	dt = (currentTime - prevTime) / 1000000000.0f;
+	// FRAME CONTROL
+	float max_dt;
+	if (max_fps != 0) {
+		max_dt = 1000 / max_fps;
+	}
+	else max_dt = 0;
+
+	if (dt < max_dt && max_dt != 0.0f) {
+		SDL_Delay(max_dt - dt);
+	}
 }
 
 bool Engine::PreUpdate() {

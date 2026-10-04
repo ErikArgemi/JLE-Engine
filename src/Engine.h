@@ -4,6 +4,7 @@
 #include <list>
 #include "Module.h"
 #include "Logger.h"
+#include <SDL3/SDL.h>
 
 // Modules
 class Render;
@@ -42,6 +43,12 @@ private:
 	Engine(const Engine&) = delete;
 	Engine& operator=(const Engine&) = delete;
 
+	//Functions mainly for the time
+	//Used to calculate dt,fps...
+	void PrepareUpdate();
+	//Used to calculate dt,fps...
+	void FinishUpdate();
+
 	// Call modules before each loop iteration
 	bool PreUpdate();
 
@@ -72,7 +79,18 @@ public:
 	std::shared_ptr<Windows> windows;
 	std::shared_ptr<Input> input;
 
+	//Time
+	SDL_Time prevTime;
+	SDL_Time currentTime;
+
+	//FPS
+	float dt = 1.0f;
+	float fps = 60.0f;
+	int max_fps = 60;
+	std::vector<float> fps_log;
+	std::vector<float> ms_log;
 private:
+
 	//add the variable of the json reader from general configuration here
 	//below there's an example code using xml it prob won't work with nlohmann
 	/*void LoadConfig()

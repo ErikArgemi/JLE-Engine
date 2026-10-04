@@ -61,6 +61,7 @@ bool Render::Awake() {
 	glContext = SDL_GL_CreateContext(window);
 	if (!glContext)
 	{
+        std::cout << "render glcontext failed" << std::endl;
 		SDL_DestroyWindow(window);
 		SDL_Quit();
 		return false;
@@ -82,6 +83,14 @@ bool Render::Awake() {
 	ImGui_ImplSDL3_InitForOpenGL(window, glContext);
 	ImGui_ImplOpenGL3_Init();
 
+    // Create & compile vertex and fragment shaders
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    // Create Program and bind shaders
+    shaderProgram = glCreateProgram();
+
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
@@ -95,7 +104,11 @@ bool Render::Awake() {
 	// Delete shaders since we've created a program already and they are contained there
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
-    
+
+    // Create ModelViewProjection matrix
+    modelViewProjLocation = glGetUniformLocation(shaderProgram, "modelViewProj");
+    isOutlineLocation = glGetUniformLocation(shaderProgram, "isOutline");
+
     glGenVertexArrays(1, &VAO);
 
     glGenBuffers(1, &VBO);
@@ -135,7 +148,7 @@ bool Render::Awake() {
     glEnable(GL_DEPTH_TEST);
 
     // Rotate the cube over time
-    SDL_GetCurrentTime(&prevTime);
+    SDL_GetCurrentTime(&Engine::GetInstance().prevTime);
 
     CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject, false);
     sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
@@ -148,21 +161,19 @@ bool Render::Awake() {
     viewMatrix = glm::lookAt(position             // Camera Position
         , position + forward   // Target Position
         , up);                 // Up Vector
+
+    projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
+    return true;
 }
 
 bool Render::Update() {
     // UPDATE
     // Model Matrix
-    glm::mat4 modelMatrix(1.0f);
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
 
     // Perform Rotation
-    SDL_GetCurrentTime(&currentTime);
-
-    const float dt = (currentTime - prevTime) / 1000000000.0f;
-    rotation += SPEED * dt;
-    prevTime = currentTime;
+    rotation += SPEED * Engine::GetInstance().dt;
     
     // Clear screen color
     glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
@@ -246,31 +257,7 @@ bool Render::Update() {
     // Unbind frame buffer, back to default
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
-    ImGuizmo::BeginFrame();
-
-    const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
-    if (gizmoActive)
-    {
-        Engine::GetInstance().windows->flags |= ImGuiWindowFlags_NoMove;
-    }
-
-    ImGui::Begin("Scene", nullptr, Engine::GetInstance().windows->flags);
-    Engine::GetInstance().windows->AddWindow("Scene");
-    ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
-    ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
-    shouldRefreshSceneWindow = (newSceneWindowSize.x != sceneWindowSize.x || newSceneWindowSize.y != sceneWindowSize.y);
-    sceneWindowSize = newSceneWindowSize;
-    ImGui::Image(frameBufferObject.RENDER_TO_TEXTURE_ID, newSceneWindowSize, ImVec2(0, 1), ImVec2(1, 0));
-
-    glDisable(GL_DEPTH_TEST);
-    ImGuizmo::SetRect(cursorScreenPos.x, cursorScreenPos.y, newSceneWindowSize.x, newSceneWindowSize.y);
-    ImGuizmo::SetDrawlist();
-    ImGuizmo::Manipulate(glm::value_ptr(viewMatrix), glm::value_ptr(projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(modelMatrix));
-    glEnable(GL_DEPTH_TEST);
-    ImGui::End();
+    return true;
 }
 bool Render::CleanUp() {
     // Delete VAO, VBO and shader program

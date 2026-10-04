@@ -36,72 +36,94 @@ Windows::~Windows() {
 }
 
 bool Windows::Awake() {
-	// Init SDL
-	if (!SDL_Init(SDL_INIT_VIDEO))
-	{
+    // Init SDL
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
         LOG("Failed to init SDL");
-		return false;
-	}
-	else {
-        LOG("SDL initialized");
-		//Below theres an example code of xml on how to configure the window using xml it prob won't work with nlohmann
-		/*Uint32 flags = 0;
-		bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
-		bool borderless = configParameters.child("borderless").attribute("value").as_bool();
-		bool resizable = configParameters.child("resizable").attribute("value").as_bool();
-		bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
+        std::cout << "windows: failed init video" << std::endl;
+        return false;
+    }
+    LOG("SDL initialized");
+    //Below theres an example code of xml on how to configure the window using xml it prob won't work with nlohmann
+    /*Uint32 flags = 0;
+    bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
+    bool borderless = configParameters.child("borderless").attribute("value").as_bool();
+    bool resizable = configParameters.child("resizable").attribute("value").as_bool();
+    bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
 
-		width = configParameters.child("resolution").attribute("width").as_int();
-		height = configParameters.child("resolution").attribute("height").as_int();
-		scale = configParameters.child("resolution").attribute("scale").as_int();
+    width = configParameters.child("resolution").attribute("width").as_int();
+    height = configParameters.child("resolution").attribute("height").as_int();
+    scale = configParameters.child("resolution").attribute("scale").as_int();
 
-		if (fullscreen == true)        flags |= SDL_WINDOW_FULLSCREEN;
-		if (borderless == true)        flags |= SDL_WINDOW_BORDERLESS;
-		if (resizable == true)         flags |= SDL_WINDOW_RESIZABLE;*/
-		// Setup Min/Major version for using OpenGL 4.6
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-        LOG("OpenGL set up version 4.6");
-		// Set Core Profile Mode
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    if (fullscreen == true)        flags |= SDL_WINDOW_FULLSCREEN;
+    if (borderless == true)        flags |= SDL_WINDOW_BORDERLESS;
+    if (resizable == true)         flags |= SDL_WINDOW_RESIZABLE;*/
+    // Setup Min/Major version for using OpenGL 4.6
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    LOG("OpenGL set up version 4.6");
+    // Set Core Profile Mode
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
-		// Create OpenGL window using SDL
-		window = SDL_CreateWindow("EnginishGL",
-			SCREEN_WIDTH, SCREEN_HEIGHT,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
-		);
-		if (window == nullptr)
-		{
-			SDL_Quit();
-			return false;
-		}
-	}
+    // Create OpenGL window using SDL
+    window = SDL_CreateWindow("EnginishGL",
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+    );
+    if (window == nullptr)
+    {
+        std::cout << "failed to create window" << std::endl;
+        SDL_Quit();
+        return false;
+    }
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-	return true;
+    
+    return true;
 }
 
 bool Windows::PreUpdate() {
-	//FPS Update
-	fps = 1.0f / dt;
-	if (ms_log.size() > 59) {
-		ms_log.erase(ms_log.begin());
-	}
-	ms_log.emplace_back(dt * 1000);
-
-	if (fps_log.size() > 59) {
-		fps_log.erase(fps_log.begin());
-	}
-	fps_log.emplace_back(fps);
+    return true;
 }
 
 bool Windows::Update() {
+    
 
+    return true;
+}
+
+bool Windows::PostUpdate() {
+
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
+
+    const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
+    if (gizmoActive)
+    {
+        Engine::GetInstance().windows->flags |= ImGuiWindowFlags_NoMove;
+    }
+
+    ImGui::Begin("Scene", nullptr, Engine::GetInstance().windows->flags);
+    Engine::GetInstance().windows->AddWindow("Scene");
+    ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+    ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
+    Engine::GetInstance().render->shouldRefreshSceneWindow = (newSceneWindowSize.x != Engine::GetInstance().render->sceneWindowSize.x || newSceneWindowSize.y != Engine::GetInstance().render->sceneWindowSize.y);
+    Engine::GetInstance().render->sceneWindowSize = newSceneWindowSize;
+    ImGui::Image(Engine::GetInstance().render->frameBufferObject.RENDER_TO_TEXTURE_ID, newSceneWindowSize, ImVec2(0, 1), ImVec2(1, 0));
+
+    glDisable(GL_DEPTH_TEST);
+    ImGuizmo::SetRect(cursorScreenPos.x, cursorScreenPos.y, newSceneWindowSize.x, newSceneWindowSize.y);
+    ImGuizmo::SetDrawlist();
+    ImGuizmo::Manipulate(glm::value_ptr(Engine::GetInstance().render->viewMatrix), glm::value_ptr(Engine::GetInstance().render->projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(Engine::GetInstance().render->modelMatrix));
+    glEnable(GL_DEPTH_TEST);
+    ImGui::End();
     ImGui::ShowDemoWindow();
+
     ImGui::ShowDebugLogWindow();
 
     // Header Menu Bar
     static bool showAbout = false;
-
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Exit")) {
@@ -170,7 +192,6 @@ bool Windows::Update() {
             SOFTWARE.)");
         ImGui::End();
     }
-
     //Configuration window
     ImGui::Begin("Configuration window", nullptr, flags);
     AddWindow("Configuration window");
@@ -178,18 +199,16 @@ bool Windows::Update() {
     {
         ImGui::Text("JLE-Engine");
         ImGui::Text("UPC CITM");
-        ImGui::SliderInt("Max FPS", &max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
+        ImGui::SliderInt("Max FPS", &Engine::GetInstance().max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
-        char title[25];
-        sprintf_s(title, 25, "Framerate %.f", fps_log[fps_log.size() - 1]);
-        ImGui::PlotHistogram("##framerate", &fps_log[0], fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
-        sprintf_s(title, 25, "Milliseconds %.f", ms_log[ms_log.size() - 1]);
-        ImGui::PlotHistogram("##milliseconds", &ms_log[0], ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+        char title[30];
+        sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
+        ImGui::PlotHistogram("##framerate", &Engine::GetInstance().Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
+        sprintf_s(title, 30, "Milliseconds %.f", Engine::GetInstance().ms_log[Engine::GetInstance().ms_log.size() - 1]);
+        ImGui::PlotHistogram("##milliseconds", &Engine::GetInstance().ms_log[0], Engine::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
     }
     if (ImGui::CollapsingHeader("Window"))
     {
-
-        //ImGui::SliderFloat("Brightness", ); TODO: Search how
         ImGui::SliderFloat("Brightness", &brightness, 0.1, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
         //Windows size TODO: Keep proportions
@@ -199,7 +218,7 @@ bool Windows::Update() {
             glViewport(0, 0, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
         }
 
-        ImGui::Text("Refresh rate: %i", (int)fps);
+        ImGui::Text("Refresh rate: %i", (int)Engine::GetInstance().fps);
 
         if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
             SDL_SetWindowFullscreen(window, fullscreen);
@@ -247,9 +266,7 @@ bool Windows::Update() {
 
     }
     ImGui::End();
-
     Engine::GetInstance().log.DrawConsole();
-
     // Dark block for brightness
     float darckBlock = 1.0f - brightness;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -258,25 +275,10 @@ bool Windows::Update() {
     // Render ImGui
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+    //ImGui::EndFrame();
     // Swap window
     SDL_GL_SwapWindow(window);
-}
-
-bool Windows::PostUpdate() {
-    // FRAME CONTROL
-    SDL_GetCurrentTime(&Engine::GetInstance().render->currentTime);
-    float current_dt = (Engine::GetInstance().render->currentTime - Engine::GetInstance().render->prevTime) / 1000000000.0f;
-    Engine::GetInstance().render->prevTime = Engine::GetInstance().render->currentTime;
-    float max_dt;
-    if (max_fps != 0) {
-        max_dt = 1000 / max_fps;
-    }
-    else max_dt = 0;
-
-    if (current_dt < max_dt && max_dt != 0.0f) {
-        SDL_Delay(max_dt - current_dt);
-    }
+    
     return true;
 }
 

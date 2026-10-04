@@ -47,18 +47,23 @@ public:
     //Create a Frame Buffer Object
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate);
 public:
-    SDL_Time prevTime;
-    SDL_Time currentTime;
+    glm::mat4 viewMatrix;
+    glm::mat4 projectionMatrix;
+    glm::mat4 modelMatrix = 1.0f;
+
+    FrameBufferObject frameBufferObject;
+    ImVec2 sceneWindowSize;
+    bool shouldRefreshSceneWindow = false;
 private:
     SDL_GLContext glContext;
 
     // Create & compile vertex and fragment shaders
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    GLuint vertexShader;
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint fragmentShader;
 
     // Create Program and bind shaders
-    GLuint shaderProgram = glCreateProgram();
+    GLuint shaderProgram;
 
     // Local Space
     //GLfloat cubeVertices[]
@@ -137,17 +142,16 @@ private:
         11,9,10,
         11,10,6
     };
-    glm::mat4 viewMatrix;
+    
     // Projection Matrix
     const float FOV = 45.0f;
     const float NEAR_PLANE = 0.1f;
     const float FAR_PLANE = 100.0f;
-    glm::mat4 projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
 
 
     // Create ModelViewProjection matrix
-    GLuint modelViewProjLocation = glGetUniformLocation(shaderProgram, "modelViewProj");
-    GLint isOutlineLocation = glGetUniformLocation(shaderProgram, "isOutline");
+    GLuint modelViewProjLocation;
+    GLint isOutlineLocation;
 
     // Create VAO & VBO & EBO
     GLuint VAO;
@@ -160,7 +164,4 @@ private:
     const float SPEED = 100.0f;
 
     bool isRunning = true;
-    FrameBufferObject frameBufferObject;
-    ImVec2 sceneWindowSize;
-    bool shouldRefreshSceneWindow = false;
 };
