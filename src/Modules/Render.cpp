@@ -150,7 +150,7 @@ bool Render::Awake() {
     // Rotate the cube over time
     SDL_GetCurrentTime(&Engine::GetInstance().prevTime);
 
-    CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject, false);
+    CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject);
     sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
     sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
 
@@ -184,7 +184,7 @@ bool Render::Update() {
     // RENDER TO TEXTURE
     if (shouldRefreshSceneWindow)
     {
-        CreateFBO(sceneWindowSize.x, sceneWindowSize.y, frameBufferObject, true);
+        CreateFBO(sceneWindowSize.x, sceneWindowSize.y, frameBufferObject);
         /*CreateFBO(sceneWindowSize.x, sceneWindowSize.y, brightnessFBO, true);*/
         shouldRefreshSceneWindow = false;
     }
@@ -276,46 +276,36 @@ bool Render::CleanUp() {
     return true;
 }
 
-void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate)
+void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObject)
 {
-    // Create frame buffer object if it didnt exist
+    /// Generate Frame buffer textures if not done earlier
     if (frameBufferObject.FBO_ID == 0)
     {
-        // Create FrameBuffer objects
         glGenFramebuffers(1, &frameBufferObject.FBO_ID);
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject.FBO_ID);
-
         glGenTextures(1, &frameBufferObject.RENDER_TO_TEXTURE_ID);
-        glBindTexture(GL_TEXTURE_2D, frameBufferObject.RENDER_TO_TEXTURE_ID);
-
         glGenRenderbuffers(1, &frameBufferObject.RBO_DEPTH_STENCIL_ID);
-        glBindRenderbuffer(GL_RENDERBUFFER, frameBufferObject.RBO_DEPTH_STENCIL_ID);
-
-        // Setup texture filtering params
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        // Attach color + depth&stencil buffers
-        // We can attach more than one color fragment shader output simultanously. For our purpose, we only attach one. 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameBufferObject.RENDER_TO_TEXTURE_ID, 0);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBufferObject.RBO_DEPTH_STENCIL_ID);
     }
-
-    // Bind Render to Texture for resizing
-    glBindTexture(GL_TEXTURE_2D, frameBufferObject.RENDER_TO_TEXTURE_ID);
-    // glTexImage2D only reallocates color data within GPU memory inside existing ID
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
-    // Bind Depth&Stencil for resizing
-    glBindRenderbuffer(GL_RENDERBUFFER, frameBufferObject.RBO_DEPTH_STENCIL_ID);
-    // glRenderbufferStorage only reallocates depth&stencil data within GPU memory inside existing ID
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-
-    // Validation for creation/reuse of frame buffer
+    // Bind the frame buffer
     glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject.FBO_ID);
+    // Color texture
+    glBindTexture(GL_TEXTURE_2D, frameBufferObject.RENDER_TO_TEXTURE_ID);
+    // Setup texture filtering params
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    // Depth/stencil
+    glBindRenderbuffer(GL_RENDERBUFFER, frameBufferObject.RBO_DEPTH_STENCIL_ID);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    // Attach
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, frameBufferObject.RENDER_TO_TEXTURE_ID, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, frameBufferObject.RBO_DEPTH_STENCIL_ID);
+
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
         std::cout << "Frame buffer incomplete" << std::endl;
     }
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }

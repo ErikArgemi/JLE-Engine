@@ -45,7 +45,7 @@ public:
 	bool CleanUp();
 
     //Create a Frame Buffer Object
-    void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate);
+    void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject);
 public:
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
