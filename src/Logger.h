@@ -8,7 +8,7 @@ public:
 	~Log() {}
 
 	//Add a message to the log
-	void LOG(std::string message);
+	void LogMessage(std::string message);
 
 	//Clean the log
 	void Clear();
