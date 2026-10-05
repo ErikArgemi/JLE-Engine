@@ -258,9 +258,9 @@ bool Windows::PostUpdate() {
     ImGui::End();
     Engine::GetInstance().log.DrawConsole();
     // Dark block for brightness
-    float darckBlock = 1.0f - brightness;
+    float opacity = 1.0f - brightness;
     ImGuiViewport* viewport = ImGui::GetMainViewport();
-    ImGui::GetForegroundDrawList(viewport)->AddRectFilled(viewport->Pos, ImVec2(viewport->Pos.x + viewport->Size.x, viewport->Pos.y + viewport->Size.y), IM_COL32(0, 0, 0, (int)(darckBlock * 255.0f)));
+    ImGui::GetForegroundDrawList(viewport)->AddRectFilled(viewport->Pos, ImVec2(viewport->Pos.x + viewport->Size.x, viewport->Pos.y + viewport->Size.y), IM_COL32(0, 0, 0, (int)(opacity * 255.0f)));
 
     // Render ImGui
     ImGui::Render();

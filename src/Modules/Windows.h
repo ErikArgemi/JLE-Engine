@@ -71,11 +71,10 @@ private:
     };
 
     //Windows flags
-    bool fullscreen = false;
+    bool fullscreen = true;
     bool resizable = false;
     bool borderless = false;
 
-    //Brightness
     float brightness = 1.0f;
 
 };

@@ -161,7 +161,7 @@ private:
     // Rotate the cube over time
     
     float rotation = 0.0f;
-    const float SPEED = 100.0f;
+    const float SPEED = 0.0f;
 
     bool isRunning = true;
 };
