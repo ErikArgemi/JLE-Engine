@@ -23,12 +23,6 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-    // Called each loop iteration before the main update
-    bool PreUpdate();
-
-    // Called each loop iteration
-    bool Update();
-
     // Called each loop iteration after the main update 
     bool PostUpdate();
 

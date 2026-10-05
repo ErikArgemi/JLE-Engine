@@ -81,16 +81,6 @@ bool Windows::Awake() {
     return true;
 }
 
-bool Windows::PreUpdate() {
-    return true;
-}
-
-bool Windows::Update() {
-    
-
-    return true;
-}
-
 bool Windows::PostUpdate() {
 
     ImGui_ImplOpenGL3_NewFrame();

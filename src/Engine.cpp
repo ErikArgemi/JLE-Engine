@@ -107,17 +107,21 @@ void Engine::PrepareUpdate() {
 void Engine::FinishUpdate() {
 	prevTime = currentTime;
 	SDL_GetCurrentTime(&currentTime);
-	dt = (currentTime - prevTime) / 1000000000.0f;
-	// FRAME CONTROL
+
+	float current_dt = (currentTime - prevTime) / 1000000000.0f;
+	
 	float max_dt;
 	if (max_fps != 0) {
 		max_dt = 1000 / max_fps;
 	}
 	else max_dt = 0;
 
-	if (dt < max_dt && max_dt != 0.0f) {
-		SDL_Delay(max_dt - dt);
+	if (current_dt < max_dt && max_dt != 0.0f) {
+		SDL_Delay(max_dt - current_dt);
 	}
+	SDL_GetCurrentTime(&currentTime);
+	dt = (currentTime - prevTime) / 1000000000.0f;
+	prevTime = currentTime;
 }
 
 bool Engine::PreUpdate() {
