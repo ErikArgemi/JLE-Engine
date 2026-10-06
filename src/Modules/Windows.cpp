@@ -260,6 +260,14 @@ bool Windows::PostUpdate() {
 
         }
         ImGui::End();
+
+        ImGui::Begin("Add primitives", nullptr, flags);
+        AddWindow("Add primitives");
+        if(ImGui::Button("Icosahedron")) {
+
+        }
+        ImGui::End();
+        
         Engine::GetInstance().log.DrawConsole();
     }
     // Dark block for brightness

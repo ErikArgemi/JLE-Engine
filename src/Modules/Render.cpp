@@ -165,6 +165,9 @@ bool Render::Awake() {
         , up);                 // Up Vector
 
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
+    
+    primitiveManager = std::make_unique<PrimitiveManager>();
+    
     return true;
 }
 
@@ -259,9 +262,15 @@ bool Render::Update() {
     // Unbind frame buffer, back to default
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+    //TODO: Render all primitives from primitiveManager
+
     return true;
 }
+
 bool Render::CleanUp() {
+    primitiveManager->CleanUp();
+    primitiveManager.reset();
+
     // Delete VAO, VBO and shader program
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
@@ -310,4 +319,47 @@ void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObje
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+PrimitiveMesh Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount)
+{
+    PrimitiveMesh mesh;
+    mesh.n_index = indexCount;
+
+    glGenVertexArrays(1, &mesh.VAO);
+
+    glGenBuffers(1, &mesh.VBO);
+
+    glGenBuffers(1, &mesh.EBO);
+
+    // Bind VAO and VBO
+    glBindVertexArray(mesh.VAO);
+
+    // Link GL_ARRAY_BUFFER to vertices data
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.VBO);
+    //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+
+    glBufferData(GL_ARRAY_BUFFER, vertexBytes, vertices, GL_STATIC_DRAW);
+
+
+    // Link GL_ELEMENT_ARRAY_BUFFER to indices data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount, indices, GL_STATIC_DRAW);
+
+
+    // Define Vertex layout and set attribute index
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // Unlink VAO
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    return mesh;
 }
