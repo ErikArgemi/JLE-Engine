@@ -1,6 +1,7 @@
 #include "Input.h"
 #include "../Engine.h"
 #include "Windows.h"
+#include "Render.h"
 
 Input::Input() : Module() {
 	name = "input";
@@ -35,5 +36,28 @@ bool Input::PreUpdate() {
             Engine::GetInstance().windows->ResizeWindows(ImVec2(w, h));
         }
     }
+
+    const bool* keyboard = SDL_GetKeyboardState(nullptr);
+
+    if (keyboard[SDL_SCANCODE_W])
+    {
+		Engine::GetInstance().render->position += Engine::GetInstance().render->forward * 5.0f * Engine::GetInstance().dt;
+    }
+
+    if (keyboard[SDL_SCANCODE_S])
+    {
+        // S is being held
+    }
+
+    if (keyboard[SDL_SCANCODE_A])
+    {
+        // A is being held
+    }
+
+    if (keyboard[SDL_SCANCODE_D])
+    {
+        // D is being held
+    }
+
     return true;
 }

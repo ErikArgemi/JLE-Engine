@@ -42,9 +42,7 @@ private:
 	glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
 	glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
 
-	//Windows* windows = Engine::GetInstance().windows->;
-
-	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, 3.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 view = glm::lookAt(glm::vec3(190.0f, 190.0f, 190.0f),
+		glm::vec3(190.0f, 20.0f, 20.0f),
+		glm::vec3(20.0f, 20.0f, 190.0f));
 };

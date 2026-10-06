@@ -154,13 +154,7 @@ bool Render::Awake() {
     sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
     sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
 
-    // View Matrix
-    glm::vec3 position(0.0f, 0.0f, -5.0f);
-    glm::vec3 forward(0.0f, 0.0f, 1.0f);
-    glm::vec3 up(0.0f, 1.0f, 0.0f);
-    viewMatrix = glm::lookAt(position             // Camera Position
-        , position + forward   // Target Position
-        , up);                 // Up Vector
+    
 
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
     return true;
@@ -168,6 +162,10 @@ bool Render::Awake() {
 
 bool Render::Update() {
     // UPDATE
+    // View Matrix
+    viewMatrix = glm::lookAt(position             // Camera Position
+        , position + forward   // Target Position
+        , up);                 // Up Vector
     // Model Matrix
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
