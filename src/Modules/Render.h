@@ -168,5 +168,4 @@ private:
 
 private:
     RenderSettings renderSettings;
-
 };

@@ -14,7 +14,7 @@
 
 #include "ImGuizmo.h"
 
-void Log::LOG(std::string message) {
+void Log::LogMessage(std::string message) {
 	msgLog.push_back(message);
 }
 
