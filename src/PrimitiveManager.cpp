@@ -1,5 +1,5 @@
 #include "PrimitiveManager.h"
-#include "Render.h"
+#include "Modules/Render.h"
 
 Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3 Pos)
 {
@@ -7,7 +7,7 @@ Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3
 
     PrimitiveEntity entity;
     entity.type = type;
-    entity.position = pos;
+    entity.position = Pos;
 
     PrimitiveMesh mesh;
     //meshData = GetPrimitiveData(type);

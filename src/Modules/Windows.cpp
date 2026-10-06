@@ -266,7 +266,7 @@ bool Windows::PostUpdate() {
         AddWindow("Add primitives");
         if(ImGui::Button("Icosahedron")) {
             LOG("Icosahdron created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
         ImGui::End();
         
