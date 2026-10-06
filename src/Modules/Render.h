@@ -48,8 +48,9 @@ public:
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate);
 public:
     glm::vec3 position = glm::vec3(0.0f, 0.0f, -5.0f);
-    glm::vec3 forward = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 x_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 y_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 z_axis = glm::vec3(0.0f, 0.0f, 1.0f);
 
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;

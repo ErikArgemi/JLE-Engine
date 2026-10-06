@@ -164,8 +164,8 @@ bool Render::Update() {
     // UPDATE
     // View Matrix
     viewMatrix = glm::lookAt(position             // Camera Position
-        , position + forward   // Target Position
-        , up);                 // Up Vector
+        , position + z_axis   // Target Position
+        , y_axis);                 // Up Vector
     // Model Matrix
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;

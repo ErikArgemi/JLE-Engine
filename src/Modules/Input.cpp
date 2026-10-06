@@ -41,22 +41,22 @@ bool Input::PreUpdate() {
 
     if (keyboard[SDL_SCANCODE_W])
     {
-		Engine::GetInstance().render->position += Engine::GetInstance().render->forward * 5.0f * Engine::GetInstance().dt;
+		Engine::GetInstance().render->position += Engine::GetInstance().render->z_axis * 5.0f * Engine::GetInstance().dt;
     }
 
     if (keyboard[SDL_SCANCODE_S])
     {
-        // S is being held
+        Engine::GetInstance().render->position -= Engine::GetInstance().render->z_axis * 5.0f * Engine::GetInstance().dt;
     }
 
     if (keyboard[SDL_SCANCODE_A])
     {
-        // A is being held
+        Engine::GetInstance().render->position += Engine::GetInstance().render->x_axis * 5.0f * Engine::GetInstance().dt;
     }
 
     if (keyboard[SDL_SCANCODE_D])
     {
-        // D is being held
+        Engine::GetInstance().render->position -= Engine::GetInstance().render->x_axis * 5.0f * Engine::GetInstance().dt;
     }
 
     return true;
