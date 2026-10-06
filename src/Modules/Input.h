@@ -33,5 +33,6 @@ public:
 	SDL_Event event;
 	// SDL KEYS
 	int numKeys;
+	float movementSpeed = 5.0f;
 private:
 };

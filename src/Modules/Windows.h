@@ -71,7 +71,7 @@ private:
     };
 
     //Windows flags
-    bool fullscreen = true;
+    bool fullscreen = false;
     bool resizable = false;
     bool borderless = false;
 

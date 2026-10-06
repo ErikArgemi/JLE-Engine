@@ -2,6 +2,7 @@
 #include "../Engine.h"
 #include "Windows.h"
 #include "Render.h"
+#include <iostream>
 
 Input::Input() : Module() {
 	name = "input";
@@ -13,50 +14,63 @@ Input::~Input() {
 bool Input::PreUpdate() {
     while (SDL_PollEvent(&event))
     {
-        ImGui_ImplSDL3_ProcessEvent(&event);
-        if (event.type == SDL_EVENT_QUIT)
-        {
-            return false;
-        }
-
-        if (event.type == SDL_EVENT_MOUSE_BUTTON_UP
-            && event.button.button == SDL_BUTTON_RIGHT)
-        {
-        }
-
-        if ((event.type == SDL_EVENT_MOUSE_BUTTON_DOWN
-            && event.button.button == SDL_BUTTON_RIGHT))
-        {
-        }
-
-        if (event.type == SDL_EVENT_WINDOW_RESIZED)
-        {
-            int w, h;
-            SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
-            Engine::GetInstance().windows->ResizeWindows(ImVec2(w, h));
-        }
-    }
-
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
+    const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
-    if (keyboard[SDL_SCANCODE_W])
+    if (mouse & SDL_BUTTON_LMASK) {
+
+        if (event.type == SDL_EVENT_MOUSE_MOTION)
+        {
+            float dx = event.motion.xrel;
+            float dy = event.motion.yrel;
+
+			float sensitivity = Engine::GetInstance().render->sensitivity;
+
+            Engine::GetInstance().render->yaw += dx * sensitivity;
+            Engine::GetInstance().render->pitch -= dy * sensitivity;
+
+            Engine::GetInstance().render->pitch = glm::clamp(Engine::GetInstance().render->pitch, -89.0f, 89.0f);
+        }
+
+        if (keyboard[SDL_SCANCODE_W]) {
+            Engine::GetInstance().render->position -= Engine::GetInstance().render->z_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_S]) {
+            Engine::GetInstance().render->position += Engine::GetInstance().render->z_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_A]) {
+            Engine::GetInstance().render->position -= Engine::GetInstance().render->x_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_D]) {
+            Engine::GetInstance().render->position += Engine::GetInstance().render->x_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+	}
+    
+    ImGui_ImplSDL3_ProcessEvent(&event);
+    if (event.type == SDL_EVENT_QUIT)
     {
-		Engine::GetInstance().render->position += Engine::GetInstance().render->z_axis * 5.0f * Engine::GetInstance().dt;
+        return false;
     }
 
-    if (keyboard[SDL_SCANCODE_S])
+    if (event.type == SDL_EVENT_MOUSE_BUTTON_UP
+        && event.button.button == SDL_BUTTON_RIGHT)
     {
-        Engine::GetInstance().render->position -= Engine::GetInstance().render->z_axis * 5.0f * Engine::GetInstance().dt;
     }
 
-    if (keyboard[SDL_SCANCODE_A])
+    if ((event.type == SDL_EVENT_MOUSE_BUTTON_DOWN
+        && event.button.button == SDL_BUTTON_RIGHT))
     {
-        Engine::GetInstance().render->position += Engine::GetInstance().render->x_axis * 5.0f * Engine::GetInstance().dt;
     }
 
-    if (keyboard[SDL_SCANCODE_D])
+    if (event.type == SDL_EVENT_WINDOW_RESIZED)
     {
-        Engine::GetInstance().render->position -= Engine::GetInstance().render->x_axis * 5.0f * Engine::GetInstance().dt;
+        int w, h;
+        SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
+        Engine::GetInstance().windows->ResizeWindows(ImVec2(w, h));
+    }
     }
 
     return true;
