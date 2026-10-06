@@ -3,6 +3,7 @@
 #include "../Log.h"
 #include "Render.h"
 #include "JSON_FileReader.h"
+#include "../PrimitiveManager.h"
 
 #include <iostream>
 #include <memory>
@@ -264,7 +265,8 @@ bool Windows::PostUpdate() {
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
         if(ImGui::Button("Icosahedron")) {
-
+            LOG("Icosahdron created.\n");
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
         ImGui::End();
         

@@ -55,6 +55,10 @@ public:
     //Create a mesh
     PrimitiveMesh CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount);
 
+    PrimitiveManager* GetPrimitiveManager() {
+        return primitiveManager.get();
+    }
+
 public:
     glm::mat4 viewMatrix;
     glm::mat4 projectionMatrix;
