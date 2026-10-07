@@ -35,14 +35,16 @@ public:
 	PrimitiveEntity entity;
 };
 
-template<size_t vertexArraySize, size_t indexArraySize>
+//template<size_t vertexArraySize, size_t indexArraySize>
 struct PrimitiveData {
-	std::array<GLfloat,vertexArraySize> vertex;
+	std::vector<GLfloat> vertex;
+	//std::array<GLfloat,vertexArraySize> vertex;
 	unsigned int num_index;
-	std::array<GLuint, indexArraySize> index;
+	std::vector<GLuint> index;
+	// std::array<GLuint, indexArraySize> index;
 };
 
-struct Cube : PrimitiveData<48, 36> {
+struct Cube : PrimitiveData {
 	Cube() {
 		vertex = {
 			// Position        Color
@@ -79,7 +81,7 @@ struct Cube : PrimitiveData<48, 36> {
 	}
 };
 
-struct Icosahedron : PrimitiveData<72, 60> {
+struct Icosahedron : PrimitiveData {
 	Icosahedron() {
 		vertex = {
 			//  Position                        Color
@@ -124,7 +126,7 @@ struct Icosahedron : PrimitiveData<72, 60> {
 		};
 	}
 };
-struct Pyramid : PrimitiveData<30, 18> {
+struct Pyramid : PrimitiveData {
 	Pyramid() {
 		vertex = {
 			//  Position                        Color
@@ -147,7 +149,7 @@ struct Pyramid : PrimitiveData<30, 18> {
 		};
 	}
 };
-struct Cylinder : PrimitiveData<252, 240> {
+struct Cylinder : PrimitiveData {
 	Cylinder() {
 		vertex = {
 				// Position				Color
@@ -264,7 +266,7 @@ struct Cylinder : PrimitiveData<252, 240> {
 	}
 };
 
-//struct Sphere : PrimitiveData<612, 500> {
+//struct Sphere : PrimitiveData {
 //	Sphere() {
 //		vertex = {
 //			// Position				Color
@@ -370,7 +372,8 @@ struct Cylinder : PrimitiveData<252, 240> {
 //		-0.294f, -0.866f, 0.405f,       1.0f, 0.0f, 0.0f,
 //		-0.155f, -0.866f, 0.476f,       0.0f, 1.0f, 0.0f,
 //		0.0f, -1.0f, 0.0f,     1.0f, 0.0f, 0.0f
-//		}	
-//		num_index = 612;
+//		};
+//		num_index = 0;
+//
 //	}
 //};
