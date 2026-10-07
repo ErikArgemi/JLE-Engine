@@ -33,6 +33,13 @@ bool Input::PreUpdate() {
             SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
             Engine::GetInstance().windows->ResizeWindows(ImVec2(w, h));
         }
+
+        int numKeys;
+        const bool* keys = SDL_GetKeyboardState(&numKeys);
+        if (keys[SDL_SCANCODE_X])
+        {
+            return false;
+        }
     }
     return true;
 }

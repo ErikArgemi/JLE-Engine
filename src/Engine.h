@@ -10,7 +10,6 @@
 class Render;
 class Windows;
 class Input;
-class JSON_FileReader;
 
 
 class Engine
@@ -76,7 +75,6 @@ public:
 	Log log;
 
 	//Modules
-	std::shared_ptr<JSON_FileReader> fileReader;
 	std::shared_ptr<Render> render;
 	std::shared_ptr<Windows> windows;
 	std::shared_ptr<Input> input;

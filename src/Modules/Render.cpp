@@ -71,7 +71,8 @@ bool Render::Awake() {
 	gladLoadGL();
 
 	// Used for mapping NDC coordinates (-1.0f to 1.0f) to pixel coordinates (e.g. 1920x1080)
-    renderSettings = Engine::GetInstance().fileReader->GetRenderSettings();
+    JSON_FileReader fileReader;
+    renderSettings = fileReader.GetRenderSettings();
 	glViewport(0, 0, renderSettings.windowsSizeX, renderSettings.windowsSizeY);
 
 	// IMGUI
