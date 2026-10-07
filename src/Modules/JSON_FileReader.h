@@ -8,7 +8,7 @@
 
 using json = nlohmann::json;
 
-class JSON_FileReader : public Module {
+class JSON_FileReader {
 public:
 	JSON_FileReader() {};
 	~JSON_FileReader() {}

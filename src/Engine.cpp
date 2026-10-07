@@ -8,20 +8,16 @@
 #include "Modules/Windows.h"
 #include "Modules/Render.h"
 #include "Modules/Input.h"
-#include "Modules/JSON_FileReader.h"
-
 
 
 Engine::Engine() {
 	std::cout << "adding modules-----------" << std::endl;
 	//Modules
-	fileReader = std::make_shared<JSON_FileReader>();
 	windows = std::make_shared<Windows>();
 	input = std::make_shared<Input>();
 	render = std::make_shared<Render>();
 
 	//add the modules in the list
-	AddModule(std::static_pointer_cast<Module>(fileReader));
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
 		//Render last

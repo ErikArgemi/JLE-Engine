@@ -80,7 +80,8 @@ bool Windows::Awake() {
     }
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
-    editorSettings = Engine::GetInstance().fileReader->GetEditorSettings(); //get editor settings before updating
+    JSON_FileReader fileReader;
+    editorSettings = fileReader.GetEditorSettings(); //get editor settings before updating
 
     return true;
 }
