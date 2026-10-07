@@ -5,7 +5,13 @@
 #include <glad/glad.h>
 
 enum class PrimitiveType {
-	ICOSAHEDRON = 0
+	TETRAHEDRON = 0,
+	ICOSAHEDRON = 1,
+	CUBE = 2,
+	PYRAMID = 3,
+	CYLINDER = 4,
+	SPHERE = 5
+
 };
 
 struct PrimitiveMesh {
@@ -498,6 +504,24 @@ struct Sphere : PrimitiveData {
 		101, 98, 99,
 		101, 99, 100,
 		101, 100, 81
+		};
+	}
+};
+
+struct Tetrahedron : PrimitiveData {
+	Tetrahedron() {
+		vertex = {
+			0.0f, 0.5f, 0.0f,	1.0f, 1.0f, 1.0f,
+			-0.5f,-0.5f,0.866f,	1.0f, 0.0f, 0.0f,
+			1.0f,-0.5f, 0.0f,	0.0f, 1.0f, 0.0f,
+			-0.5f,-0.5f,-0.866f,0.0f, 0.0f, 1.0f
+		};
+		num_index = 12;
+		index = {
+			0,1,2,
+			0,2,3,
+			0,3,1,
+			1,2,3
 		};
 	}
 };

@@ -53,7 +53,7 @@ public:
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject);
 
     //Create a mesh
-    PrimitiveMesh CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount);
+    PrimitiveMesh CreateMesh(GLfloat* vertices, Uint32 vertexBytes, GLuint* indices, GLsizei indexCount);
 
     PrimitiveManager* GetPrimitiveManager() {
         return primitiveManager.get();
