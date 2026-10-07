@@ -2,7 +2,7 @@
 #include "../Engine.h"
 #include "../Log.h"
 #include "Render.h"
-#include "JSON_FileReader.h"
+#include "../JSON_FileReader.h"
 #include "../PrimitiveManager.h"
 
 #include <iostream>
