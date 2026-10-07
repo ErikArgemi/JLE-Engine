@@ -9,9 +9,12 @@ Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3
     entity.type = type;
     entity.position = Pos;
 
+    
+    MeshContainer meshContainer;
+    PrimitiveMeshData meshData = meshContainer.GetMesh(type);
+
     PrimitiveMesh mesh;
-    //meshData = GetPrimitiveData(type);
-    //mesh = Engine::GetInstance().render->CreateMesh(mehData); TODO: get mesh data depending on the primitive type
+    mesh = Engine::GetInstance().render->CreateMesh(meshData.vertex.data(), meshData.vertex.size()*sizeof(GLfloat), meshData.index.data(), meshData.num_index);
 
     Primitive p = Primitive(mesh, entity);
     primitives.emplace(primitivesSize, p);

@@ -181,91 +181,96 @@ bool Render::Update() {
     //// Perform Rotation
     //rotation += SPEED * Engine::GetInstance().dt;
     //
-    //// Clear screen color
-    //glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
+    // Clear screen color
+    glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
 
-    //// Clear Color Buffer and Depth Buffer
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear Color Buffer and Depth Buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //// RENDER TO TEXTURE
-    //if (shouldRefreshSceneWindow)
-    //{
-    //    CreateFBO(sceneWindowSize.x, sceneWindowSize.y, frameBufferObject);
-    //    /*CreateFBO(sceneWindowSize.x, sceneWindowSize.y, brightnessFBO, true);*/
-    //    shouldRefreshSceneWindow = false;
-    //}
+    // RENDER TO TEXTURE
+    if (shouldRefreshSceneWindow)
+    {
+        CreateFBO(sceneWindowSize.x, sceneWindowSize.y, frameBufferObject);
+        /*CreateFBO(sceneWindowSize.x, sceneWindowSize.y, brightnessFBO, true);*/
+        shouldRefreshSceneWindow = false;
+    }
 
-    //glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject.FBO_ID);
-    //GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
-    //glDrawBuffers(1, drawBuffers);
+    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferObject.FBO_ID);
+    GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
+    glDrawBuffers(1, drawBuffers);
 
-    //glViewport(0, 0, sceneWindowSize.x, sceneWindowSize.y);
+    glViewport(0, 0, sceneWindowSize.x, sceneWindowSize.y);
 
-    //// Enable depth test
-    //glEnable(GL_DEPTH_TEST);
+    // Enable depth test
+    glEnable(GL_DEPTH_TEST);
 
-    //// Enable Stencil test
-    //glEnable(GL_STENCIL_TEST);
+    // Enable Stencil test
+    glEnable(GL_STENCIL_TEST);
 
-    //// Clear screen color from render to texture
-    //glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
+    // Clear screen color from render to texture
+    glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
 
-    //// Clear Color Buffer and Depth Buffer from render to texture
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    // Clear Color Buffer and Depth Buffer from render to texture
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    //// RENDER
-    //// 1. We write value 1 to stencil buffer for all fragments that pass
-    //// It will only write if depth test passes, this is why we use stencil 
-    //// for outlining to avoid wrong visuals when other objects are in front
-    //glStencilFunc(GL_ALWAYS, 1, 0xFF);
-    //glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-    //// Enable write to stencil
-    //glStencilMask(0xFF);
+    //Render primitives
+    auto& primitives = primitiveManager->GetPrimitives();
 
-    //// Use shader program & bind VAO
-    //glUseProgram(shaderProgram);
-    //glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(modelViewProj));
-    //glUniform1f(isOutlineLocation, 0.0f);  // set the value
+    glUseProgram(shaderProgram);
 
-    //glBindVertexArray(VAO);
+    glStencilFunc(GL_ALWAYS, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF);
+    glUniform1f(isOutlineLocation, 0.0f);
 
-    //// 2. Render the first cube
-    ////glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+    for (auto& primitive : primitives) {
+        Primitive& p = primitive.second; //get the entity part
 
-    //glDrawElements(GL_TRIANGLES, NUM_INDICES_D20, GL_UNSIGNED_INT, 0);
+        p.entity.rotation += SPEED * Engine::GetInstance().dt;
 
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, p.entity.position);
+        model = glm::rotate(model, glm::radians(p.entity.rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, p.entity.scale);
 
-    //// 3. We will compare when rendering 2nd cube if there's value 1 to stencil buffer for all fragments that pass
-    //// Only write outline to value != 1
-    //glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+        glm::mat4 mvp = projectionMatrix * viewMatrix * model;
+        glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-    //// Disable write to stencil, we don't need to do that for 2nd cube
-    //glStencilMask(0x00);
+        glBindVertexArray(p.mesh.VAO);
+        glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
+    }
 
-    //// 4. Draw Second Cube with higher scale, and update uniform so that its color is white
-    //modelMatrix = glm::mat4(1.0f);
-    //modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-    //modelMatrix = glm::scale(modelMatrix, glm::vec3(1.1f, 1.1f, 1.1f));
+    // lines
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilMask(0x00);
+    glUniform1f(isOutlineLocation, 1.0f);
 
-    //modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
+    for (auto& entry : primitives) {
+        Primitive& p = entry.second;
 
-    //glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(modelViewProj));
-    //glUniform1f(isOutlineLocation, 1.0f);  // set the value
-    ////glDrawElements(GL_TRIANGLES, NUM_INDICES, GL_UNSIGNED_INT, 0);
+        //same but bigger
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, p.entity.position);
+        model = glm::rotate(model, glm::radians(p.entity.rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, p.entity.scale * 1.1f);
 
-    //glDrawElements(GL_TRIANGLES, NUM_INDICES_D20, GL_UNSIGNED_INT, 0);
+        glm::mat4 mvp = projectionMatrix * viewMatrix * model;
+        glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-    //// 5. Restore previous state
-    //glStencilMask(0xFF);
-    //glEnable(GL_DEPTH_TEST);
-    //glDisable(GL_STENCIL_TEST);
+        glBindVertexArray(p.mesh.VAO);
+        glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
+    }
 
-    //// Unbind frame buffer, back to default
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindVertexArray(0);
 
-    //TODO: Render all primitives from primitiveManager
+    // Restore previous state
+    glStencilMask(0xFF);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+
+    // Unbind frame buffer, back to default
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
-
     return true;
 }
 
@@ -348,7 +353,7 @@ PrimitiveMesh Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount*sizeof(int), indices, GL_STATIC_DRAW);
 
 
     // Define Vertex layout and set attribute index

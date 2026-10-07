@@ -5,7 +5,10 @@
 #include <glad/glad.h>
 
 enum class PrimitiveType {
-	ICOSAHEDRON = 0
+	CUBE = 0,
+	ICOSAHEDRON,
+	PYRAMID,
+	CYLINDER
 };
 
 struct PrimitiveMesh {
@@ -36,15 +39,15 @@ public:
 };
 
 //template<size_t vertexArraySize, size_t indexArraySize>
-struct PrimitiveData {
+struct PrimitiveMeshData {
 	std::vector<GLfloat> vertex;
 	//std::array<GLfloat,vertexArraySize> vertex;
 	unsigned int num_index;
-	std::vector<GLuint> index;
+	std::vector<int> index;
 	// std::array<GLuint, indexArraySize> index;
 };
 
-struct Cube : PrimitiveData {
+struct Cube : PrimitiveMeshData {
 	Cube() {
 		vertex = {
 			// Position        Color
@@ -81,7 +84,7 @@ struct Cube : PrimitiveData {
 	}
 };
 
-struct Icosahedron : PrimitiveData {
+struct Icosahedron : PrimitiveMeshData {
 	Icosahedron() {
 		vertex = {
 			//  Position                        Color
@@ -126,7 +129,7 @@ struct Icosahedron : PrimitiveData {
 		};
 	}
 };
-struct Pyramid : PrimitiveData {
+struct Pyramid : PrimitiveMeshData {
 	Pyramid() {
 		vertex = {
 			//  Position                        Color
@@ -149,7 +152,7 @@ struct Pyramid : PrimitiveData {
 		};
 	}
 };
-struct Cylinder : PrimitiveData {
+struct Cylinder : PrimitiveMeshData {
 	Cylinder() {
 		vertex = {
 				// Position				Color
@@ -266,7 +269,7 @@ struct Cylinder : PrimitiveData {
 	}
 };
 
-//struct Sphere : PrimitiveData {
+//struct Sphere : PrimitiveMeshData {
 //	Sphere() {
 //		vertex = {
 //			// Position				Color
@@ -377,3 +380,24 @@ struct Cylinder : PrimitiveData {
 //
 //	}
 //};
+
+struct MeshContainer {
+	Cube cube;
+	Icosahedron icosahedron;
+	Pyramid pyramid;
+	Cylinder cylinder;
+
+	std::vector<PrimitiveMeshData> meshContainer;
+
+	MeshContainer() {
+		meshContainer.emplace_back(cube);
+		meshContainer.emplace_back(icosahedron);
+		meshContainer.emplace_back(pyramid);
+		meshContainer.emplace_back(cylinder);
+	}
+
+	PrimitiveMeshData GetMesh(PrimitiveType type) {
+		return meshContainer.at((int)type);
+	}
+
+};

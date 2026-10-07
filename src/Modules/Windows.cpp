@@ -265,9 +265,21 @@ bool Windows::PostUpdate() {
 
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
+        if (ImGui::Button("Cube")) {
+            LOG("Cube created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
+        }
         if(ImGui::Button("Icosahedron")) {
             LOG("Icosahdron created.\n");
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
+        }
+        if (ImGui::Button("Pyramid")) {
+            LOG("Pyramid created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);
+        }
+        if (ImGui::Button("Cylinder")) {
+            LOG("Cylinder created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CYLINDER);
         }
         ImGui::End();
         
