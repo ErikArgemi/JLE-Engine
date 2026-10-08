@@ -19,7 +19,7 @@ bool Input::PreUpdate() {
 
     if (mouse & SDL_BUTTON_LMASK) {
 
-        if (event.type == SDL_EVENT_MOUSE_MOTION)
+        /*if (event.type == SDL_EVENT_MOUSE_MOTION)
         {
             float dx = event.motion.xrel;
             float dy = event.motion.yrel;
@@ -30,7 +30,7 @@ bool Input::PreUpdate() {
             Engine::GetInstance().render->pitch -= dy * sensitivity;
 
             Engine::GetInstance().render->pitch = glm::clamp(Engine::GetInstance().render->pitch, -89.0f, 89.0f);
-        }
+        }*/
 
         if (keyboard[SDL_SCANCODE_W]) {
             Engine::GetInstance().render->position -= Engine::GetInstance().render->z_axis * movementSpeed * Engine::GetInstance().dt;
@@ -46,6 +46,14 @@ bool Input::PreUpdate() {
 
         if (keyboard[SDL_SCANCODE_D]) {
             Engine::GetInstance().render->position += Engine::GetInstance().render->x_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_Q]) {
+            Engine::GetInstance().render->position -= Engine::GetInstance().render->y_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_E]) {
+            Engine::GetInstance().render->position += Engine::GetInstance().render->y_axis * movementSpeed * Engine::GetInstance().dt;
         }
 	}
     
