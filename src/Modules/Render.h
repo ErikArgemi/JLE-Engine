@@ -64,13 +64,26 @@ public:
     }
 
 public:
-    glm::mat4 viewMatrix;
+    glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f);
+
+    glm::vec3 x_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 y_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 z_axis = glm::vec3(0.0f, 0.0f, 1.0f);
+
+	glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
+
+    const float sensitivity = 0.5f;
+    float yaw = -90.0f;
+    float pitch = 0.0f;
+
+    glm::mat4 viewMatrix = glm::lookAt(position, position + z_axis, y_axis);
     glm::mat4 projectionMatrix;
     glm::mat4 modelMatrix = 1.0f;
 
     FrameBufferObject frameBufferObject;
     ImVec2 sceneWindowSize;
     bool shouldRefreshSceneWindow = false;
+
 private:
     SDL_GLContext glContext;
 
@@ -178,7 +191,7 @@ private:
     // Rotate the cube over time
     
     float rotation = 0.0f;
-    const float SPEED = 100.0f;
+    const float SPEED = 10.0f;
 
     bool isRunning = true;
 

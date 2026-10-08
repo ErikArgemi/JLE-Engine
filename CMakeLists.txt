@@ -26,7 +26,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Add source to this project's executable.
-add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES})
+add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES}  )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
