@@ -11,6 +11,8 @@
 #include <dxgi1_4.h> //<----- needed to see VRAM values
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
 
+#include "../settings.h"
+
 class Windows : public Module {
 public:
 	Windows();
@@ -77,4 +79,6 @@ private:
 
     float brightness = 1.0f;
 
+    //EditorSettings
+    EditorSettings editorSettings;
 };

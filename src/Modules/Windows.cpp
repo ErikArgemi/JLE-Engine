@@ -2,6 +2,8 @@
 #include "../Engine.h"
 #include "../Log.h"
 #include "Render.h"
+#include "JSON_FileReader.h"
+#include "../PrimitiveManager.h"
 
 #include <iostream>
 #include <memory>
@@ -77,7 +79,10 @@ bool Windows::Awake() {
         return false;
     }
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-    
+
+    JSON_FileReader fileReader;
+    editorSettings = fileReader.GetEditorSettings(); //get editor settings before updating
+
     return true;
 }
 
@@ -108,49 +113,50 @@ bool Windows::PostUpdate() {
     ImGuizmo::Manipulate(glm::value_ptr(Engine::GetInstance().render->viewMatrix), glm::value_ptr(Engine::GetInstance().render->projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(Engine::GetInstance().render->modelMatrix));
     glEnable(GL_DEPTH_TEST);
     ImGui::End();
-    ImGui::ShowDemoWindow();
 
-    ImGui::ShowDebugLogWindow();
+    if (editorSettings.ImGuiActive) {
+        ImGui::ShowDemoWindow();
+        ImGui::ShowDebugLogWindow();
 
-    // Header Menu Bar
-    static bool showAbout = false;
-    if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("Exit")) {
-                exit(0);
+        // Header Menu Bar
+        static bool showAbout = false;
+        if (ImGui::BeginMainMenuBar()) {
+            if (ImGui::BeginMenu("File")) {
+                if (ImGui::MenuItem("Exit")) {
+                    exit(0);
+                }
+                ImGui::EndMenu();
             }
-            ImGui::EndMenu();
+            if (ImGui::BeginMenu("View")) {
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Help")) {
+                if (ImGui::MenuItem("Github Documentation")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
+                }
+                if (ImGui::MenuItem("Report a Bug")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
+                }
+                if (ImGui::MenuItem("Download Latest:")) {
+                    SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
+                }
+                if (ImGui::MenuItem("About")) {
+                    showAbout = true;
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
         }
-        if (ImGui::BeginMenu("View")) {
-            ImGui::EndMenu();
-        }
-        if (ImGui::BeginMenu("Help")) {
-            if (ImGui::MenuItem("Github Documentation")) {
-                SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine#gameenginetemplate");
-            }
-            if (ImGui::MenuItem("Report a Bug")) {
-                SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine/issues");
-            }
-            if (ImGui::MenuItem("Download Latest:")) {
-                SDL_OpenURL("https://github.com/ErikArgemi/JLE-Engine");
-            }
-            if (ImGui::MenuItem("About")) {
-                showAbout = true;
-            }
-            ImGui::EndMenu();
-        }
-        ImGui::EndMainMenuBar();
-    }
 
-    if (showAbout)
-    {
-        ImGui::Begin("About", &showAbout);
-        AddWindow("About");
+        if (showAbout)
+        {
+            ImGui::Begin("About", &showAbout);
+            AddWindow("About");
 
-        ImGui::Text("JLE Engine v0.1");
-        ImGui::Text("Welcome to the glorious JLE Engine, JLE stands for Jia, Luying and Erik.");
-        ImGui::Text("By Group 1: Jia Hao Zhao Deng, Luying Bao Cheng and Erik Argemí Chinchilla");
-        ImGui::TextUnformatted(R"(3rd Party Libraries Used:
+            ImGui::Text("JLE Engine v0.1");
+            ImGui::Text("Welcome to the glorious JLE Engine, JLE stands for Jia, Luying and Erik.");
+            ImGui::Text("By Group 1: Jia Hao Zhao Deng, Luying Bao Cheng and Erik Argemí Chinchilla");
+            ImGui::TextUnformatted(R"(3rd Party Libraries Used:
             - SDL
             - glm
             - sdl3
@@ -159,7 +165,7 @@ bool Windows::PostUpdate() {
             - imgui
             - imguizmo
             )");
-        ImGui::TextUnformatted(R"(MIT License
+            ImGui::TextUnformatted(R"(MIT License
 
             Copyright (c) 2026 Jia Hao Zhao Deng & Luying Bao Cheng & Erik Argemí Chinchilla
 
@@ -180,83 +186,109 @@ bool Windows::PostUpdate() {
             LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             SOFTWARE.)");
+            ImGui::End();
+        }
+        //Configuration window
+        ImGui::Begin("Configuration window", nullptr, flags);
+        AddWindow("Configuration window");
+        if (ImGui::CollapsingHeader("Application"))
+        {
+            ImGui::Text("JLE-Engine");
+            ImGui::Text("UPC CITM");
+            ImGui::SliderInt("Max FPS", &Engine::GetInstance().max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
+            char title[30];
+            sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
+            ImGui::PlotHistogram("##framerate", &Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
+            sprintf_s(title, 30, "Milliseconds %.f", Engine::GetInstance().ms_log[Engine::GetInstance().ms_log.size() - 1]);
+            ImGui::PlotHistogram("##milliseconds", &Engine::GetInstance().ms_log[0], Engine::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+        }
+        if (ImGui::CollapsingHeader("Window"))
+        {
+            ImGui::SliderFloat("Brightness", &brightness, 0.1, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
+            //Windows size TODO: Keep proportions
+            static int currentSize = 1;
+            if (ImGui::Combo("Window sizes", &currentSize, windowSizes, GLM_COUNTOF(windowSizes))) {
+                SDL_SetWindowSize(window, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
+                glViewport(0, 0, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
+            }
+
+            ImGui::Text("Refresh rate: %i", (int)Engine::GetInstance().fps);
+
+            if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
+                SDL_SetWindowFullscreen(window, fullscreen);
+            }
+
+            if (ImGui::Checkbox("Resizable", &resizable)) {
+                SDL_SetWindowResizable(window, resizable);
+            }
+
+            if (ImGui::Checkbox("Borderless", &borderless)) {
+                SDL_SetWindowBordered(window, !borderless);
+            }
+        }
+        if (ImGui::CollapsingHeader("Hardware")) {
+            //get info from the cpu
+            const cpu_features::X86Features features = cpu_features::GetX86Info().features;
+            std::string capsCPU = GetCapsFromCpu(features);
+            pFactory.reset();
+            adapter.reset();
+
+            HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
+            pFactory->EnumAdapters(0, reinterpret_cast<IDXGIAdapter**>(&adapter));
+            pFactory->Release();
+            DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
+            adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &videoMemoryInfo);
+            adapter->Release();
+            size_t usedVRAM = videoMemoryInfo.CurrentUsage / 1024 / 1024;
+            //end of stack overflow copy-paste
+            size_t availableVRAM = videoMemoryInfo.AvailableForReservation / 1024 / 1024;
+            size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
+            size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
+
+            ImGui::Separator();
+            ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
+            int systemRAM = SDL_GetSystemRAM();
+            ImGui::Text("System RAM: %.2f %s", (systemRAM > 1024) ? (float)systemRAM / 1024 : (float)systemRAM, (systemRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("Caps: %s", capsCPU.c_str());
+            ImGui::Separator();
+            ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
+            ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
+            ImGui::Text("VRAM budget: %.2f %s", (budgetVRAM > 1024) ? (float)budgetVRAM / 1024 : (float)budgetVRAM, (budgetVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
+            ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
+
+        }
         ImGui::End();
-    }
-    //Configuration window
-    ImGui::Begin("Configuration window", nullptr, flags);
-    AddWindow("Configuration window");
-    if (ImGui::CollapsingHeader("Application"))
-    {
-        ImGui::Text("JLE-Engine");
-        ImGui::Text("UPC CITM");
-        ImGui::SliderInt("Max FPS", &Engine::GetInstance().max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
-        char title[30];
-        sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
-        ImGui::PlotHistogram("##framerate", &Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
-        sprintf_s(title, 30, "Milliseconds %.f", Engine::GetInstance().ms_log[Engine::GetInstance().ms_log.size() - 1]);
-        ImGui::PlotHistogram("##milliseconds", &Engine::GetInstance().ms_log[0], Engine::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
-    }
-    if (ImGui::CollapsingHeader("Window"))
-    {
-        ImGui::SliderFloat("Brightness", &brightness, 0.1, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
-
-        //Windows size TODO: Keep proportions
-        static int currentSize = 1;
-        if (ImGui::Combo("Window sizes", &currentSize, windowSizes, GLM_COUNTOF(windowSizes))) {
-            SDL_SetWindowSize(window, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
-            glViewport(0, 0, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
+        ImGui::Begin("Add primitives", nullptr, flags);
+        AddWindow("Add primitives");
+        if(ImGui::Button("Icosahedron")) {
+            LOG("Icosahdron created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
-
-        ImGui::Text("Refresh rate: %i", (int)Engine::GetInstance().fps);
-
-        if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
-            SDL_SetWindowFullscreen(window, fullscreen);
+        if (ImGui::Button("Cube")) {
+            LOG("Cube created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
         }
-
-        if (ImGui::Checkbox("Resizable", &resizable)) {
-            SDL_SetWindowResizable(window, resizable);
+        if (ImGui::Button("Pyramid")) {
+            LOG("Pyramid created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);
         }
-
-        if (ImGui::Checkbox("Borderless", &borderless)) {
-            SDL_SetWindowBordered(window, !borderless);
+        if (ImGui::Button("Cylinder")) {
+            LOG("Cylinder created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CYLINDER);
         }
+        if (ImGui::Button("Sphere")) {
+            LOG("Sphere created.\n");
+            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::SPHERE);
+        }
+        ImGui::End();
+        
+        Engine::GetInstance().log.DrawConsole();
     }
-    if (ImGui::CollapsingHeader("Hardware")) {
-        //get info from the cpu
-        const cpu_features::X86Features features = cpu_features::GetX86Info().features;
-        std::string capsCPU = GetCapsFromCpu(features);
-        pFactory.reset();
-        adapter.reset();
-
-        HRESULT hr = CreateDXGIFactory1(__uuidof(IDXGIFactory4), (void**)&pFactory);
-        pFactory->EnumAdapters(0, reinterpret_cast<IDXGIAdapter**>(&adapter));
-        pFactory->Release();
-        DXGI_QUERY_VIDEO_MEMORY_INFO videoMemoryInfo;
-        adapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &videoMemoryInfo);
-        adapter->Release();
-        size_t usedVRAM = videoMemoryInfo.CurrentUsage / 1024 / 1024;
-        //end of stack overflow copy-paste
-        size_t availableVRAM = videoMemoryInfo.AvailableForReservation / 1024 / 1024;
-        size_t budgetVRAM = videoMemoryInfo.Budget / 1024 / 1024;
-        size_t reservedVRAM = videoMemoryInfo.CurrentReservation / 1024 / 1024;
-
-        ImGui::Separator();
-        ImGui::Text("CPUs: %i (Cache: %ikb)", SDL_GetNumLogicalCPUCores(), SDL_GetCPUCacheLineSize());
-        int systemRAM = SDL_GetSystemRAM();
-        ImGui::Text("System RAM: %.2f %s", (systemRAM > 1024) ? (float)systemRAM / 1024 : (float)systemRAM, (systemRAM > 1024) ? "Gb" : "Mb");
-        ImGui::Text("Caps: %s", capsCPU.c_str());
-        ImGui::Separator();
-        ImGui::Text("Vendor: %s", glGetString(GL_VENDOR));
-        ImGui::Text("Brand: %s", glGetString(GL_RENDERER));
-        ImGui::Text("VRAM budget: %.2f %s", (budgetVRAM > 1024) ? (float)budgetVRAM / 1024 : (float)budgetVRAM, (budgetVRAM > 1024) ? "Gb" : "Mb");
-        ImGui::Text("VRAM usage: %.2f %s", (usedVRAM > 1024) ? (float)usedVRAM / 1024 : (float)usedVRAM, (usedVRAM > 1024) ? "Gb" : "Mb");
-        ImGui::Text("VRAM available: %.2f %s", (availableVRAM > 1024) ? (float)availableVRAM / 1024 : (float)availableVRAM, (availableVRAM > 1024) ? "Gb" : "Mb");
-        ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
-
-    }
-    ImGui::End();
-    Engine::GetInstance().log.DrawConsole();
     // Dark block for brightness
     float opacity = 1.0f - brightness;
     ImGuiViewport* viewport = ImGui::GetMainViewport();

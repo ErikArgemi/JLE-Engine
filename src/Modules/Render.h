@@ -5,6 +5,7 @@
 #include "Windows.h"
 #include <iostream>
 #include <memory>
+#include "../settings.h"
 
 // OpenGL
 #include <glad/glad.h>
@@ -21,6 +22,10 @@
 #include "imgui_impl_opengl3.h"
 
 #include "ImGuizmo.h"
+
+//Primitives
+#include "../PrimitiveManager.h"
+
 struct FrameBufferObject
 {
     GLuint FBO_ID = 0;
@@ -45,7 +50,15 @@ public:
 	bool CleanUp();
 
     //Create a Frame Buffer Object
-    void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject, bool recreate);
+    void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject);
+
+    //Create a mesh
+    PrimitiveMesh CreateMesh(GLfloat* vertices, Uint32 vertexBytes, GLuint* indices, GLsizei indexCount);
+
+    PrimitiveManager* GetPrimitiveManager() {
+        return primitiveManager.get();
+    }
+
 public:
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f);
 
@@ -177,4 +190,9 @@ private:
     const float SPEED = 10.0f;
 
     bool isRunning = true;
+
+
+    RenderSettings renderSettings;
+
+    std::unique_ptr<PrimitiveManager> primitiveManager;
 };
