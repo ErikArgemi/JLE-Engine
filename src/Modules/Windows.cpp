@@ -273,10 +273,6 @@ bool Windows::PostUpdate() {
             LOG("Icosahdron created.\n");
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
-        if (ImGui::Button("Cube")) {
-            LOG("Cube created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
-        }
         if (ImGui::Button("Pyramid")) {
             LOG("Pyramid created.\n");
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);

@@ -13,7 +13,7 @@ Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3
     PrimitiveMeshData meshData = meshContainer.GetMesh(type);
 
     PrimitiveMesh mesh;
-    mesh = Engine::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(GLfloat), meshData->index.data(), meshData->num_index);
+    mesh = Engine::GetInstance().render->CreateMesh(meshData.vertex.data(), meshData.vertex.size() * sizeof(GLfloat), meshData.index.data(), meshData.num_index);
 
 
     Primitive p = Primitive(mesh, entity);

@@ -329,7 +329,7 @@ void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObje
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-PrimitiveMesh Render::CreateMesh(GLfloat* vertices, Uint32 vertexBytes, GLuint* indices, GLsizei indexCount)
+PrimitiveMesh Render::CreateMesh(GLfloat* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount)
 {
     PrimitiveMesh mesh;
     mesh.n_index = indexCount;

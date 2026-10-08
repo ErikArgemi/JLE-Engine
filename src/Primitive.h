@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 // GLM
 #include "glm/vec3.hpp"
 #include <glad/glad.h>
@@ -271,7 +273,7 @@ struct Cylinder : PrimitiveMeshData {
 	}
 };
 
-struct Sphere : PrimitiveData {
+struct Sphere : PrimitiveMeshData {
 	Sphere() {
 		vertex = {
 			// Position				Color
@@ -507,7 +509,7 @@ struct Sphere : PrimitiveData {
 	}
 };
 
-struct Tetrahedron : PrimitiveData {
+struct Tetrahedron : PrimitiveMeshData {
 	Tetrahedron() {
 		vertex = {
 			0.0f, 0.5f, 0.0f,	1.0f, 1.0f, 1.0f,
@@ -547,3 +549,4 @@ struct MeshContainer {
 	PrimitiveMeshData GetMesh(PrimitiveType type) {
 		return meshContainer.at((int)type);
 	}
+};

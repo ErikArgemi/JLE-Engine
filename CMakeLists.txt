@@ -18,7 +18,7 @@ find_package(imguizmo CONFIG REQUIRED)
 #added vcpkg
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(assimp CONFIG REQUIRED)
-find_package(DevIL CONFIG REQUIRED)
+find_package(DevIL REQUIRED)
 
 file(GLOB_RECURSE SOURCES
     src/*.h
@@ -46,7 +46,8 @@ if (assimp_FOUND)
     include_directories(${ASSIMP_INCLUDE_DIRS})
     target_link_libraries (${PROJECT_NAME} PRIVATE ${ASSIMP_LIBRARIES})
 endif(assimp_FOUND)
-target_link_libraries(${PROJECT_NAME PRIVATE DevIL::DevIL})
+target_include_directories(${PROJECT_NAME} PRIVATE ${IL_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)
