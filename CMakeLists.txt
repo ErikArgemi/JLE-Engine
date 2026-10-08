@@ -17,6 +17,8 @@ find_package(imgui CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
 #added vcpkg
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(assimp CONFIG REQUIRED)
+find_package(DevIL CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES
     src/*.h
@@ -25,7 +27,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 # Add source to this project's executable.
-add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES})
+add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES}  )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
@@ -38,6 +40,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
 #added vcpkg
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+#target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
+if (assimp_FOUND)
+    link_directories(${ASSIMP_LIBRARY_DIRS})
+    include_directories(${ASSIMP_INCLUDE_DIRS})
+    target_link_libraries (${PROJECT_NAME} PRIVATE ${ASSIMP_LIBRARIES})
+endif(assimp_FOUND)
+target_link_libraries(${PROJECT_NAME PRIVATE DevIL::DevIL})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)

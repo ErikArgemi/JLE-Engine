@@ -77,7 +77,6 @@ private:
     bool resizable = false;
     bool borderless = false;
 
-    //Brightness
     float brightness = 1.0f;
 
     //EditorSettings
