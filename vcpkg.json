@@ -11,8 +11,9 @@
       ]
     },
     "imguizmo",
+    "nlohmann-json",
     "opengl",
     "sdl3",
-    "nlohmann-json"
+    "assimp"
   ]
 }
