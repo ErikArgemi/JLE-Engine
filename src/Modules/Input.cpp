@@ -17,17 +17,14 @@ bool Input::PreUpdate() {
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
     const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
-    if (mouse & SDL_BUTTON_LMASK) {
+    if (mouse & SDL_BUTTON_RMASK) {
 
         if (event.type == SDL_EVENT_MOUSE_MOTION)
         {
-            float dx = event.motion.xrel;
-            float dy = event.motion.yrel;
-
 			float sensitivity = Engine::GetInstance().render->sensitivity;
 
-            Engine::GetInstance().render->yaw += dx * sensitivity;
-            Engine::GetInstance().render->pitch -= dy * sensitivity;
+            Engine::GetInstance().render->yaw += event.motion.xrel * sensitivity;
+            Engine::GetInstance().render->pitch -= event.motion.yrel * sensitivity;
 
             Engine::GetInstance().render->pitch = glm::clamp(Engine::GetInstance().render->pitch, -89.0f, 89.0f);
         }
@@ -54,6 +51,10 @@ bool Input::PreUpdate() {
 
         if (keyboard[SDL_SCANCODE_E]) {
             Engine::GetInstance().render->position += Engine::GetInstance().render->y_axis * movementSpeed * Engine::GetInstance().dt;
+        }
+
+        if (keyboard[SDL_SCANCODE_LSHIFT]) {
+            movementSpeed *= 2;
         }
 	}
     
