@@ -1,10 +1,10 @@
 #pragma once
-#include "../Module.h"
+#include "./Module.h"
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <fstream>
 
-#include "../settings.h"
+#include "./settings.h"
 
 using json = nlohmann::json;
 
