@@ -17,7 +17,7 @@ bool Input::PreUpdate() {
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
     const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
-    if (mouse & SDL_BUTTON_LMASK) {
+    if (mouse & SDL_BUTTON_RMASK) {
 
         if (event.type == SDL_EVENT_MOUSE_MOTION)
         {
