@@ -174,6 +174,7 @@ bool Render::Update() {
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
     viewMatrix = glm::lookAt(position, position + direction, y_axis);
+
     // Model Matrix
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), y_axis);
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
