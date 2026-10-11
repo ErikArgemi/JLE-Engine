@@ -12,6 +12,10 @@ Input::~Input() {
 }
 
 bool Input::PreUpdate() {
+
+    Render& render = *Engine::GetInstance().render;
+	float deltaTime = Engine::GetInstance().dt;
+
     while (SDL_PollEvent(&event))
     {
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
@@ -19,40 +23,51 @@ bool Input::PreUpdate() {
 
     if (mouse & SDL_BUTTON_RMASK) {
 
+        //Camera look
         if (event.type == SDL_EVENT_MOUSE_MOTION)
         {
-			float sensitivity = Engine::GetInstance().render->sensitivity;
-
-            Engine::GetInstance().render->yaw += event.motion.xrel * sensitivity;
-            Engine::GetInstance().render->pitch -= event.motion.yrel * sensitivity;
-
-            Engine::GetInstance().render->pitch = glm::clamp(Engine::GetInstance().render->pitch, -89.0f, 89.0f);
+            render.yaw += event.motion.xrel * render.sensitivity;
+            render.pitch -= event.motion.yrel * render.sensitivity;
+            //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
+            render.pitch = glm::clamp(render.pitch, -89.0f, 89.0f);
         }
 
+        //Camera movement
+        glm::vec3 forward = render.direction;
+        forward.y = 0.0f;
+        float speed = movementSpeed * deltaTime;
+
+        if (glm::length(forward) > 0.0f) {
+            forward = glm::normalize(forward);
+        }
+
+        glm::vec3 right = glm::normalize(glm::cross(forward, render.y_axis));
+
         if (keyboard[SDL_SCANCODE_W]) {
-            Engine::GetInstance().render->position -= Engine::GetInstance().render->z_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position += forward * speed;
         }
 
         if (keyboard[SDL_SCANCODE_S]) {
-            Engine::GetInstance().render->position += Engine::GetInstance().render->z_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position -= forward * speed;
         }
 
         if (keyboard[SDL_SCANCODE_A]) {
-            Engine::GetInstance().render->position -= Engine::GetInstance().render->x_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position -= right * speed;
         }
 
         if (keyboard[SDL_SCANCODE_D]) {
-            Engine::GetInstance().render->position += Engine::GetInstance().render->x_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position += right * speed;
         }
 
         if (keyboard[SDL_SCANCODE_Q]) {
-            Engine::GetInstance().render->position -= Engine::GetInstance().render->y_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position -= render.y_axis * speed;
         }
 
         if (keyboard[SDL_SCANCODE_E]) {
-            Engine::GetInstance().render->position += Engine::GetInstance().render->y_axis * movementSpeed * Engine::GetInstance().dt;
+            render.position += render.y_axis * speed;
         }
 
+		//Camera speed boost
         if (keyboard[SDL_SCANCODE_LSHIFT]) {
             movementSpeed *= 2;
         }
