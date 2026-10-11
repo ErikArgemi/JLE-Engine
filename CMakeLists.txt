@@ -17,8 +17,6 @@ find_package(imgui CONFIG REQUIRED)
 find_package(imguizmo CONFIG REQUIRED)
 #added vcpkg
 find_package(nlohmann_json CONFIG REQUIRED)
-find_package(assimp CONFIG REQUIRED)
-find_package(DevIL REQUIRED)
 
 file(GLOB_RECURSE SOURCES
     src/*.h
@@ -40,14 +38,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
 #added vcpkg
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
-#target_link_libraries(${PROJECT_NAME} PRIVATE assimp::assimp)
-if (assimp_FOUND)
-    link_directories(${ASSIMP_LIBRARY_DIRS})
-    include_directories(${ASSIMP_INCLUDE_DIRS})
-    target_link_libraries (${PROJECT_NAME} PRIVATE ${ASSIMP_LIBRARIES})
-endif(assimp_FOUND)
-target_include_directories(${PROJECT_NAME} PRIVATE ${IL_INCLUDE_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${IL_LIBRARIES} ${ILU_LIBRARIES} ${ILUT_LIBRARIES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
 add_subdirectory(cpu_features)

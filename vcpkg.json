@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "assimp",
     "glad",
     "glm",
     {
@@ -12,9 +11,8 @@
       ]
     },
     "imguizmo",
-    "nlohmann-json",
     "opengl",
     "sdl3",
-    "devil"
+    "nlohmann-json"
   ]
 }
