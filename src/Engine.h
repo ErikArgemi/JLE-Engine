@@ -86,7 +86,7 @@ public:
 	//FPS
 	float dt = 1.0f;
 	float fps = 60.0f;
-	int max_fps = 60;
+	float max_fps = 60.0f;
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 private:

@@ -195,7 +195,10 @@ bool Windows::PostUpdate() {
         {
             ImGui::Text("JLE-Engine");
             ImGui::Text("UPC CITM");
-            ImGui::SliderInt("Max FPS", &Engine::GetInstance().max_fps, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
+            int max_fps_int = Engine::GetInstance().max_fps;
+            ImGui::SliderInt("Max FPS", &max_fps_int, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
+            Engine::GetInstance().max_fps = max_fps_int;
 
             char title[30];
             sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
