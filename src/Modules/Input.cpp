@@ -32,17 +32,23 @@ bool Input::PreUpdate() {
             render.pitch = glm::clamp(render.pitch, -89.0f, 89.0f);
         }
 
-        //Camera movement
-        glm::vec3 forward = render.direction;
-        forward.y = 0.0f;
+		glm::vec3 forward = render.direction; //gets the forward direction of the camera
+
         float speed = movementSpeed * deltaTime;
+
+		//Movment speed boost when Lshift is held
+        if (keyboard[SDL_SCANCODE_LSHIFT]) {
+            speed = (movementSpeed+speedBoost) * deltaTime;
+        }
 
         if (glm::length(forward) > 0.0f) {
             forward = glm::normalize(forward);
         }
 
+		//gets the perpendicular vector to the forward direction, which is the right direction of the camera
         glm::vec3 right = glm::normalize(glm::cross(forward, render.y_axis));
 
+        //Camera movement
         if (keyboard[SDL_SCANCODE_W]) {
             render.position += forward * speed;
         }
@@ -67,10 +73,6 @@ bool Input::PreUpdate() {
             render.position += render.y_axis * speed;
         }
 
-		//Camera speed boost
-        if (keyboard[SDL_SCANCODE_LSHIFT]) {
-            movementSpeed *= 2;
-        }
 	}
     
     ImGui_ImplSDL3_ProcessEvent(&event);
