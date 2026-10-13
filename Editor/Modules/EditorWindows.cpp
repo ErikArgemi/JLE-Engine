@@ -40,47 +40,6 @@ EditorWindows::~EditorWindows() {
 }
 
 bool EditorWindows::Awake() {
-    window = Engine::GetInstance().windows->window;
-    // Init SDL
-    //if (!SDL_Init(SDL_INIT_VIDEO))
-    //{
-    //    LOG("Failed to init SDL");
-    //    std::cout << "windows: failed init video" << std::endl;
-    //    return false;
-    //}
-    //LOG("SDL initialized");
-    ////Below theres an example code of xml on how to configure the window using xml it prob won't work with nlohmann
-    ///*Uint32 flags = 0;
-    //bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
-    //bool borderless = configParameters.child("borderless").attribute("value").as_bool();
-    //bool resizable = configParameters.child("resizable").attribute("value").as_bool();
-    //bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
-
-    //width = configParameters.child("resolution").attribute("width").as_int();
-    //height = configParameters.child("resolution").attribute("height").as_int();
-    //scale = configParameters.child("resolution").attribute("scale").as_int();
-
-    //if (fullscreen == true)        flags |= SDL_WINDOW_FULLSCREEN;
-    //if (borderless == true)        flags |= SDL_WINDOW_BORDERLESS;
-    //if (resizable == true)         flags |= SDL_WINDOW_RESIZABLE;*/
-    //// Setup Min/Major version for using OpenGL 4.6
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-    //LOG("OpenGL set up version 4.6");
-    //// Set Core Profile Mode
-    //SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    //// Create OpenGL window using SDL
-    //window = SDL_CreateWindow("EnginishGL",
-    //    SCREEN_WIDTH, SCREEN_HEIGHT,
-    //    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
-    //);
-    //if (window == nullptr)
-    //{
-    //    std::cout << "failed to create window" << std::endl;
-    //    SDL_Quit();
-    //    return false;
-    //}
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
     JSON_FileReader fileReader;
@@ -333,12 +292,6 @@ bool EditorWindows::PostUpdate() {
     // Swap window
     SDL_GL_SwapWindow(window);
 
-    return true;
-}
-
-bool EditorWindows::CleanUp() {
-    //SDL_DestroyWindow(window);
-    free(window);
     return true;
 }
 

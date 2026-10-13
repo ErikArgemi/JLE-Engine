@@ -22,10 +22,6 @@ public:
     // Called before render is available
     bool Awake();
 
-    // Called before quitting
-    bool CleanUp();
-
-
     // Called each loop iteration before the main update
     bool PreUpdate();
 
@@ -46,7 +42,7 @@ private:
     std::string GetCapsFromCpu(const cpu_features::X86Features& features);
 
 public:
-    SDL_Window* window = NULL;
+    //SDL_Window* window = NULL;
 
     // Window Resolution
     const int SCREEN_WIDTH = 1920;
