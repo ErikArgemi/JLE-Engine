@@ -92,6 +92,7 @@ private:
 
     GLuint fragmentShader;
 
+    GLuint shaderProgram;
     // Local Space
     //GLfloat cubeVertices[]
     //{

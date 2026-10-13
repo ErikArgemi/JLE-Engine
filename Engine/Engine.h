@@ -8,6 +8,7 @@
 
 // Editor Modules
 class EditorWindows;
+class EditorRender;
 
 // Modules
 class Render;
@@ -80,6 +81,7 @@ public:
 
 	//Editor Modules
 	std::shared_ptr<EditorWindows> editorWindows;
+	std::shared_ptr<EditorRender> editorRender;
 
 	//Modules
 	std::shared_ptr<Render> render;

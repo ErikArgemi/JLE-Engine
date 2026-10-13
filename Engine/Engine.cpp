@@ -6,6 +6,7 @@
 #include "Log.h"
 //Editor modules include
 #include "../Editor/Modules/EditorWindows.h"
+#include "../Editor/Modules/EditorRender.h"
 
 //Modules includes
 #include "Modules/Windows.h"
@@ -17,6 +18,7 @@ Engine::Engine() {
 
 	//Editor Modules
 	editorWindows = std::make_shared<EditorWindows>();
+	editorRender = std::make_shared<EditorRender>();
 
 	//Modules
 	windows = std::make_shared<Windows>();
@@ -33,6 +35,7 @@ Engine::Engine() {
 
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
+	AddModule(std::static_pointer_cast<Module>(editorRender));
 }
 
 Engine& Engine::GetInstance() {
@@ -91,6 +94,7 @@ bool Engine::Update() {
 bool Engine::CleanUp() {
 	LOG("ENGINE CLEAN UP----------");
 	bool result = true;
+	moduleList.reverse();
 	for (const auto& module : moduleList) {
 		result = module->CleanUp();
 		if (!result) {
