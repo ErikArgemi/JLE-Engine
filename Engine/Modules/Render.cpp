@@ -157,8 +157,6 @@ bool Render::Awake() {
     sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
     sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
 
-    
-
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
     
     primitiveManager = std::make_unique<PrimitiveManager>();

@@ -4,23 +4,34 @@
 
 #include "Engine.h"
 #include "Log.h"
+//Editor modules include
+#include "../Editor/Modules/EditorWindows.h"
+
 //Modules includes
 #include "Modules/Windows.h"
 #include "Modules/Render.h"
 #include "Modules/Input.h"
 
-
 Engine::Engine() {
 	std::cout << "adding modules-----------" << std::endl;
+
+	//Editor Modules
+	editorWindows = std::make_shared<EditorWindows>();
+
 	//Modules
 	windows = std::make_shared<Windows>();
 	input = std::make_shared<Input>();
 	render = std::make_shared<Render>();
 
 	//add the modules in the list
+	//Engine Modules
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
-		//Render last
+
+	//Editor Modules
+	AddModule(std::static_pointer_cast<Module>(editorWindows));
+
+		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
 }
 

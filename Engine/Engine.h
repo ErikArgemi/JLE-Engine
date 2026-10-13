@@ -6,6 +6,9 @@
 #include "Logger.h"
 #include <SDL3/SDL.h>
 
+// Editor Modules
+class EditorWindows;
+
 // Modules
 class Render;
 class Windows;
@@ -71,8 +74,12 @@ public:
 		FAIL,
 		EXIT
 	};
+
 	//Logger
 	Log log;
+
+	//Editor Modules
+	std::shared_ptr<EditorWindows> editorWindows;
 
 	//Modules
 	std::shared_ptr<Render> render;

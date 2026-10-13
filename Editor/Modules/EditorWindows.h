@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "../Module.h"
+#include "../../Engine/Module.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include <SDL3/SDL.h>
@@ -11,32 +11,36 @@
 #include <dxgi1_4.h> //<----- needed to see VRAM values
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
 
-#include "../settings.h"
+#include "../../Engine/settings.h"
 
-class Windows : public Module {
+class EditorWindows : public Module {
 public:
-	Windows();
+    EditorWindows();
 
-	~Windows();
+    ~EditorWindows();
 
-	// Called before render is available
-	bool Awake();
+    // Called before render is available
+    bool Awake();
 
-	// Called before quitting
-	bool CleanUp();
+    // Called before quitting
+    bool CleanUp();
+
+
+    // Called each loop iteration before the main update
+    bool PreUpdate();
 
     // Called each loop iteration after the main update 
     bool PostUpdate();
 
-	//Called to add a window from ImGui
-	void AddWindow(std::string newWindow);
+    //Called to add a window from ImGui
+    void AddWindow(std::string newWindow);
 
-	//Called when ALL the windows are in need of a resize
-	void ResizeWindows(ImVec2 windowSize);
+    //Called when ALL the windows are in need of a resize
+    void ResizeWindows(ImVec2 windowSize);
 
 private:
-	//Called to rescale a window
-	void RescaleWindow(std::string window);
+    //Called to rescale a window
+    void RescaleWindow(std::string window);
 
     //checks individually each and every feature avalailable from the cpu and returns a string of all of them
     std::string GetCapsFromCpu(const cpu_features::X86Features& features);
@@ -51,9 +55,9 @@ public:
     //ImGui flags
     ImGuiWindowFlags flags;
 private:
-	std::vector<std::string> windows;
-	ImVec2 currentWindowSize;
-	ImVec2 prevWindowsSize{ 1920, 1080 };
+    std::vector<std::string> windows;
+    ImVec2 currentWindowSize;
+    ImVec2 prevWindowsSize{ 1920, 1080 };
 
     //maybe return them as pointers
     std::shared_ptr<IDXGIFactory4> pFactory;
