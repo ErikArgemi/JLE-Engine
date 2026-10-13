@@ -1,6 +1,6 @@
 #include "EditorRender.h"
-#include "../../Engine/Engine.h"
-#include "../../Engine/Log.h"
+#include "../Engine.h"
+#include "../Log.h"
 #include "../../Engine/Modules/Render.h"
 #include "../../Engine/Modules/Windows.h"
 

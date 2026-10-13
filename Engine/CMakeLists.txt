@@ -10,7 +10,7 @@ find_package(imguizmo CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 
 # Collect all .cpp files in this folder
-file(GLOB_RECURSE ENGINE_CODE 
+file(GLOB_RECURSE ENGINE_CODE CONFIGURE_DEPENDS
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
@@ -32,7 +32,3 @@ target_link_libraries(Engine PRIVATE imgui::imgui)
 target_link_libraries(Engine PRIVATE imguizmo::imguizmo)
 #added vcpkg
 target_link_libraries(Engine PRIVATE nlohmann_json::nlohmann_json)
-
-target_link_libraries(Engine PRIVATE dxgi)
-add_subdirectory(cpu_features)
-target_link_libraries(Engine PRIVATE CpuFeatures::cpu_features)

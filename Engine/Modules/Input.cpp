@@ -1,5 +1,6 @@
 #include "Input.h"
-#include "../Engine.h"
+#include "../../Editor/Engine.h"
+#include "../../Editor/Log.h"
 #include "Windows.h"
 #include "Render.h"
 #include <iostream>

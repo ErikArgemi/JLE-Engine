@@ -5,13 +5,13 @@
 #include "Engine.h"
 #include "Log.h"
 //Editor modules include
-#include "../Editor/Modules/EditorWindows.h"
-#include "../Editor/Modules/EditorRender.h"
+#include "Modules/EditorWindows.h"
+#include "Modules/EditorRender.h"
 
 //Modules includes
-#include "Modules/Windows.h"
-#include "Modules/Render.h"
-#include "Modules/Input.h"
+#include "../Engine/Modules/Windows.h"
+#include "../Engine/Modules/Render.h"
+#include "../Engine/Modules/Input.h"
 
 Engine::Engine() {
 	std::cout << "adding modules-----------" << std::endl;

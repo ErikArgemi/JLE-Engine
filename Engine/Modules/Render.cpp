@@ -1,6 +1,6 @@
 #include "Render.h"
-#include "../Engine.h"
-#include "../Log.h"
+#include "../../Editor/Engine.h"
+#include "../../Editor/Log.h"
 #include "Windows.h"
 #include "JSON_FileReader.h"
 

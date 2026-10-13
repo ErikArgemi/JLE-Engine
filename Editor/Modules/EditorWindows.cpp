@@ -1,11 +1,11 @@
 #include "EditorWindows.h"
-#include "../../Engine/Engine.h"
-#include "../../Engine/Log.h"
-#include "Render.h"
+#include "../Engine.h"
+#include "../Log.h"
+#include "../../Engine/Modules/Render.h"
 #include "../../Engine/Modules/Windows.h"
 #include "../../Engine/Modules/Input.h"
-#include "JSON_FileReader.h"
-#include "../PrimitiveManager.h"
+#include "../../Engine/Modules/JSON_FileReader.h"
+#include "../../Engine/PrimitiveManager.h"
 
 #include <iostream>
 #include <memory>
@@ -49,26 +49,27 @@ bool EditorWindows::Awake() {
 }
 
 bool EditorWindows::PreUpdate() {
-    ImGui_ImplSDL3_ProcessEvent(&Engine::GetInstance().input->event);
-    if (event.type == SDL_EVENT_QUIT)
+    SDL_Event* event = &Engine::GetInstance().input->event;
+    ImGui_ImplSDL3_ProcessEvent(event);
+    if (event->type == SDL_EVENT_QUIT)
     {
         return false;
     }
 
-    if (event.type == SDL_EVENT_MOUSE_BUTTON_UP
-        && event.button.button == SDL_BUTTON_RIGHT)
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_UP
+        && event->button.button == SDL_BUTTON_RIGHT)
     {
     }
 
-    if ((event.type == SDL_EVENT_MOUSE_BUTTON_DOWN
-        && event.button.button == SDL_BUTTON_RIGHT))
+    if ((event->type == SDL_EVENT_MOUSE_BUTTON_DOWN
+        && event->button.button == SDL_BUTTON_RIGHT))
     {
     }
 
-    if (event.type == SDL_EVENT_WINDOW_RESIZED)
+    if (event->type == SDL_EVENT_WINDOW_RESIZED)
     {
         int w, h;
-        SDL_GetWindowSize(window, &w, &h);
+        SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
         ResizeWindows(ImVec2(w, h));
     }
     return true;
@@ -80,7 +81,7 @@ bool EditorWindows::PostUpdate() {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-
+    SDL_Window* window = Engine::GetInstance().windows->window;
     const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
     if (gizmoActive)
     {

@@ -1,6 +1,6 @@
 #include "Windows.h"
-#include "../Engine.h"
-#include "../Log.h"
+#include "../../Editor/Engine.h"
+#include "../../Editor/Log.h"
 #include "Render.h"
 #include "JSON_FileReader.h"
 #include "../PrimitiveManager.h"
@@ -57,5 +57,9 @@ bool Windows::Awake() {
         return false;
     }
 
+    return true;
+}
+bool Windows::CleanUp() {
+    SDL_DestroyWindow(window);
     return true;
 }
