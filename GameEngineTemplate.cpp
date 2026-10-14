@@ -5,6 +5,7 @@
 int main() {
 	std::cout << "engine starting----------"<< std::endl;
 	//LOG("Engine starting ...");
+	Engine& engine = Engine::GetInstance();
 	Engine::EngineState state = Engine::EngineState::CREATE;
 	int result = EXIT_FAILURE;
 	std::cout << "engine create----------" << std::endl;
@@ -12,6 +13,7 @@ int main() {
 		switch (state) {
 		case Engine::EngineState::CREATE:
 			//LOG("CREATE");
+			
 			std::cout << "engine awake----------" << std::endl;
 			state = Engine::EngineState::AWAKE;
 			break;
@@ -20,6 +22,7 @@ int main() {
 			//LOG("AWAKEN MODULES");
 			std::cout << "module awake----------" << std::endl;
 			if (Engine::GetInstance().Awake() == true) {
+				engine.Awake();
 				state = Engine::EngineState::START;
 			}
 			else {
@@ -32,6 +35,7 @@ int main() {
 			std::cout << "module start----------" << std::endl;
 			//LOG("START MODULES");
 			if (Engine::GetInstance().Start() == true) {
+				engine.Start();
 				state = Engine::EngineState::UPDATE;
 				//LOG("UPDATE MODULES");
 			}
@@ -44,6 +48,7 @@ int main() {
 
 		case Engine::EngineState::UPDATE:
 			if (Engine::GetInstance().Update() == false) {
+				engine.Update();
 				state = Engine::EngineState::CLEAN;
 			}
 			break;
@@ -52,6 +57,7 @@ int main() {
 			std::cout << "module clean----------" << std::endl;
 			//LOG("CLEANUP MODULES");
 			if (Engine::GetInstance().CleanUp() == true) {
+				engine.CleanUp();
 				result = EXIT_SUCCESS;
 				state = Engine::EngineState::EXIT;
 			}
