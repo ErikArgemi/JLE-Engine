@@ -34,5 +34,7 @@ public:
 	// SDL KEYS
 	int numKeys;
 	float movementSpeed = 5.0f;
+	float speedBoost = 10.0f;
 private:
+	
 };
