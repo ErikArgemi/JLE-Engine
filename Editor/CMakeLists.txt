@@ -21,7 +21,7 @@ target_compile_options(Editor PRIVATE
 # Disable Exceptions
 target_compile_options(Editor PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/EHs-c- /D_HAS_EXCEPTIONS=0>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-exceptions> 
+    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-exceptions>
 )
 
 target_include_directories(Editor PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")

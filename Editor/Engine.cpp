@@ -4,24 +4,38 @@
 
 #include "Engine.h"
 #include "Log.h"
-//Modules includes
-#include "Modules/Windows.h"
-#include "Modules/Render.h"
-#include "Modules/Input.h"
+//Editor modules include
+#include "Modules/EditorWindows.h"
+#include "Modules/EditorRender.h"
 
+//Modules includes
+#include "../Engine/Modules/Windows.h"
+#include "../Engine/Modules/Render.h"
+#include "../Engine/Modules/Input.h"
 
 Engine::Engine() {
 	std::cout << "adding modules-----------" << std::endl;
+
+	//Editor Modules
+	editorWindows = std::make_shared<EditorWindows>();
+	editorRender = std::make_shared<EditorRender>();
+
 	//Modules
 	windows = std::make_shared<Windows>();
 	input = std::make_shared<Input>();
 	render = std::make_shared<Render>();
 
 	//add the modules in the list
+	//Engine Modules
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
-		//Render last
+
+	//Editor Modules
+	AddModule(std::static_pointer_cast<Module>(editorWindows));
+
+		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
+	AddModule(std::static_pointer_cast<Module>(editorRender));
 }
 
 Engine& Engine::GetInstance() {
@@ -80,6 +94,7 @@ bool Engine::Update() {
 bool Engine::CleanUp() {
 	LOG("ENGINE CLEAN UP----------");
 	bool result = true;
+	moduleList.reverse();
 	for (const auto& module : moduleList) {
 		result = module->CleanUp();
 		if (!result) {

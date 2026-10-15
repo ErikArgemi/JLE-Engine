@@ -1,9 +1,11 @@
-#include "Windows.h"
+#include "EditorWindows.h"
 #include "../Engine.h"
 #include "../Log.h"
-#include "Render.h"
-#include "JSON_FileReader.h"
-#include "../PrimitiveManager.h"
+#include "../../Engine/Modules/Render.h"
+#include "../../Engine/Modules/Windows.h"
+#include "../../Engine/Modules/Input.h"
+#include "../../Engine/Modules/JSON_FileReader.h"
+#include "../../Engine/PrimitiveManager.h"
 
 #include <iostream>
 #include <memory>
@@ -29,55 +31,15 @@
 #include <dxgi1_4.h> //<----- needed to see VRAM values
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
 
-Windows::Windows() : Module(){
-	name = "windows";
+EditorWindows::EditorWindows() : Module() {
+    name = "EditorWindows";
 }
 
-Windows::~Windows() {
+EditorWindows::~EditorWindows() {
 
 }
 
-bool Windows::Awake() {
-    // Init SDL
-    if (!SDL_Init(SDL_INIT_VIDEO))
-    {
-        LOG("Failed to init SDL");
-        std::cout << "windows: failed init video" << std::endl;
-        return false;
-    }
-    LOG("SDL initialized");
-    //Below theres an example code of xml on how to configure the window using xml it prob won't work with nlohmann
-    /*Uint32 flags = 0;
-    bool fullscreen = configParameters.child("fullscreen").attribute("value").as_bool();
-    bool borderless = configParameters.child("borderless").attribute("value").as_bool();
-    bool resizable = configParameters.child("resizable").attribute("value").as_bool();
-    bool fullscreen_window = configParameters.child("fullscreen_window").attribute("value").as_bool();
-
-    width = configParameters.child("resolution").attribute("width").as_int();
-    height = configParameters.child("resolution").attribute("height").as_int();
-    scale = configParameters.child("resolution").attribute("scale").as_int();
-
-    if (fullscreen == true)        flags |= SDL_WINDOW_FULLSCREEN;
-    if (borderless == true)        flags |= SDL_WINDOW_BORDERLESS;
-    if (resizable == true)         flags |= SDL_WINDOW_RESIZABLE;*/
-    // Setup Min/Major version for using OpenGL 4.6
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-    LOG("OpenGL set up version 4.6");
-    // Set Core Profile Mode
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    // Create OpenGL window using SDL
-    window = SDL_CreateWindow("EnginishGL",
-        SCREEN_WIDTH, SCREEN_HEIGHT,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
-    );
-    if (window == nullptr)
-    {
-        std::cout << "failed to create window" << std::endl;
-        SDL_Quit();
-        return false;
-    }
+bool EditorWindows::Awake() {
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
     JSON_FileReader fileReader;
@@ -86,21 +48,48 @@ bool Windows::Awake() {
     return true;
 }
 
-bool Windows::PostUpdate() {
+bool EditorWindows::PreUpdate() {
+    SDL_Event* event = &Engine::GetInstance().input->event;
+    ImGui_ImplSDL3_ProcessEvent(event);
+    if (event->type == SDL_EVENT_QUIT)
+    {
+        return false;
+    }
+
+    if (event->type == SDL_EVENT_MOUSE_BUTTON_UP
+        && event->button.button == SDL_BUTTON_RIGHT)
+    {
+    }
+
+    if ((event->type == SDL_EVENT_MOUSE_BUTTON_DOWN
+        && event->button.button == SDL_BUTTON_RIGHT))
+    {
+    }
+
+    if (event->type == SDL_EVENT_WINDOW_RESIZED)
+    {
+        int w, h;
+        SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
+        ResizeWindows(ImVec2(w, h));
+    }
+    return true;
+}
+
+bool EditorWindows::PostUpdate() {
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-
+    SDL_Window* window = Engine::GetInstance().windows->window;
     const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
     if (gizmoActive)
     {
-        Engine::GetInstance().windows->flags |= ImGuiWindowFlags_NoMove;
+        flags |= ImGuiWindowFlags_NoMove;
     }
 
-    ImGui::Begin("Scene", nullptr, Engine::GetInstance().windows->flags);
-    Engine::GetInstance().windows->AddWindow("Scene");
+    ImGui::Begin("Scene", nullptr, flags);
+    AddWindow("Scene");
     ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
     ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
     Engine::GetInstance().render->shouldRefreshSceneWindow = (newSceneWindowSize.x != Engine::GetInstance().render->sceneWindowSize.x || newSceneWindowSize.y != Engine::GetInstance().render->sceneWindowSize.y);
@@ -268,7 +257,7 @@ bool Windows::PostUpdate() {
 
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
-        if(ImGui::Button("Icosahedron")) {
+        if (ImGui::Button("Icosahedron")) {
             LOG("Icosahdron created.\n");
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
@@ -289,7 +278,7 @@ bool Windows::PostUpdate() {
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::SPHERE);
         }
         ImGui::End();
-        
+
         Engine::GetInstance().log.DrawConsole();
     }
     // Dark block for brightness
@@ -303,72 +292,67 @@ bool Windows::PostUpdate() {
     //ImGui::EndFrame();
     // Swap window
     SDL_GL_SwapWindow(window);
-    
+
     return true;
 }
 
-bool Windows::CleanUp() {
-	SDL_DestroyWindow(window);
-    return true;
+void EditorWindows::AddWindow(std::string newWindow) {
+    for (const auto& window : windows) {
+        if (window == newWindow) return;
+    }
+    windows.emplace_back(newWindow);
 }
 
-void Windows::AddWindow(std::string newWindow) {
-	for (const auto& window : windows) {
-		if (window == newWindow) return;
-	}
-	windows.emplace_back(newWindow);
-}
-
-void Windows::ResizeWindows(ImVec2 windowSize) {
-	currentWindowSize = windowSize;
-	for (auto& window : windows) {
-		RescaleWindow(window);
-	}
-	prevWindowsSize = currentWindowSize;
+void EditorWindows::ResizeWindows(ImVec2 windowSize) {
+    currentWindowSize = windowSize;
+    for (auto& window : windows) {
+        RescaleWindow(window);
+    }
+    prevWindowsSize = currentWindowSize;
 }
 
 //privates
-void Windows::RescaleWindow(std::string window) {
-	ImGuiWindow* win = ImGui::FindWindowByName(window.c_str());
-	if (!win) return;
+void EditorWindows::RescaleWindow(std::string window) {
+    ImGuiWindow* win = ImGui::FindWindowByName(window.c_str());
+    if (!win) return;
 
-	float scaleX = (float)currentWindowSize.x / (float)prevWindowsSize.x;
-	float scaleY = (float)currentWindowSize.y / (float)prevWindowsSize.y;
+    float scaleX = (float)currentWindowSize.x / (float)prevWindowsSize.x;
+    float scaleY = (float)currentWindowSize.y / (float)prevWindowsSize.y;
 
-	ImVec2 newPos(win->Pos.x * scaleX, win->Pos.y * scaleY);
-	ImVec2 newSize(win->Size.x * scaleX, win->Size.y * scaleY);
+    ImVec2 newPos(win->Pos.x * scaleX, win->Pos.y * scaleY);
+    ImVec2 newSize(win->Size.x * scaleX, win->Size.y * scaleY);
 
-	ImGui::SetWindowPos(window.c_str(), newPos, ImGuiCond_Always);
-	ImGui::SetWindowSize(window.c_str(), newSize, ImGuiCond_Always);
+    ImGui::SetWindowPos(window.c_str(), newPos, ImGuiCond_Always);
+    ImGui::SetWindowSize(window.c_str(), newSize, ImGuiCond_Always);
 }
 
-std::string Windows::GetCapsFromCpu(const cpu_features::X86Features& features) {
-	std::string listOfFeatures = "";
-	if (features.sse) { listOfFeatures += "SSE, "; }
-	if (features.sse2) { listOfFeatures += "SSE2, "; }
-	if (features.sse3) { listOfFeatures += "SSE3, "; }
-	if (features.ssse3) { listOfFeatures += "SSSE3, "; }
-	if (features.sse4_1) { listOfFeatures += "SSE4.1, "; }
-	if (features.sse4_2) { listOfFeatures += "SSE4.2, "; }
-	if (features.avx) { listOfFeatures += "AVX, "; }
-	if (features.avx2) { listOfFeatures += "AVX2, "; }
-	if (features.avx512f) { listOfFeatures += "AVX-512F, "; }
-	if (features.avx512cd) { listOfFeatures += "AVX-512CD, "; }
-	if (features.avx512er) { listOfFeatures += "AVX-512ER, "; }
-	if (features.avx512pf) { listOfFeatures += "AVX-512PF, "; }
-	if (features.avx512vl) { listOfFeatures += "AVX-512VL, "; }
-	if (features.avx512dq) { listOfFeatures += "AVX-512DQ, "; }
-	if (features.avx512bw) { listOfFeatures += "AVX-512BW, "; }
-	if (features.avx512ifma) { listOfFeatures += "AVX-512IFMA, "; }
-	if (features.avx512vbmi) { listOfFeatures += "AVX-512VBMI, "; }
-	if (features.avx512_4vnniw) { listOfFeatures += "AVX-512 4VNNIW, "; }
-	if (features.avx512_4fmaps) { listOfFeatures += "AVX-512 4FMAPS, "; }
-	if (features.avx512vpopcntdq) { listOfFeatures += "AVX-512VPOPCNTDQ, "; }
-	if (features.avx512vnni) { listOfFeatures += "AVX-512VNNI, "; }
-	if (features.avx512vbmi2) { listOfFeatures += "AVX-512VBMI2, "; }
-	if (features.avx512bitalg) { listOfFeatures += "AVX-512BITALG, "; }
-	if (features.avx512_vp2intersect) { listOfFeatures += "AVX-512 VP2INTERSECT, "; }
-	listOfFeatures.pop_back();
-	listOfFeatures.pop_back();
-	return listOfFeatures;
+std::string EditorWindows::GetCapsFromCpu(const cpu_features::X86Features& features) {
+    std::string listOfFeatures = "";
+    if (features.sse) { listOfFeatures += "SSE, "; }
+    if (features.sse2) { listOfFeatures += "SSE2, "; }
+    if (features.sse3) { listOfFeatures += "SSE3, "; }
+    if (features.ssse3) { listOfFeatures += "SSSE3, "; }
+    if (features.sse4_1) { listOfFeatures += "SSE4.1, "; }
+    if (features.sse4_2) { listOfFeatures += "SSE4.2, "; }
+    if (features.avx) { listOfFeatures += "AVX, "; }
+    if (features.avx2) { listOfFeatures += "AVX2, "; }
+    if (features.avx512f) { listOfFeatures += "AVX-512F, "; }
+    if (features.avx512cd) { listOfFeatures += "AVX-512CD, "; }
+    if (features.avx512er) { listOfFeatures += "AVX-512ER, "; }
+    if (features.avx512pf) { listOfFeatures += "AVX-512PF, "; }
+    if (features.avx512vl) { listOfFeatures += "AVX-512VL, "; }
+    if (features.avx512dq) { listOfFeatures += "AVX-512DQ, "; }
+    if (features.avx512bw) { listOfFeatures += "AVX-512BW, "; }
+    if (features.avx512ifma) { listOfFeatures += "AVX-512IFMA, "; }
+    if (features.avx512vbmi) { listOfFeatures += "AVX-512VBMI, "; }
+    if (features.avx512_4vnniw) { listOfFeatures += "AVX-512 4VNNIW, "; }
+    if (features.avx512_4fmaps) { listOfFeatures += "AVX-512 4FMAPS, "; }
+    if (features.avx512vpopcntdq) { listOfFeatures += "AVX-512VPOPCNTDQ, "; }
+    if (features.avx512vnni) { listOfFeatures += "AVX-512VNNI, "; }
+    if (features.avx512vbmi2) { listOfFeatures += "AVX-512VBMI2, "; }
+    if (features.avx512bitalg) { listOfFeatures += "AVX-512BITALG, "; }
+    if (features.avx512_vp2intersect) { listOfFeatures += "AVX-512 VP2INTERSECT, "; }
+    listOfFeatures.pop_back();
+    listOfFeatures.pop_back();
+    return listOfFeatures;
 }

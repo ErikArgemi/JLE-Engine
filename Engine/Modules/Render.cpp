@@ -1,6 +1,6 @@
 #include "Render.h"
-#include "../Engine.h"
-#include "../Log.h"
+#include "../../Editor/Engine.h"
+#include "../../Editor/Log.h"
 #include "Windows.h"
 #include "JSON_FileReader.h"
 
@@ -16,12 +16,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// ImGui
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_opengl3.h"
-
-#include "ImGuizmo.h"
+//// ImGui
+//#include "imgui.h"
+//#include "imgui_impl_sdl3.h"
+//#include "imgui_impl_opengl3.h"
+//
+//#include "ImGuizmo.h"
 
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -74,17 +74,6 @@ bool Render::Awake() {
     JSON_FileReader fileReader;
     renderSettings = fileReader.GetRenderSettings();
 	glViewport(0, 0, renderSettings.windowsSizeX, renderSettings.windowsSizeY);
-
-	// IMGUI
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    LOG("ImGui created context");
-	// Setup Platform/Renderer backends
-	ImGui_ImplSDL3_InitForOpenGL(window, glContext);
-	ImGui_ImplOpenGL3_Init();
 
     // Create & compile vertex and fragment shaders
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -156,8 +145,6 @@ bool Render::Awake() {
     CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject);
     sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
     sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
-
-    
 
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
     
@@ -278,11 +265,6 @@ bool Render::CleanUp() {
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
-
-    // Deinit ImGui
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL3_Shutdown();
-    ImGui::DestroyContext();
 
     SDL_GL_DestroyContext(glContext);
     SDL_Quit();

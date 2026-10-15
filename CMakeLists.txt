@@ -9,54 +9,21 @@ set(CMAKE_CXX_EXTENSIONS OFF)       # optional: disable compiler-specific extens
 
 project (GameEngineTemplate)
 
-find_package(glm CONFIG REQUIRED)
-find_package(SDL3 CONFIG REQUIRED)
-find_package(OpenGL REQUIRED)
-find_package(glad CONFIG REQUIRED)
-find_package(imgui CONFIG REQUIRED)
-find_package(imguizmo CONFIG REQUIRED)
-#added vcpkg
-find_package(nlohmann_json CONFIG REQUIRED)
-
-file(GLOB_RECURSE SOURCES
-    src/*.h
-    src/*.cpp
-    src/*.json
-)
-
-# Add source to this project's executable.
-add_executable (${PROJECT_NAME} GameEngineTemplate.cpp ${SOURCES}  )
-
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIBRARIES})
-target_include_directories(${PROJECT_NAME} PRIVATE ${OPENGL_INCLUDE_DIR})
-
-target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad)
-target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
-target_link_libraries(${PROJECT_NAME} PRIVATE imguizmo::imguizmo)
-#added vcpkg
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE dxgi)
-add_subdirectory(cpu_features)
-target_link_libraries(${PROJECT_NAME} PRIVATE CpuFeatures::cpu_features)
-
-# For generating the release, we need to copy assets folder to build folder
-file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})
+add_subdirectory(Engine)
+add_subdirectory(Editor)
 
 # Disable RTTI
-target_compile_options(${PROJECT_NAME} PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/GR->
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-rtti>
-)
+#target_compile_options(${PROJECT_NAME} PRIVATE
+#    $<$<CXX_COMPILER_ID:MSVC>:/GR->
+#    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-rtti>
+#)
 
 # Disable Exceptions
-target_compile_options(${PROJECT_NAME} PRIVATE
-    $<$<CXX_COMPILER_ID:MSVC>:/EHs-c- /D_HAS_EXCEPTIONS=0>
-    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-exceptions>
-)
+#target_compile_options(${PROJECT_NAME} PRIVATE
+#    $<$<CXX_COMPILER_ID:MSVC>:/EHs-c- /D_HAS_EXCEPTIONS=0>
+#    $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-fno-exceptions>
+#)
+
 
 # Setting custom working directory within root's 'launch.vs.json and copying within .vs folder
 configure_file(
@@ -64,3 +31,12 @@ configure_file(
     "${CMAKE_SOURCE_DIR}/.vs/launch.vs.json"
     COPYONLY
 )
+
+# For generating the release, we need to copy assets folder to build folder
+file(COPY ${CMAKE_SOURCE_DIR}/Data DESTINATION ${CMAKE_BINARY_DIR})
+
+#file(GLOB_RECURSE SOURCES
+#    src/*.h
+#    src/*.cpp
+#    src/*.json
+#)

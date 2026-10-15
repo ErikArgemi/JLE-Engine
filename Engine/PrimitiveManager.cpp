@@ -1,5 +1,6 @@
 #include "PrimitiveManager.h"
 #include "Modules/Render.h"
+#include "../Editor/Engine.h"
 
 Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3 Pos)
 {

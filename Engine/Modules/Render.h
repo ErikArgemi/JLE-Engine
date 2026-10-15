@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Module.h"
-#include "../Engine.h"
+#include "../../Editor/Engine.h"
 #include "Windows.h"
 #include <iostream>
 #include <memory>
@@ -36,18 +36,18 @@ struct FrameBufferObject
 
 class Render : public Module {
 public:
-	Render();
+    Render();
 
-	~Render();
+    ~Render();
 
-	// Called before render is available
-	bool Awake();
+    // Called before render is available
+    bool Awake();
 
     // Called each loop iteration
     bool Update();
 
-	// Called before quitting
-	bool CleanUp();
+    // Called before quitting
+    bool CleanUp();
 
     //Create a Frame Buffer Object
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject);
@@ -59,6 +59,10 @@ public:
         return primitiveManager.get();
     }
 
+    SDL_GLContext GetGLContext() const {
+        return glContext;
+    }
+
 public:
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f);
 
@@ -66,7 +70,7 @@ public:
     glm::vec3 y_axis = glm::vec3(0.0f, 1.0f, 0.0f);
     glm::vec3 z_axis = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
     const float sensitivity = 0.5f;
     float yaw = -90.0f;
@@ -77,7 +81,7 @@ public:
     glm::mat4 modelMatrix = 1.0f;
 
     FrameBufferObject frameBufferObject;
-    ImVec2 sceneWindowSize;
+    ImVec2 sceneWindowSize; //This is from ImGui it may not belong here
     bool shouldRefreshSceneWindow = false;
 
 private:
@@ -88,9 +92,7 @@ private:
 
     GLuint fragmentShader;
 
-    // Create Program and bind shaders
     GLuint shaderProgram;
-
     // Local Space
     //GLfloat cubeVertices[]
     //{
@@ -99,7 +101,7 @@ private:
     //    0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 0.0f,
     //    0.5f, 0.5f, -0.5f,      0.0f, 0.0f, 1.0f,
     //    -0.5f, 0.5f, -0.5f,     1.0f, 0.0f, 0.0f,
-    //    -0.5f, -0.5f, 0.5f,     0.0f, 1.0f, 1.0f,
+    //    -0.5f, -0.5f, 0.5f,     1.0f, 1.0f, 1.0f,
     //    0.5f, -0.5f, 0.5f,      1.0f, 1.0f, 0.0f,
     //    0.5f, 0.5f, 0.5f,       1.0f, 0.0f, 1.0f,
     //    -0.5f, 0.5f, 0.5f,      1.0f, 1.0f, 1.0f,
@@ -168,12 +170,11 @@ private:
         11,9,10,
         11,10,6
     };
-    
+
     // Projection Matrix
     const float FOV = 45.0f;
     const float NEAR_PLANE = 0.1f;
     const float FAR_PLANE = 100.0f;
-
 
     // Create ModelViewProjection matrix
     GLuint modelViewProjLocation;
@@ -185,12 +186,10 @@ private:
     GLuint EBO;
 
     // Rotate the cube over time
-    
     float rotation = 0.0f;
     const float SPEED = 10.0f;
 
     bool isRunning = true;
-
 
     RenderSettings renderSettings;
 

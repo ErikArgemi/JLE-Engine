@@ -1,6 +1,8 @@
 ﻿#include <iostream>
-#include "src/Engine.h"
-#include "src/Log.h"
+//#include "src/Engine.h"
+//#include "src/Log.h"
+#include "Engine.h"
+#include "Log.h"
 
 int main() {
 	std::cout << "engine starting----------"<< std::endl;

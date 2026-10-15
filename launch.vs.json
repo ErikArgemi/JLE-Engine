@@ -1,3 +1,16 @@
+//{
+//  "version": "0.2.1",
+//  "defaults": {},
+//  "configurations": [
+//    {
+//      "type": "default",
+//      "project": "CMakeLists.txt",
+//      "projectTarget": "GameEngineTemplate.exe",
+//      "name": "GameEngineTemplate.exe",
+//      "currentDir": "${workspaceRoot}"
+//    }
+//  ]
+//}
 {
   "version": "0.2.1",
   "defaults": {},
@@ -5,9 +18,9 @@
     {
       "type": "default",
       "project": "CMakeLists.txt",
-      "projectTarget": "GameEngineTemplate.exe",
-      "name": "GameEngineTemplate.exe",
-      "currentDir": "${workspaceRoot}"
+      "projectTarget": "Editor.exe (Editor\\Editor.exe)",
+      "name": "Editor.exe (Editor\\Editor.exe)",
+      "currentDir": "${workspaceRoot}/Editor"
     }
   ]
 }
