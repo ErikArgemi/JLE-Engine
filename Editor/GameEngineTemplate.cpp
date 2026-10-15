@@ -3,8 +3,11 @@
 //#include "src/Log.h"
 #include "Engine.h"
 #include "Log.h"
+#include <filesystem>
 
 int main() {
+	std::cout << std::filesystem::current_path() << '\n';
+
 	std::cout << "engine starting----------"<< std::endl;
 	//LOG("Engine starting ...");
 	Engine::EngineState state = Engine::EngineState::CREATE;

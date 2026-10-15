@@ -20,7 +20,7 @@
       "project": "CMakeLists.txt",
       "projectTarget": "Editor.exe (Editor\\Editor.exe)",
       "name": "Editor.exe (Editor\\Editor.exe)",
-      "currentDir": "${workspaceRoot}/Editor"
+      "currentDir": "${workspaceRoot}"
     }
   ]
 }
