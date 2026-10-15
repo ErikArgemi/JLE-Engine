@@ -14,7 +14,7 @@ json JSON_FileReader::GetFile(const char* path) {
 
 RenderSettings JSON_FileReader::GetRenderSettings()
 {
-	json file = GetFile("configFile/render_settings.json");
+	json file = GetFile("src/configFile/render_settings.json");
 
 	int x = file["currentResolution"]["x"];
 	int y = file["currentResolution"]["y"];
@@ -24,7 +24,7 @@ RenderSettings JSON_FileReader::GetRenderSettings()
 
 EditorSettings JSON_FileReader::GetEditorSettings()
 {
-	json file = GetFile("configFile/editor_settings.json");
+	json file = GetFile("src/configFile/editor_settings.json");
 
 	bool active = file["isImGuiActive"];
 
