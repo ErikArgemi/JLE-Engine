@@ -1,8 +1,12 @@
 # Collect all .cpp files in this folder
 
 file(GLOB_RECURSE EDITOR_CODE CONFIGURE_DEPENDS
-	"${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+
+list(FILTER EDITOR_CODE EXCLUDE REGEX
+    ".*/cpu_features/cmake/ci/sample/main\\.cpp$"
 )
 
 # Add source to this project's executable.
