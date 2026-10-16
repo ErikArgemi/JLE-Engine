@@ -21,6 +21,7 @@ bool Input::PreUpdate() {
     {
         const bool* keyboard = SDL_GetKeyboardState(nullptr);
         const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
+        ImGui_ImplSDL3_ProcessEvent(&event);
 
         if (mouse & SDL_BUTTON_RMASK) {
 
