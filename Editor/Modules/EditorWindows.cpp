@@ -50,7 +50,6 @@ bool EditorWindows::Awake() {
 
 bool EditorWindows::PreUpdate() {
     SDL_Event* event = &Engine::GetInstance().input->event;
-    ImGui_ImplSDL3_ProcessEvent(event);
     if (event->type == SDL_EVENT_QUIT)
     {
         return false;
@@ -59,11 +58,13 @@ bool EditorWindows::PreUpdate() {
     if (event->type == SDL_EVENT_MOUSE_BUTTON_UP
         && event->button.button == SDL_BUTTON_RIGHT)
     {
+        printf("L Mouse down.");
     }
 
     if ((event->type == SDL_EVENT_MOUSE_BUTTON_DOWN
         && event->button.button == SDL_BUTTON_RIGHT))
     {
+        printf("R Mouse down.");
     }
 
     if (event->type == SDL_EVENT_WINDOW_RESIZED)

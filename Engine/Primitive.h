@@ -43,10 +43,10 @@ public:
 
 //template<size_t vertexArraySize, size_t indexArraySize>
 struct PrimitiveData {
-	std::vector<GLfloat> vertex;
+	std::vector<float> vertex;
 	//std::array<GLfloat,vertexArraySize> vertex;
 	unsigned int num_index;
-	std::vector<GLuint> index;
+	std::vector<int> index;
 	// std::array<GLuint, indexArraySize> index;
 };
 

@@ -33,7 +33,7 @@ Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3
     }
 
     PrimitiveMesh mesh;
-    mesh = Engine::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(GLfloat), meshData->index.data(), meshData->num_index);// TODO: get mesh data depending on the primitive type
+    mesh = Engine::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(float), meshData->index.data(), meshData->num_index * sizeof(int));
 
     Primitive p = Primitive(mesh, entity);
     primitives.emplace(primitivesSize, p);
