@@ -1,6 +1,7 @@
 #include "TextureLoader.h"
 #include "../Editor/Log.h"
 #include <glad/glad.h>
+#include <filesystem>
 
 Texture TextureLoader::LoadTexture(const char* path) {
 	ILuint img_ID = 0;
@@ -9,6 +10,7 @@ Texture TextureLoader::LoadTexture(const char* path) {
 
 	if (!ilLoadImage(path)) {
 		LOG("TextureLoader: Couldn't load the image with path '%s'.", path);
+		std::cout << "Could not load texture: " << path << " | Working directory: " << std::filesystem::current_path() << std::endl;
 		ilDeleteImages(1, &img_ID);
 		return Texture();
 	}
