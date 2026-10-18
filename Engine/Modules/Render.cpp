@@ -16,6 +16,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// Textures
+#include "../TextureLoader.h"
+
 //// ImGui
 //#include "imgui.h"
 //#include "imgui_impl_sdl3.h"
@@ -55,6 +58,9 @@ Render::~Render() {
 }
 
 bool Render::Awake() {
+    //Initialize DevIL
+    ilInit();
+
 	SDL_Window* window = Engine::GetInstance().windows->window;
 	// OpenGL is context based and thread local
 		// Link OpenGL context to SDL, after this you can load OpenGL functions and start rendering
@@ -274,6 +280,10 @@ bool Render::CleanUp() {
 
     SDL_GL_DestroyContext(glContext);
     SDL_Quit();
+
+    //Quit DevIL
+    ilShutDown();
+    
     return true;
 }
 

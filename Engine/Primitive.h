@@ -1,4 +1,6 @@
 #pragma once
+//Textures
+#include "TextureLoader.h"
 
 // GLM
 #include "glm/vec3.hpp"
@@ -30,15 +32,17 @@ struct PrimitiveEntity {
 
 class Primitive {
 public:
-
-	Primitive(PrimitiveMesh mesh, PrimitiveEntity entity) {
+	Primitive() {}
+	Primitive(PrimitiveMesh mesh, PrimitiveEntity entity, Texture texture) {
 		this->mesh = mesh;
 		this->entity = entity;
+		this->texture = texture;
 	}
 	~Primitive() {}
 
 	PrimitiveMesh mesh;
 	PrimitiveEntity entity;
+	Texture texture;
 };
 
 //template<size_t vertexArraySize, size_t indexArraySize>
@@ -48,6 +52,7 @@ struct PrimitiveData {
 	unsigned int num_index;
 	std::vector<int> index;
 	// std::array<GLuint, indexArraySize> index;
+	const char* texturePath;
 };
 
 struct Cube : PrimitiveData {
@@ -84,6 +89,7 @@ struct Cube : PrimitiveData {
 			    4, 5, 6,
 			    6, 7, 4,
 		};
+		texturePath = "Engine/PrimitiveTextures/cube.dds";
 	}
 };
 
