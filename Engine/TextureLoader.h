@@ -22,4 +22,7 @@ struct Texture {
 class TextureLoader {
 public:
 	static Texture LoadTexture(const char* path);
+
+private:
+	static Texture CreateDefaultTexture();
 };

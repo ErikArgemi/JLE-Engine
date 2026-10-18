@@ -4,6 +4,8 @@
 #include <filesystem>
 
 Texture TextureLoader::LoadTexture(const char* path) {
+	if (path == nullptr) return CreateDefaultTexture();
+
 	ILuint img_ID = 0;
 	ilGenImages(1, &img_ID);
 	ilBindImage(img_ID);
@@ -12,7 +14,7 @@ Texture TextureLoader::LoadTexture(const char* path) {
 		LOG("TextureLoader: Couldn't load the image with path '%s'.", path);
 		std::cout << "Could not load texture: " << path << " | Working directory: " << std::filesystem::current_path() << std::endl;
 		ilDeleteImages(1, &img_ID);
-		return Texture();
+		return CreateDefaultTexture();
 	}
 
 	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
@@ -34,4 +36,24 @@ Texture TextureLoader::LoadTexture(const char* path) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	return Texture(img_width, img_height, tex_ID);
+}
+
+Texture TextureLoader::CreateDefaultTexture()
+{
+	GLubyte white[4] = { 255, 255, 255, 255 };
+
+	Texture tex;
+	tex.width = 1;
+	tex.height = 1;
+
+	glGenTextures(1, &tex.id);
+	glBindTexture(GL_TEXTURE_2D, tex.id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, white);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return tex;
 }

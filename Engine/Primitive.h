@@ -52,7 +52,7 @@ struct PrimitiveData {
 	unsigned int num_index;
 	std::vector<int> index;
 	// std::array<GLuint, indexArraySize> index;
-	const char* texturePath;
+	const char* texturePath = nullptr;
 };
 
 struct Cube : PrimitiveData {
