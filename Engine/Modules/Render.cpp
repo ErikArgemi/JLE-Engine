@@ -42,7 +42,7 @@ const char* vertexShaderSource = "\n"
 "TexCoord = inTexCoord;\n"
 "}\0";
 
-const char* fragmentShaderSource = "\n"
+const char* fragmentShaderSource = "\n" //TODO: Create .frag and .vert files to save the fragment and shader code
 "#version 460 core\n"
 "in vec3 vertexColor;\n"
 "in vec2 TexCoord;\n"
