@@ -83,7 +83,7 @@ struct Cube : PrimitiveData {
 			 8, 9,10,   8,10,11,    12,13,14,  12,14,15,
 			16,17,18,  16,18,19,    20,21,22,  20,22,23,
 		};
-		texturePath = "Data/PrimitiveTextures/cube.dds";
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };
 
@@ -153,6 +153,7 @@ struct Pyramid : PrimitiveData {
 			1,2,3,
 			1,3,4
 		};
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };
 struct Cylinder : PrimitiveData {
@@ -269,6 +270,7 @@ struct Cylinder : PrimitiveData {
 			41, 39, 40,
 			41, 40, 21
 		};
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };
 
@@ -438,7 +440,7 @@ struct Sphere : PrimitiveData {
 	106, 97, 98, 106, 98, 99, 106, 99, 100, 106, 100, 101,
 	106, 101, 102, 106, 102, 103, 106, 103, 104, 106, 104, 105,
 		};
-		texturePath = "Data/PrimitiveTextures/sphere_checkerboard.dds";
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };
 
@@ -457,5 +459,6 @@ struct Tetrahedron : PrimitiveData {
 			0,3,1,
 			1,2,3
 		};
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };
