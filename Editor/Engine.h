@@ -14,6 +14,7 @@ class EditorRender;
 class Render;
 class Windows;
 class Input;
+class Scene;
 
 
 class Engine
@@ -87,6 +88,7 @@ public:
 	std::shared_ptr<Render> render;
 	std::shared_ptr<Windows> windows;
 	std::shared_ptr<Input> input;
+	std::shared_ptr<Scene> scene;
 
 	//Time
 	SDL_Time prevTime;

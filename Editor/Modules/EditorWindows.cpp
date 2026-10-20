@@ -258,7 +258,7 @@ bool EditorWindows::PostUpdate() {
 
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
-        if (ImGui::Button("Icosahedron")) {
+        if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
             LOG("Icosahdron created.\n");
             Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }

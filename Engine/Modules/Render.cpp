@@ -3,6 +3,7 @@
 #include "../../Editor/Log.h"
 #include "Windows.h"
 #include "JSON_FileReader.h"
+#include "Scene.h"
 
 #include <iostream>
 #include <memory>
@@ -16,16 +17,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// Textures
-#include "../TextureLoader.h"
+//GameObjectt and Components
+#include "../GameObject.h"
+#include "../Components/TransformComponent.h"
+#include "../Components/MeshComponent.h"
+#include "../Components/MaterialComponent.h"
 
-//// ImGui
-//#include "imgui.h"
-//#include "imgui_impl_sdl3.h"
-//#include "imgui_impl_opengl3.h"
-//
-//#include "ImGuizmo.h"
-
+//TODO: Create .frag and .vert files to save the fragment and shader code
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
 "#version 460 core\n"
@@ -42,7 +40,7 @@ const char* vertexShaderSource = "\n"
 "TexCoord = inTexCoord;\n"
 "}\0";
 
-const char* fragmentShaderSource = "\n" //TODO: Create .frag and .vert files to save the fragment and shader code
+const char* fragmentShaderSource = "\n"
 "#version 460 core\n"
 "in vec3 vertexColor;\n"
 "in vec2 TexCoord;\n"
@@ -53,6 +51,13 @@ const char* fragmentShaderSource = "\n" //TODO: Create .frag and .vert files to 
 "{\n"
 "   FragColor = vec4(vertexColor, 1.0f) * texture(tex, TexCoord) + vec4(isOutline, isOutline, isOutline, isOutline);\n"
 "}\0";
+
+//// ImGui
+//#include "imgui.h"
+//#include "imgui_impl_sdl3.h"
+//#include "imgui_impl_opengl3.h"
+//
+//#include "ImGuizmo.h"
 
 Render::Render() : Module() {
 	name = "render";
@@ -94,7 +99,7 @@ bool Render::Awake() {
     // Create Program and bind shaders
     shaderProgram = glCreateProgram();
 
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL); //TODO: get these from files
 	glCompileShader(vertexShader);
 
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
@@ -112,43 +117,43 @@ bool Render::Awake() {
     modelViewProjLocation = glGetUniformLocation(shaderProgram, "modelViewProj");
     isOutlineLocation = glGetUniformLocation(shaderProgram, "isOutline");
 
-    glGenVertexArrays(1, &VAO);
+ //   glGenVertexArrays(1, &VAO);
 
-    glGenBuffers(1, &VBO);
+ //   glGenBuffers(1, &VBO);
 
-    glGenBuffers(1, &EBO);
+ //   glGenBuffers(1, &EBO);
 
-    // Bind VAO and VBO
-    glBindVertexArray(VAO);
+ //   // Bind VAO and VBO
+ //   glBindVertexArray(VAO);
 
-    // Link GL_ARRAY_BUFFER to vertices data
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+ //   // Link GL_ARRAY_BUFFER to vertices data
+ //   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+ //   //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(d20Vertices), d20Vertices, GL_STATIC_DRAW);
-
-
-    // Link GL_ELEMENT_ARRAY_BUFFER to indices data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(d20Indices), d20Indices, GL_STATIC_DRAW);
+ //   glBufferData(GL_ARRAY_BUFFER, sizeof(d20Vertices), d20Vertices, GL_STATIC_DRAW);
 
 
-    // Define Vertex layout and set attribute index
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+ //   // Link GL_ELEMENT_ARRAY_BUFFER to indices data
+ //   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+ //   //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+ //   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(d20Indices), d20Indices, GL_STATIC_DRAW);
 
-    // Unlink VAO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    // Enable depth test
-    glEnable(GL_DEPTH_TEST);
+ //   // Define Vertex layout and set attribute index
+ //   glEnableVertexAttribArray(0);
+ //   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+
+ //   glEnableVertexAttribArray(1);
+ //   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
+ //   // Unlink VAO
+ //   glBindBuffer(GL_ARRAY_BUFFER, 0);
+ //   glBindVertexArray(0);
+ //   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+ //   // Enable depth test
+ //   glEnable(GL_DEPTH_TEST);
 
     // Rotate the cube over time
     SDL_GetCurrentTime(&Engine::GetInstance().prevTime);
@@ -167,14 +172,14 @@ bool Render::Awake() {
 bool Render::Update() {
     // UPDATE
     // View Matrix
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    //direction.y = sin(glm::radians(pitch));
+    //direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 
-    viewMatrix = glm::lookAt(position, position + direction, y_axis);
-    // Model Matrix
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), y_axis);
-    glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
+    //viewMatrix = glm::lookAt(position, position + direction, y_axis);
+    //// Model Matrix
+    //modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), y_axis);
+    //glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
 
 
     //// Perform Rotation
@@ -222,24 +227,21 @@ bool Render::Update() {
     glStencilMask(0xFF);
     glUniform1f(isOutlineLocation, 0.0f);
 
-    for (auto& primitive : primitives) {
-        Primitive& p = primitive.second; //get the entity part
+    for (auto gameObject : Engine::GetInstance().scene->GetGameObjects()) {
+        auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
+        auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
+        auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
-        p.entity.rotation += SPEED * Engine::GetInstance().dt;
+        transform->rotation += SPEED * Engine::GetInstance().dt;
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, p.entity.position);
-        model = glm::rotate(model, glm::radians(p.entity.rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, p.entity.scale);
-
-        glm::mat4 mvp = projectionMatrix * viewMatrix * model;
+        glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, p.texture.id);
+        glBindTexture(GL_TEXTURE_2D, material->id);
 
-        glBindVertexArray(p.mesh.VAO);
-        glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(mesh->VAO);
+        glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -249,20 +251,22 @@ bool Render::Update() {
     glStencilMask(0x00);
     glUniform1f(isOutlineLocation, 1.0f);
 
-    for (auto& entry : primitives) {
-        Primitive& p = entry.second;
+    for (auto gameObject : Engine::GetInstance().scene->GetGameObjects()) {
+        auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
+        auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
+        auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
         //same but bigger
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, p.entity.position);
-        model = glm::rotate(model, glm::radians(p.entity.rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, p.entity.scale * 1.1f);
+        model = glm::translate(model, transform->position);
+        model = glm::rotate(model, glm::radians(transform->rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, transform->scale*1.1f);
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * model;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
         
-        glBindVertexArray(p.mesh.VAO);
-        glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(mesh->VAO);
+        glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
     }
 
     glBindVertexArray(0);
