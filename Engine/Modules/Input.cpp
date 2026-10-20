@@ -1,7 +1,6 @@
 #include "Input.h"
 #include "../../Editor/Engine.h"
 #include "../../Editor/Log.h"
-#include "Windows.h"
 #include "Render.h"
 #include <iostream>
 
@@ -14,7 +13,7 @@ Input::~Input() {
 
 bool Input::PreUpdate() {
 
-    Render& render = *Engine::GetInstance().render;
+    Camera& camera = *Engine::GetInstance().camera;
 	float deltaTime = Engine::GetInstance().dt;
 
     while (SDL_PollEvent(&event))
@@ -28,13 +27,13 @@ bool Input::PreUpdate() {
             //Camera look
             if (event.type == SDL_EVENT_MOUSE_MOTION)
             {
-                render.yaw += event.motion.xrel * render.sensitivity;
-                render.pitch -= event.motion.yrel * render.sensitivity;
+                camera.yaw += event.motion.xrel * camera.sensitivity;
+                camera.pitch -= event.motion.yrel * camera.sensitivity;
                 //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
-                render.pitch = glm::clamp(render.pitch, -89.0f, 89.0f);
+                camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
             }
 
-            glm::vec3 forward = render.direction; //gets the forward direction of the camera
+            glm::vec3 forward = camera.direction; //gets the forward direction of the camera
 
             float speed = movementSpeed * deltaTime;
 
@@ -48,31 +47,31 @@ bool Input::PreUpdate() {
             }
 
             //gets the perpendicular vector to the forward direction, which is the right direction of the camera
-            glm::vec3 right = glm::normalize(glm::cross(forward, render.y_axis));
+            glm::vec3 right = glm::normalize(glm::cross(forward, camera.y_axis));
 
             //Camera movement
             if (keyboard[SDL_SCANCODE_W]) {
-                render.position += forward * speed;
+                camera.position += forward * speed;
             }
 
             if (keyboard[SDL_SCANCODE_S]) {
-                render.position -= forward * speed;
+                camera.position -= forward * speed;
             }
 
             if (keyboard[SDL_SCANCODE_A]) {
-                render.position -= right * speed;
+                camera.position -= right * speed;
             }
 
             if (keyboard[SDL_SCANCODE_D]) {
-                render.position += right * speed;
+                camera.position += right * speed;
             }
 
             if (keyboard[SDL_SCANCODE_Q]) {
-                render.position -= render.y_axis * speed;
+                camera.position -= camera.y_axis * speed;
             }
 
             if (keyboard[SDL_SCANCODE_E]) {
-                render.position += render.y_axis * speed;
+                camera.position += camera.y_axis * speed;
             }
 
         }
