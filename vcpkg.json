@@ -13,6 +13,9 @@
     "imguizmo",
     "opengl",
     "sdl3",
-    "nlohmann-json"
+    "cpu-features",
+    "nlohmann-json",
+    "assimp",
+    "devil"
   ]
 }

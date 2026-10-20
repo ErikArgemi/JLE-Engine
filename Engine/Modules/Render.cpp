@@ -16,6 +16,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+// Textures
+#include "../TextureLoader.h"
+
 //// ImGui
 //#include "imgui.h"
 //#include "imgui_impl_sdl3.h"
@@ -28,22 +31,27 @@ const char* vertexShaderSource = "\n"
 "#version 460 core\n"
 "layout (location = 0) in vec3 inPos;\n"
 "layout (location = 1) in vec3 inColor;\n"
+"layout (location = 2) in vec2 inTexCoord;\n"
 "out vec3 vertexColor;\n"
+"out vec2 TexCoord;\n"
 "uniform mat4 modelViewProj;\n"
 "void main()\n"
 "{\n"
 "gl_Position = modelViewProj * vec4(inPos, 1.0);\n"
 "vertexColor = inColor;\n"
+"TexCoord = inTexCoord;\n"
 "}\0";
 
 const char* fragmentShaderSource = "\n"
 "#version 460 core\n"
 "in vec3 vertexColor;\n"
+"in vec2 TexCoord;\n"
 "uniform float isOutline;\n"
+"uniform sampler2D tex;\n"
 "out vec4 FragColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(vertexColor, 1.0f) + vec4(isOutline, isOutline, isOutline, isOutline);\n"
+"   FragColor = vec4(vertexColor, 1.0f) * texture(tex, TexCoord) + vec4(isOutline, isOutline, isOutline, isOutline);\n"
 "}\0";
 
 Render::Render() : Module() {
@@ -55,6 +63,9 @@ Render::~Render() {
 }
 
 bool Render::Awake() {
+    //Initialize DevIL
+    ilInit();
+
 	SDL_Window* window = Engine::GetInstance().windows->window;
 	// OpenGL is context based and thread local
 		// Link OpenGL context to SDL, after this you can load OpenGL functions and start rendering
@@ -92,7 +103,7 @@ bool Render::Awake() {
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
-
+    
 	// Delete shaders since we've created a program already and they are contained there
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
@@ -224,8 +235,13 @@ bool Render::Update() {
         glm::mat4 mvp = projectionMatrix * viewMatrix * model;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, p.texture.id);
+
         glBindVertexArray(p.mesh.VAO);
         glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     // lines
@@ -244,7 +260,7 @@ bool Render::Update() {
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * model;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-
+        
         glBindVertexArray(p.mesh.VAO);
         glDrawElements(GL_TRIANGLES, p.mesh.n_index, GL_UNSIGNED_INT, 0);
     }
@@ -274,6 +290,10 @@ bool Render::CleanUp() {
 
     SDL_GL_DestroyContext(glContext);
     SDL_Quit();
+
+    //Quit DevIL
+    ilShutDown();
+    
     return true;
 }
 
@@ -328,7 +348,7 @@ PrimitiveMesh Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     // Link GL_ARRAY_BUFFER to vertices data
     glBindBuffer(GL_ARRAY_BUFFER, mesh.VBO);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
+        
     glBufferData(GL_ARRAY_BUFFER, vertexBytes, vertices, GL_STATIC_DRAW);
 
 
@@ -338,13 +358,15 @@ PrimitiveMesh Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount, indices, GL_STATIC_DRAW);
 
-
-    // Define Vertex layout and set attribute index
+    // Define Vertex layout and set attribute index and set UVs
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
     // Unlink VAO
     glBindBuffer(GL_ARRAY_BUFFER, 0);

@@ -1,4 +1,6 @@
 #pragma once
+//Textures
+#include "TextureLoader.h"
 
 // GLM
 #include "glm/vec3.hpp"
@@ -30,15 +32,17 @@ struct PrimitiveEntity {
 
 class Primitive {
 public:
-
-	Primitive(PrimitiveMesh mesh, PrimitiveEntity entity) {
+	Primitive() {}
+	Primitive(PrimitiveMesh mesh, PrimitiveEntity entity, Texture texture) {
 		this->mesh = mesh;
 		this->entity = entity;
+		this->texture = texture;
 	}
 	~Primitive() {}
 
 	PrimitiveMesh mesh;
 	PrimitiveEntity entity;
+	Texture texture;
 };
 
 //template<size_t vertexArraySize, size_t indexArraySize>
@@ -48,42 +52,38 @@ struct PrimitiveData {
 	unsigned int num_index;
 	std::vector<int> index;
 	// std::array<GLuint, indexArraySize> index;
+	const char* texturePath = nullptr;
 };
 
 struct Cube : PrimitiveData {
 	Cube() {
 		vertex = {
-			// Position        Color
-			-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f,
-			-0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f
-		};
+			// Front (z = +0.5)
+			-0.5f,-0.5f, 0.5f, 1,1,1, 0,0,   0.5f,-0.5f, 0.5f, 1,1,1, 1,0,
+			 0.5f, 0.5f, 0.5f, 1,1,1, 1,1,  -0.5f, 0.5f, 0.5f, 1,1,1, 0,1,
+			 // Back (z = -0.5)
+			  0.5f,-0.5f,-0.5f, 1,1,1, 0,0,  -0.5f,-0.5f,-0.5f, 1,1,1, 1,0,
+			 -0.5f, 0.5f,-0.5f, 1,1,1, 1,1,   0.5f, 0.5f,-0.5f, 1,1,1, 0,1,
+			 // Left (x = -0.5)
+			 -0.5f,-0.5f,-0.5f, 1,1,1, 0,0,  -0.5f,-0.5f, 0.5f, 1,1,1, 1,0,
+			 -0.5f, 0.5f, 0.5f, 1,1,1, 1,1,  -0.5f, 0.5f,-0.5f, 1,1,1, 0,1,
+			 // Right (x = +0.5)
+			  0.5f,-0.5f, 0.5f, 1,1,1, 0,0,   0.5f,-0.5f,-0.5f, 1,1,1, 1,0,
+			  0.5f, 0.5f,-0.5f, 1,1,1, 1,1,   0.5f, 0.5f, 0.5f, 1,1,1, 0,1,
+			  // Top (y = +0.5)
+			  -0.5f, 0.5f, 0.5f, 1,1,1, 0,0,   0.5f, 0.5f, 0.5f, 1,1,1, 1,0,
+			   0.5f, 0.5f,-0.5f, 1,1,1, 1,1,  -0.5f, 0.5f,-0.5f, 1,1,1, 0,1,
+			   // Bottom (y = -0.5)
+			   -0.5f,-0.5f,-0.5f, 1,1,1, 0,0,   0.5f,-0.5f,-0.5f, 1,1,1, 1,0,
+				0.5f,-0.5f, 0.5f, 1,1,1, 1,1,  -0.5f,-0.5f, 0.5f, 1,1,1, 0,1,
+		};	
 		num_index = 36;
 		index = {
-				// Top face
-			    3, 2, 6,
-			    6, 7, 3,
-			    // Bottom face
-			    0, 1, 5,
-			    5, 4, 0,
-			    // Left face
-			    0, 4, 7,
-			    7, 3, 0,
-			    // Right face
-			    1, 5, 6,
-			    6, 2, 1,
-			    // Back face
-			    0, 1, 2,
-			    2, 3, 0,
-			    // Front face
-			    4, 5, 6,
-			    6, 7, 4,
+			 0, 1, 2,   0, 2, 3,     4, 5, 6,   4, 6, 7,
+			 8, 9,10,   8,10,11,    12,13,14,  12,14,15,
+			16,17,18,  16,18,19,    20,21,22,  20,22,23,
 		};
+		texturePath = "Data/PrimitiveTextures/cube.dds";
 	}
 };
 

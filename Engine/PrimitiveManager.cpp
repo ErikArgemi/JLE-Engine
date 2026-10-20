@@ -1,6 +1,7 @@
 #include "PrimitiveManager.h"
 #include "Modules/Render.h"
 #include "../Editor/Engine.h"
+#include "TextureLoader.h"
 
 Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3 Pos)
 {
@@ -35,8 +36,12 @@ Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3
     PrimitiveMesh mesh;
     mesh = Engine::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(float), meshData->index.data(), meshData->num_index * sizeof(int));
 
-    Primitive p = Primitive(mesh, entity);
+    Texture texture = TextureLoader::LoadTexture(meshData->texturePath);
+
+    Primitive p = Primitive(mesh, entity, texture);
     primitives.emplace(primitivesSize, p);
 
-    return p;
+    delete(meshData);
+
+    return primitives[primitivesSize];
 }
