@@ -171,6 +171,7 @@ bool Render::Awake() {
 
 bool Render::Update() {
     // UPDATE
+    Camera& camera= *Engine::GetInstance().camera;
     // View Matrix
     //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     //direction.y = sin(glm::radians(pitch));
@@ -180,7 +181,12 @@ bool Render::Update() {
     //// Model Matrix
     //modelMatrix = glm::rotate(modelMatrix, glm::radians(rotation), y_axis);
     //glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
+    direction = camera.direction;
 
+    viewMatrix = camera.viewMatrix;
+    // Model Matrix
+    modelMatrix = camera.modelMatrix;
+    glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
 
     //// Perform Rotation
     //rotation += SPEED * Engine::GetInstance().dt;

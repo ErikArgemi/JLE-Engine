@@ -15,6 +15,7 @@ class Render;
 class Windows;
 class Input;
 class Scene;
+class Camera;
 
 
 class Engine
@@ -89,6 +90,7 @@ public:
 	std::shared_ptr<Windows> windows;
 	std::shared_ptr<Input> input;
 	std::shared_ptr<Scene> scene;
+	std::shared_ptr<Camera> camera;
 
 	//Time
 	SDL_Time prevTime;

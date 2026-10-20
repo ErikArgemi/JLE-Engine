@@ -2,6 +2,7 @@
 
 #include "../Module.h"
 #include "../../Editor/Engine.h"
+#include "Camera.h"
 #include "Windows.h"
 #include <iostream>
 #include <memory>
@@ -78,7 +79,7 @@ public:
 
     glm::mat4 viewMatrix = glm::lookAt(position, position + z_axis, y_axis);
     glm::mat4 projectionMatrix;
-    glm::mat4 modelMatrix = 1.0f;
+    glm::mat4 modelMatrix = 1.0f;   
 
     FrameBufferObject frameBufferObject;
     ImVec2 sceneWindowSize; //This is from ImGui it may not belong here

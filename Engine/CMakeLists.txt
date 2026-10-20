@@ -5,7 +5,7 @@ file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
 
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX ".*/GameEngineTemplate\\.cpp$")
 
-add_library(Engine STATIC ${ENGINE_SOURCES})
+add_library(Engine STATIC ${ENGINE_SOURCES} "Modules/Camera.h" "Modules/Camera.cpp")
 
 target_include_directories(Engine PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/src"
