@@ -15,68 +15,67 @@ bool Input::PreUpdate() {
 
     Camera& camera = *Engine::GetInstance().camera;
 	float deltaTime = Engine::GetInstance().dt;
+    const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
     while (SDL_PollEvent(&event))
     {
-        const bool* keyboard = SDL_GetKeyboardState(nullptr);
-        const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
         ImGui_ImplSDL3_ProcessEvent(&event);
 
-        if (mouse & SDL_BUTTON_RMASK) {
+        //Camera look
+        if (event.type == SDL_EVENT_MOUSE_MOTION && mouse & SDL_BUTTON_RMASK)
+        {
+            camera.yaw += event.motion.xrel * camera.sensitivity;
+            camera.pitch -= event.motion.yrel * camera.sensitivity;
+            //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
+            camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
+        }
+    }
+    
+    const bool* keyboard = SDL_GetKeyboardState(nullptr);
 
-            //Camera look
-            if (event.type == SDL_EVENT_MOUSE_MOTION)
-            {
-                camera.yaw += event.motion.xrel * camera.sensitivity;
-                camera.pitch -= event.motion.yrel * camera.sensitivity;
-                //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
-                camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
-            }
+    if (mouse & SDL_BUTTON_RMASK) {
+        glm::vec3 forward = camera.direction; //gets the forward direction of the camera
 
-            glm::vec3 forward = camera.direction; //gets the forward direction of the camera
+        float speed = movementSpeed * deltaTime;
 
-            float speed = movementSpeed * deltaTime;
+        //Movment speed boost when Lshift is held
+        if (keyboard[SDL_SCANCODE_LSHIFT]) {
+            speed = (movementSpeed + speedBoost) * deltaTime;
+        }
 
-            //Movment speed boost when Lshift is held
-            if (keyboard[SDL_SCANCODE_LSHIFT]) {
-                speed = (movementSpeed + speedBoost) * deltaTime;
-            }
+        if (glm::length(forward) > 0.0f) {
+            forward = glm::normalize(forward);
+        }
 
-            if (glm::length(forward) > 0.0f) {
-                forward = glm::normalize(forward);
-            }
+        //gets the perpendicular vector to the forward direction, which is the right direction of the camera
+        glm::vec3 right = glm::normalize(glm::cross(forward, camera.y_axis));
 
-            //gets the perpendicular vector to the forward direction, which is the right direction of the camera
-            glm::vec3 right = glm::normalize(glm::cross(forward, camera.y_axis));
+        //Camera movement
+        if (keyboard[SDL_SCANCODE_W]) {
+            camera.position += forward * speed;
+        }
 
-            //Camera movement
-            if (keyboard[SDL_SCANCODE_W]) {
-                camera.position += forward * speed;
-            }
+        if (keyboard[SDL_SCANCODE_S]) {
+            camera.position -= forward * speed;
+        }
 
-            if (keyboard[SDL_SCANCODE_S]) {
-                camera.position -= forward * speed;
-            }
+        if (keyboard[SDL_SCANCODE_A]) {
+            camera.position -= right * speed;
+        }
 
-            if (keyboard[SDL_SCANCODE_A]) {
-                camera.position -= right * speed;
-            }
+        if (keyboard[SDL_SCANCODE_D]) {
+            camera.position += right * speed;
+        }
 
-            if (keyboard[SDL_SCANCODE_D]) {
-                camera.position += right * speed;
-            }
+        if (keyboard[SDL_SCANCODE_Q]) {
+            camera.position -= camera.y_axis * speed;
+        }
 
-            if (keyboard[SDL_SCANCODE_Q]) {
-                camera.position -= camera.y_axis * speed;
-            }
-
-            if (keyboard[SDL_SCANCODE_E]) {
-                camera.position += camera.y_axis * speed;
-            }
-
+        if (keyboard[SDL_SCANCODE_E]) {
+            camera.position += camera.y_axis * speed;
         }
 
     }
-    
+
     return true;
 }
