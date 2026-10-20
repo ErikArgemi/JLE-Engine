@@ -4,14 +4,15 @@
 class GameObject;
 
 enum class ComponentType{
-	MESH = 0,
+	NONE = 0,
+	MESH,
 	TRANSFORM,
-	MATERIAL
+	MATERIAL,
 };
 
 class Component {
 public:
-	Component() {};
+	Component() {  }
 	Component(GameObject* owner) { this->owner = owner; }
 	~Component() {}
 
@@ -19,7 +20,7 @@ public:
 	virtual void Update() = 0;
 	virtual void Disable() = 0;
 
-	ComponentType type;
+	ComponentType type = ComponentType::NONE;
 	bool active = true;
 	GameObject* owner = nullptr;
 };

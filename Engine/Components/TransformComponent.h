@@ -5,8 +5,8 @@
 
 class TransformComponent : public Component {
 public:
-	TransformComponent() {}
-	TransformComponent(GameObject* owner) { this->owner = owner; }
+	TransformComponent() { type = ComponentType::TRANSFORM; }
+	TransformComponent(GameObject* owner) { this->owner = owner; type = ComponentType::TRANSFORM;}
 	~TransformComponent() {}
 
 	void Enable() { active = true; }

@@ -24,8 +24,7 @@
 
 #include "ImGuizmo.h"
 
-//Primitives
-#include "../PrimitiveManager.h"
+class MeshComponent;
 
 struct FrameBufferObject
 {
@@ -54,11 +53,11 @@ public:
     void CreateFBO(int width, int height, FrameBufferObject& frameBufferObject);
 
     //Create a mesh
-    PrimitiveMesh CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount);
+    MeshComponent CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount);
 
-    PrimitiveManager* GetPrimitiveManager() {
-        return primitiveManager.get();
-    }
+    //PrimitiveManager* GetPrimitiveManager() {
+    //    return primitiveManager.get();
+    //}
 
     SDL_GLContext GetGLContext() const {
         return glContext;
@@ -193,6 +192,4 @@ private:
     bool isRunning = true;
 
     RenderSettings renderSettings;
-
-    std::unique_ptr<PrimitiveManager> primitiveManager;
 };

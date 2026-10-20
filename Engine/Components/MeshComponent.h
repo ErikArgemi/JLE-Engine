@@ -4,8 +4,8 @@
 
 class MeshComponent : public Component { //TODO: Add the assimp for loading meshes
 public:
-	MeshComponent() {}
-	MeshComponent(GameObject* owner) { this->owner = owner; }
+	MeshComponent() { type = ComponentType::MESH; }
+	MeshComponent(GameObject* owner) { this->owner = owner; type = ComponentType::MESH; }
 	~MeshComponent() {}
 
 	void Enable() { active = true; }

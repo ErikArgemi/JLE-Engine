@@ -163,9 +163,7 @@ bool Render::Awake() {
     sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
 
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
-    
-    primitiveManager = std::make_unique<PrimitiveManager>();
-    
+
     return true;
 }
 
@@ -224,7 +222,6 @@ bool Render::Update() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
     //Render primitives
-    auto& primitives = primitiveManager->GetPrimitives();
 
     glUseProgram(shaderProgram);
 
@@ -289,8 +286,6 @@ bool Render::Update() {
 }
 
 bool Render::CleanUp() {
-    primitiveManager->CleanUp();
-    primitiveManager.reset();
 
     // Delete VAO, VBO and shader program
     glDeleteVertexArrays(1, &VAO);
@@ -341,9 +336,9 @@ void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObje
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-PrimitiveMesh Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount)
+MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount)
 {
-    PrimitiveMesh mesh;
+    MeshComponent mesh;
     mesh.n_index = indexCount;
 
     glGenVertexArrays(1, &mesh.VAO);

@@ -5,8 +5,8 @@
 
 class MaterialComponent : public Component {
 public:
-	MaterialComponent() {}
-	MaterialComponent(GameObject* owner) { this->owner = owner; }
+	MaterialComponent() { type = ComponentType::MATERIAL; }
+	MaterialComponent(GameObject* owner) { this->owner = owner; type = ComponentType::MATERIAL; }
 	~MaterialComponent() {}
 	
 	void Enable() { active = true; }
@@ -21,5 +21,4 @@ public:
 	
 private:
 	void CreateDefaultTexture();
-
 };
