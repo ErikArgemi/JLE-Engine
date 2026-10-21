@@ -9,6 +9,16 @@ void MaterialComponent::LoadTexture(const char* path) {
 	ilGenImages(1, &img_ID);
 	ilBindImage(img_ID);
 
+	//debug
+	std::cout << "Could not load texture: " << path
+		<< " | Working directory: "
+		<< std::filesystem::current_path()
+		<< std::endl;
+
+	std::cout << "Texture path: " << std::filesystem::absolute(path)
+		<< "\nFile exists: " << std::filesystem::exists(path)
+		<< "\n";
+
 	if (!ilLoadImage(path)) {
 		LOG("TextureLoader: Couldn't load the image with path '%s'.", path);
 		std::cout << "Could not load texture: " << path << " | Working directory: " << std::filesystem::current_path() << std::endl;
@@ -37,7 +47,7 @@ void MaterialComponent::LoadTexture(const char* path) {
 
 	width = img_width;
 	height = img_height;
-	id = img_ID;
+	id = tex_ID;
 }
 
 void MaterialComponent::CreateDefaultTexture() {

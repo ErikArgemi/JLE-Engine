@@ -33,7 +33,6 @@ Engine::Engine() {
 	//Engine Modules
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
-	AddModule(std::static_pointer_cast<Module>(scene));
 	AddModule(std::static_pointer_cast<Module>(camera));
 
 	//Editor Modules
@@ -42,6 +41,8 @@ Engine::Engine() {
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
 	AddModule(std::static_pointer_cast<Module>(editorRender));
+
+	AddModule(std::static_pointer_cast<Module>(scene));
 }
 
 Engine& Engine::GetInstance() {
