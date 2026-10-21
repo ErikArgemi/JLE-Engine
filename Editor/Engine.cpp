@@ -12,6 +12,7 @@
 #include "../Engine/Modules/Windows.h"
 #include "../Engine/Modules/Render.h"
 #include "../Engine/Modules/Input.h"
+#include "../Engine/Modules/Scene.h"
 #include "../Engine/Modules/Camera.h"
 
 Engine::Engine() {
@@ -25,6 +26,7 @@ Engine::Engine() {
 	windows = std::make_shared<Windows>();
 	input = std::make_shared<Input>();
 	render = std::make_shared<Render>();
+	scene = std::make_shared<Scene>();
 	camera = std::make_shared<Camera>();
 
 	//add the modules in the list
@@ -36,9 +38,13 @@ Engine::Engine() {
 	//Editor Modules
 	AddModule(std::static_pointer_cast<Module>(editorWindows));
 
+	//Scene
+	AddModule(std::static_pointer_cast<Module>(scene));
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
 	AddModule(std::static_pointer_cast<Module>(editorRender));
+
+
 }
 
 Engine& Engine::GetInstance() {

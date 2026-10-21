@@ -258,25 +258,25 @@ bool EditorWindows::PostUpdate() {
 
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
-        if (ImGui::Button("Icosahedron")) {
+        if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
             LOG("Icosahdron created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
         if (ImGui::Button("Cube")) {
             LOG("Cube created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
         }
         if (ImGui::Button("Pyramid")) {
             LOG("Pyramid created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);
         }
         if (ImGui::Button("Cylinder")) {
             LOG("Cylinder created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CYLINDER);
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CYLINDER);
         }
         if (ImGui::Button("Sphere")) {
             LOG("Sphere created.\n");
-            Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::SPHERE);
+            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::SPHERE);
         }
         ImGui::End();
 

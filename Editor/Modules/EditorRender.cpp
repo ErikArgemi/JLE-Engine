@@ -8,6 +8,8 @@
 #include "imgui_impl_sdl3.h"
 #include "imgui_impl_opengl3.h"
 
+#include "IL/il.h"
+
 EditorRender::EditorRender() : Module() {
     name = "EditorRender";
 }
