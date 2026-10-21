@@ -38,11 +38,13 @@ Engine::Engine() {
 	//Editor Modules
 	AddModule(std::static_pointer_cast<Module>(editorWindows));
 
+	//Scene
+	AddModule(std::static_pointer_cast<Module>(scene));
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
 	AddModule(std::static_pointer_cast<Module>(editorRender));
 
-	AddModule(std::static_pointer_cast<Module>(scene));
+
 }
 
 Engine& Engine::GetInstance() {

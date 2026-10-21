@@ -68,6 +68,8 @@ Render::~Render() {
 }
 
 bool Render::Awake() {
+    //Initialize DevIL
+    ilInit();
 	SDL_Window* window = Engine::GetInstance().windows->window;
 	// OpenGL is context based and thread local
 		// Link OpenGL context to SDL, after this you can load OpenGL functions and start rendering

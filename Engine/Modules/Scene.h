@@ -10,6 +10,7 @@ public:
 	~Scene();
 
 	bool Awake();
+	bool Start();
 	bool Update();
 
 	std::vector<GameObject*> GetGameObjects();

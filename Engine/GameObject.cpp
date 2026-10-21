@@ -63,4 +63,8 @@ void GameObject::GetAllGameObjects(std::vector<GameObject*>& vec) {
 			child->GetAllGameObjects(vec);
 		}
 	}
+	else {
+		vec.emplace_back(this);
+		return;
+	}
 }

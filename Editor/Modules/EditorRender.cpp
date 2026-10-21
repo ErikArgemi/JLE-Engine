@@ -19,8 +19,6 @@ EditorRender::~EditorRender() {
 }
 
 bool EditorRender::Awake() {
-    //Initialize DevIL
-    ilInit();
     SDL_Window* window = Engine::GetInstance().windows->window;
     SDL_GLContext glContext = Engine::GetInstance().render->GetGLContext();
 

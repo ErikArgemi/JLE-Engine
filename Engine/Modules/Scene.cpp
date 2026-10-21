@@ -26,7 +26,10 @@ std::vector<GameObject*> Scene::GetGameObjects()
 
 bool Scene::Awake() {
 	//parse scene jsons to load GameObjects
+	return true;
+}
 
+bool Scene::Start() {
 	CubeData cube;
 
 	rootGameObject = std::make_unique<GameObject>();
@@ -40,7 +43,7 @@ bool Scene::Awake() {
 
 	transform->position = { 0,0,0 };
 	material->LoadTexture(cube.texturePath);
-	MeshComponent newMesh = Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index);
+	MeshComponent newMesh = Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index * sizeof(int));
 	mesh->VAO = newMesh.VAO;
 	mesh->VBO = newMesh.VBO;
 	mesh->EBO = newMesh.EBO;
