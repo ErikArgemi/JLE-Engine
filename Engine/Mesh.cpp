@@ -29,8 +29,8 @@ Mesh::~Mesh() {
 }
 
 void Mesh::Clear() {
-	for (unsigned int i = 0; i < m_textures.size(); i++) {
-		SAFE_DELETE(m_textures[i]);
+	for (unsigned int i = 0; i < m_Textures.size(); i++) {
+		SAFE_DELETE(m_Textures[i]);
 	}
 	if (m_buffers[0] != 0) {
 		glDeleteBuffers(ARRAY_SIZE_IN_ELEMENTS(m_buffers), m_buffers);
@@ -58,7 +58,7 @@ bool Mesh::LoadMesh(const std::string& filename) {
 		ret = InitFromScene(pScene, filename);
 	}
 	else {
-		std::cout << "Error parsing '%s': '%s'", filename.c_str(), importer.GetErrorString() << std::endl;
+		std::cout << "Error parsing " << filename.c_str() <<": " << importer.GetErrorString() << std::endl;
 	}
 
 	glBindVertexArray(0);
@@ -84,7 +84,7 @@ bool Mesh::InitFromScene(const aiScene* pScene, const std::string& filename) {
 	}
 	PopulateBuffers();
 
-	return GLCheckError();
+	return true;
 }
 
 void Mesh::CountVerticesAndIndices(const aiScene* pScene, unsigned int& numVertices, unsigned int& numIndices) {
@@ -130,7 +130,7 @@ void Mesh::InitSingleMesh(const aiMesh* paiMesh) {
 	//populate the index buffer
 	for (unsigned int i = 0; i < paiMesh->mNumFaces; i++) {
 		const aiFace& face = paiMesh->mFaces[i];
-		assert(face.mIndices == 3);
+		assert(face.mNumIndices == 3);
 		m_Indices.push_back(face.mIndices[0]);
 		m_Indices.push_back(face.mIndices[1]);
 		m_Indices.push_back(face.mIndices[2]);
@@ -163,21 +163,21 @@ bool Mesh::InitMaterials(const aiScene* pScene, const std::string& filename) {
 		if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
 			aiString path;
 			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-				std::string p(path);
+				std::string p(path.C_Str());
 				if (p.substr(0, 2) == ".\\") {
 					p = p.substr(2, p.size() - 2);
 				}
 				std::string fullPath = dir + "/" + p;
 				//Load texture
-				m_Textures[i] = new Texture(GL_TEXTURE_2D, fullPath.c_str());
-				if (!m_Texxtures[i]->Load()) {
-					std::cout << "Error loading texture '%s'", fullPath.c_str() << std::endl;
+				m_Textures[i] = new Texture(fullPath.c_str());
+				if (!m_Textures[i]->Load()) {
+					std::cerr << "Error loading texture: " << fullPath << std::endl;
 					delete m_Textures[i];
 					m_Textures[i] = NULL;
 					ret = false;
 				}
 				else {
-					std::cout << "Loaded texture '%s'", fullPath.c_str() << std::endl;
+					std::cerr << "Loaded texture: " << fullPath << std::endl;
 				}
 			}
 		}
@@ -233,9 +233,9 @@ bool Mesh::ChangeTexture(unsigned int materialIndex, const std::string& fileName
 	}
 	//Cheack if there is no material
 	if (m_Textures[materialIndex] == nullptr) {
-		m_Textures[materialIndex] =	new Texture(GL_TEXTURE_2D, fileName);
+		m_Textures[materialIndex] =	new Texture(fileName);
 		if (!m_Textures[materialIndex]->Load()) {
-			std::cout << "Error loading texture '%s'", fileName.c_str() << std::endl;
+			std::cerr << "Error loading texture: " << fileName.c_str() << std::endl;
 			delete m_Textures[materialIndex];
 			m_Textures[materialIndex] = nullptr;
 			return false;

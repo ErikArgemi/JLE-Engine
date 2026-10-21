@@ -6,7 +6,7 @@
 
 #include <iostream>
 
-Texture::Texture(const std::string& fileName) : m_textureTarget(textureTarget), m_fileName(fileName){
+Texture::Texture(const std::string& fileName) : m_fileName(fileName){
 
 }
 
@@ -29,7 +29,7 @@ bool Texture::LoadFromFile(const std::string& fileName) {
         return false;
     }
 
-    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE));
+    ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
 
     //texID -> m_textureObj m stands for mesh
     glGenTextures(1, &m_textureObj);
