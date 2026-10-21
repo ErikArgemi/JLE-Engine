@@ -226,3 +226,22 @@ void Mesh::Render() {
 	}
 	glBindVertexArray(0);
 }
+
+bool Mesh::ChangeTexture(unsigned int materialIndex, const std::string& fileName) {
+	if (materialIndex >= m_Textures.size()) {
+		return false;
+	}
+	//Cheack if there is no material
+	if (m_Textures[materialIndex] == nullptr) {
+		m_Textures[materialIndex] =	new Texture(GL_TEXTURE_2D, fileName);
+		if (!m_Textures[materialIndex]->Load()) {
+			std::cout << "Error loading texture '%s'", fileName.c_str() << std::endl;
+			delete m_Textures[materialIndex];
+			m_Textures[materialIndex] = nullptr;
+			return false;
+		}
+		return true;
+	}
+	// change material
+	return m_Textures[materialIndex]->LoadFromFile(fileName);
+}

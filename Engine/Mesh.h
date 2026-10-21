@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 
-#include "TextureLoader.h"
+#include "Texture.h"
 
 // I'll keep these structs here for now, but i'll move it to another header after i gather some data
 struct Vector3f {
@@ -44,6 +44,7 @@ public:
 
 	//WorldTrans& GetWorldTransform(){ return m_worldTransform; }
 
+	bool ChangeTexture(unsigned int materialIndex, const std::string& fileName);
 private:
 	void Clear();
 
