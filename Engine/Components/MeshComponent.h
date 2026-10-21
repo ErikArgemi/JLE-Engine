@@ -12,6 +12,8 @@ public:
 	void Update();
 	void Disable() { active = false; }
 
+	void SetData(const MeshComponent& meshComponent);
+
 	GLuint VAO = 0;
 	GLuint VBO = 0;
 	GLuint EBO = 0;

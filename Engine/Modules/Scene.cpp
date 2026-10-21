@@ -43,7 +43,7 @@ bool Scene::Start() {
 
 	transform->position = { 0,0,0 };
 	material->LoadTexture(cube.texturePath);
-	mesh = Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index);
+	mesh->SetData(Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index));
 
 	return true;
 }
