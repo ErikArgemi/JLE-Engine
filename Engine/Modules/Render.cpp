@@ -360,7 +360,7 @@ MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount, indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(int), indices, GL_STATIC_DRAW);
 
     // Define Vertex layout and set attribute index and set UVs
     glEnableVertexAttribArray(0);
