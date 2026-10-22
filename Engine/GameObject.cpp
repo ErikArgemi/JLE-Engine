@@ -7,6 +7,13 @@ GameObject::GameObject() {}
 
 GameObject::~GameObject() {}
 
+void GameObject::CreateComponents(const std::vector<ComponentType>& newComponents)
+{
+	for (const auto& component : newComponents) {
+		this->CreateComponent(component);
+	}
+}
+
 Component& GameObject::CreateComponent(ComponentType type) {
 	std::unique_ptr<Component> component;
 
