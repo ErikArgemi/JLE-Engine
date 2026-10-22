@@ -231,7 +231,7 @@ bool Mesh::ChangeTexture(unsigned int materialIndex, const std::string& fileName
 	if (materialIndex >= m_Textures.size()) {
 		return false;
 	}
-	//Cheack if there is no material
+	//Check if there is no material
 	if (m_Textures[materialIndex] == nullptr) {
 		m_Textures[materialIndex] =	new Texture(fileName);
 		if (!m_Textures[materialIndex]->Load()) {
