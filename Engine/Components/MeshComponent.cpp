@@ -34,6 +34,7 @@ void MeshComponent::SetData(const MeshComponent& meshComponent) {
 	m_EBO = meshComponent.m_EBO;
 	n_index = meshComponent.n_index;
 }
+
 void MeshComponent::Clear() {
 	for (unsigned int i = 0; i < m_Textures.size(); i++) {
 		SAFE_DELETE(m_Textures[i]);

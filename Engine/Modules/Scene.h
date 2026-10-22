@@ -1,3 +1,4 @@
+#pragma once
 #include "../Module.h"
 #include <iostream>
 #include <vector>
@@ -16,7 +17,7 @@ public:
 	std::vector<GameObject*> GetGameObjects();
 	GameObject* GetRootGameObject() { return rootGameObject.get(); }
 
-	//TODO: Create AddGameObject
+	void AddGameObject(std::unique_ptr<GameObject> gameObject);
 
 private:
 	std::unique_ptr<GameObject> rootGameObject;

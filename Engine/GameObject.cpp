@@ -1,3 +1,4 @@
+#pragma once
 #include "../Engine/GameObject.h"
 #include "../Engine/Components/MaterialComponent.h"
 #include "../Engine/Components/MeshComponent.h"

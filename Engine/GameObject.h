@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "../Engine/Component.h"
 #include <vector>
@@ -12,6 +13,7 @@ public:
 
 	void Update();
 	
+public:
 	Component* GetComponent(ComponentType type);
 	void GetAllGameObjects(std::vector<GameObject*>& vec); //call only with the rootGameObject
 

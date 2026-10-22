@@ -1,3 +1,4 @@
+#include "Scene.h"
 #include "../Modules/Scene.h"
 #include "../GameObject.h"
 #include <iostream>
@@ -26,6 +27,15 @@ std::vector<GameObject*> Scene::GetGameObjects()
 	return ret;
 }
 
+void Scene::AddGameObject(std::unique_ptr<GameObject> gameObject)
+{
+	if (!rootGameObject) {
+		rootGameObject = std::move(gameObject);
+		return;
+	}
+	rootGameObject->children.emplace_back(std::move(gameObject));
+}
+
 bool Scene::Awake() {
 	//parse scene jsons to load GameObjects
 	return true;
@@ -41,7 +51,7 @@ bool Scene::Start() {
 	auto* transform = static_cast<TransformComponent*>(rootGameObject->GetComponent(ComponentType::TRANSFORM));
 	auto* material = static_cast<MaterialComponent*>(rootGameObject->GetComponent(ComponentType::MATERIAL));
 
-	mesh->SetData(Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index));
+	mesh->SetData(App::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index));
 	transform->position = { 0,0,0 };
 	material->LoadTexture(cube.texturePath);
 
