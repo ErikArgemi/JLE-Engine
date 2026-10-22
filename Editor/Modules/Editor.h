@@ -13,11 +13,11 @@
 
 #include "../../Engine/settings.h"
 
-class EditorWindows : public Module {
+class Editor : public Module {
 public:
-    EditorWindows();
+    Editor();
 
-    ~EditorWindows();
+    ~Editor();
 
     // Called before render is available
     bool Awake();
@@ -27,6 +27,9 @@ public:
 
     // Called each loop iteration after the main update 
     bool PostUpdate();
+
+    // Called before quitting
+    bool CleanUp();
 
     //Called to add a window from ImGui
     void AddWindow(std::string newWindow);

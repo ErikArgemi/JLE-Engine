@@ -2,11 +2,10 @@
 #include <sstream>
 #include <iomanip>
 
-#include "Engine.h"
+#include "App.h"
 #include "Log.h"
 //Editor modules include
-#include "Modules/EditorWindows.h"
-#include "Modules/EditorRender.h"
+#include "Modules/Editor.h"
 
 //Modules includes
 #include "../Engine/Modules/Windows.h"
@@ -15,12 +14,11 @@
 #include "../Engine/Modules/Scene.h"
 #include "../Engine/Modules/Camera.h"
 
-Engine::Engine() {
+App::App() {
 	std::cout << "adding modules-----------" << std::endl;
 
 	//Editor Modules
-	editorWindows = std::make_shared<EditorWindows>();
-	editorRender = std::make_shared<EditorRender>();
+	editor = std::make_shared<Editor>();
 
 	//Modules
 	windows = std::make_shared<Windows>();
@@ -30,34 +28,31 @@ Engine::Engine() {
 	camera = std::make_shared<Camera>();
 
 	//add the modules in the list
-	//Engine Modules
+	//App Modules
 	AddModule(std::static_pointer_cast<Module>(windows));
 	AddModule(std::static_pointer_cast<Module>(input));
 	AddModule(std::static_pointer_cast<Module>(camera));
-
-	//Editor Modules
-	AddModule(std::static_pointer_cast<Module>(editorWindows));
 
 	//Scene
 	AddModule(std::static_pointer_cast<Module>(scene));
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
-	AddModule(std::static_pointer_cast<Module>(editorRender));
+	AddModule(std::static_pointer_cast<Module>(editor));
 
 
 }
 
-Engine& Engine::GetInstance() {
-	static Engine instance; // Guaranteed to be destroyed and instantiated on first use
+App& App::GetInstance() {
+	static App instance; // Guaranteed to be destroyed and instantiated on first use
 	return instance;
 }
 
-void Engine::AddModule(std::shared_ptr<Module> module) {
+void App::AddModule(std::shared_ptr<Module> module) {
 	module->Init();
 	moduleList.push_back(module);
 }
 
-bool Engine::Awake() {
+bool App::Awake() {
 	LOG("ENGINE AWAKE----------");
 	bool result = true;
 	for (const auto& module : moduleList) {
@@ -70,7 +65,7 @@ bool Engine::Awake() {
 	return result;
 }
 
-bool Engine::Start() {
+bool App::Start() {
 	LOG("ENGINE START----------HELLO WORLD");
 	bool result = true;
 	for (const auto& module : moduleList) {
@@ -82,7 +77,7 @@ bool Engine::Start() {
 	return result;
 }
 
-bool Engine::Update() {
+bool App::Update() {
 	bool result = true;
 	PrepareUpdate();
 
@@ -100,7 +95,7 @@ bool Engine::Update() {
 	return result;
 }
 
-bool Engine::CleanUp() {
+bool App::CleanUp() {
 	LOG("ENGINE CLEAN UP----------");
 	bool result = true;
 	moduleList.reverse();
@@ -113,7 +108,7 @@ bool Engine::CleanUp() {
 	log.~Log();
 	return result;
 }
-void Engine::PrepareUpdate() {
+void App::PrepareUpdate() {
 	SDL_GetCurrentTime(&currentTime);
 	//FPS Update
 	fps = 1.0f / dt;
@@ -128,7 +123,7 @@ void Engine::PrepareUpdate() {
 	fps_log.emplace_back(fps);
 }
 
-void Engine::FinishUpdate() {
+void App::FinishUpdate() {
 	prevTime = currentTime;
 	SDL_GetCurrentTime(&currentTime);
 
@@ -148,7 +143,7 @@ void Engine::FinishUpdate() {
 	prevTime = currentTime;
 }
 
-bool Engine::PreUpdate() {
+bool App::PreUpdate() {
 	bool result = true;
 	for (const auto& module : moduleList) {
 		result = module->PreUpdate();
@@ -159,7 +154,7 @@ bool Engine::PreUpdate() {
 	return result;
 }
 
-bool Engine::DoUpdate() {
+bool App::DoUpdate() {
 	bool result = true;
 	for (const auto& module : moduleList) {
 		result = module->Update();
@@ -170,7 +165,7 @@ bool Engine::DoUpdate() {
 	return result;
 }
 
-bool Engine::PostUpdate() {
+bool App::PostUpdate() {
 	bool result = true;
 	for (const auto& module : moduleList) {
 		result = module->PostUpdate();

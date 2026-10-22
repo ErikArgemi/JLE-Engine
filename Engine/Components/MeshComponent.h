@@ -52,7 +52,7 @@ public:
 	//WorldTrans& GetWorldTransform(){ return m_worldTransform; }
 
 	bool ChangeTexture(unsigned int materialIndex, const std::string& fileName);
-	private:
+private:
 	void Clear();
 
 	bool InitFromScene(const aiScene* pScene, const std::string& filename);
@@ -69,6 +69,14 @@ public:
 
 	void PopulateBuffers(); // i believe this has to be in render module
 
+public:
+	GLuint m_VAO = 0;
+	GLuint m_VBO = 0;
+	GLuint m_EBO = 0;
+	GLsizei n_index = 0;
+	
+private:
+
 	#define INVALID_MATERIAL 0xFFFFFFFF
 
 	enum Buffer_Type {
@@ -82,10 +90,6 @@ public:
 	};
 
 	//WorldTrans m_worldTransform;
-	GLuint m_VAO = 0;
-	GLuint m_VBO = 0;
-	GLuint m_EBO = 0;
-	GLsizei n_index = 0;
 	GLuint m_buffers[NUM_BUFFERS] = { 0 };
 
 	struct MeshEntry {

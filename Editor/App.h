@@ -7,8 +7,7 @@
 #include <SDL3/SDL.h>
 
 // Editor Modules
-class EditorWindows;
-class EditorRender;
+class Editor;
 
 // Modules
 class Render;
@@ -18,11 +17,11 @@ class Scene;
 class Camera;
 
 
-class Engine
+class App
 {
 public:
 	// Public method to get the instance of the Singleton
-	static Engine& GetInstance();
+	static App& GetInstance();
 
 	//	Called to add the modules of the engine
 	void AddModule(std::shared_ptr<Module> module);
@@ -43,11 +42,11 @@ private:
 
 	// Private constructor to prevent instantiation
 	// Constructor
-	Engine();
+	App();
 
 	// Delete copy constructor and assignment operator to prevent copying
-	Engine(const Engine&) = delete;
-	Engine& operator=(const Engine&) = delete;
+	App(const App&) = delete;
+	App& operator=(const App&) = delete;
 
 	//Functions mainly for the time
 	//Used to calculate dt,fps...
@@ -68,7 +67,7 @@ private:
 
 public:
 	//Manage states of the engine
-	enum EngineState {
+	enum AppState {
 		CREATE = 1,
 		AWAKE, //set up libraries if needed
 		START,
@@ -82,8 +81,7 @@ public:
 	Log log;
 
 	//Editor Modules
-	std::shared_ptr<EditorWindows> editorWindows;
-	std::shared_ptr<EditorRender> editorRender;
+	std::shared_ptr<Editor> editor;
 
 	//Modules
 	std::shared_ptr<Render> render;
