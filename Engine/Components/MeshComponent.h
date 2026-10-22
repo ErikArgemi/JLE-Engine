@@ -36,13 +36,13 @@ class MeshComponent : public Component { //TODO: Add the assimp for loading mesh
 public:
 	MeshComponent() { type = ComponentType::MESH; }
 	MeshComponent(GameObject* owner) { this->owner = owner; type = ComponentType::MESH; }
-	~MeshComponent() { Clear(); }
+	~MeshComponent() { }
 
 	void Enable() { active = true; }
 	void Update();
 	void Disable() { active = false; }
 
-	void SetData(const MeshComponent& meshComponent);
+	void SetData(const MeshComponent& meshComponent); //TODO: think if making a MeshData is better to avoid initializing a MeshComponent
 
 	//Assimp load mesh
 	bool LoadMesh(const std::string& filename);
