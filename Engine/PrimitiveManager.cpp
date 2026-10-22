@@ -1,6 +1,6 @@
 //#include "PrimitiveManager.h"
 //#include "Modules/Render.h"
-//#include "../Editor/Engine.h"
+//#include "../Editor/App.h"
 //#include "TextureLoader.h"
 //
 //Primitive& PrimitiveManager::CreatePrimitiveEntity(PrimitiveType type, glm::vec3 Pos)
@@ -34,7 +34,7 @@
 //    }
 //
 //    PrimitiveMesh mesh;
-//    mesh = Engine::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(float), meshData->index.data(), meshData->num_index * sizeof(int));
+//    mesh = App::GetInstance().render->CreateMesh(meshData->vertex.data(), meshData->vertex.size() * sizeof(float), meshData->index.data(), meshData->num_index * sizeof(int));
 //
 //    Texture texture = TextureLoader::LoadTexture(meshData->texturePath);
 //

@@ -1,7 +1,7 @@
 ﻿#include <iostream>
-//#include "src/Engine.h"
+//#include "src/App.h"
 //#include "src/Log.h"
-#include "Engine.h"
+#include "App.h"
 #include "Log.h"
 #include <filesystem>
 
@@ -9,73 +9,62 @@ int main() {
 	std::cout << std::filesystem::current_path() << '\n';
 
 	std::cout << "engine starting----------"<< std::endl;
-	//LOG("Engine starting ...");
-	Engine::EngineState state = Engine::EngineState::CREATE;
+	App::AppState state = App::AppState::CREATE;
 	int result = EXIT_FAILURE;
 	std::cout << "engine create----------" << std::endl;
-	while (state != Engine::EngineState::EXIT) {
+	while (state != App::AppState::EXIT) {
 		switch (state) {
-		case Engine::EngineState::CREATE:
-			//LOG("CREATE");
-			
+		case App::AppState::CREATE:
 			std::cout << "engine awake----------" << std::endl;
-			state = Engine::EngineState::AWAKE;
+			state = App::AppState::AWAKE;
 			break;
 
-		case Engine::EngineState::AWAKE:
-			//LOG("AWAKEN MODULES");
+		case App::AppState::AWAKE:
 			std::cout << "module awake----------" << std::endl;
-			if (Engine::GetInstance().Awake() == true) {
-				state = Engine::EngineState::START;
+			if (App::GetInstance().Awake() == true) {
+				state = App::AppState::START;
 			}
 			else {
 				std::cout << "module awake fail" << std::endl;
-				state = Engine::EngineState::FAIL;
+				state = App::AppState::FAIL;
 			}
 			break;
 
-		case Engine::EngineState::START:
+		case App::AppState::START:
 			std::cout << "module start----------" << std::endl;
-			//LOG("START MODULES");
-			if (Engine::GetInstance().Start() == true) {
-				state = Engine::EngineState::UPDATE;
-				//LOG("UPDATE MODULES");
+			if (App::GetInstance().Start() == true) {
+				state = App::AppState::UPDATE;
 			}
 			else {
 				std::cout << "module start fail" << std::endl;
-				state = Engine::EngineState::FAIL;
-				//LOG("ERROR: Start failed");
+				state = App::AppState::FAIL;
 			}
 			break;
 
-		case Engine::EngineState::UPDATE:
-			if (Engine::GetInstance().Update() == false) {
-				state = Engine::EngineState::CLEAN;
+		case App::AppState::UPDATE:
+			if (App::GetInstance().Update() == false) {
+				state = App::AppState::CLEAN;
 			}
 			break;
 
-		case Engine::EngineState::CLEAN:
+		case App::AppState::CLEAN:
 			std::cout << "module clean----------" << std::endl;
-			//LOG("CLEANUP MODULES");
-			if (Engine::GetInstance().CleanUp() == true) {
+			if (App::GetInstance().CleanUp() == true) {
 				result = EXIT_SUCCESS;
-				state = Engine::EngineState::EXIT;
+				state = App::AppState::EXIT;
 			}
 			else {
 				std::cout << "module clean fail" << std::endl;
-				state = Engine::EngineState::FAIL;
+				state = App::AppState::FAIL;
 			}
 			break;
 
-		case Engine::EngineState::FAIL:
+		case App::AppState::FAIL:
 			std::cout << "fail---------------" << std::endl;
-			//LOG("Exiting with errors");
 			result = EXIT_FAILURE;
-			state = Engine::EngineState::EXIT;
+			state = App::AppState::EXIT;
 			break;
 		}
 	}
-	//LOG("THE END");
-
 	return result;
 }

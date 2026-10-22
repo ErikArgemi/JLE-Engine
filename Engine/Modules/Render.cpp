@@ -1,5 +1,5 @@
 #include "Render.h"
-#include "../../Editor/Engine.h"
+#include "../../Editor/App.h"
 #include "../../Editor/Log.h"
 #include "Windows.h"
 #include "JSON_FileReader.h"
@@ -70,7 +70,7 @@ Render::~Render() {
 bool Render::Awake() {
     //Initialize DevIL
     ilInit();
-	SDL_Window* window = Engine::GetInstance().windows->window;
+	SDL_Window* window = App::GetInstance().windows->window;
 	// OpenGL is context based and thread local
 		// Link OpenGL context to SDL, after this you can load OpenGL functions and start rendering
 		// Multi-threading -> Define multiple context and make them current
@@ -155,20 +155,20 @@ bool Render::Awake() {
  //   glEnable(GL_DEPTH_TEST);
 
     // Rotate the cube over time
-    SDL_GetCurrentTime(&Engine::GetInstance().prevTime);
+    SDL_GetCurrentTime(&App::GetInstance().prevTime);
 
-    CreateFBO(Engine::GetInstance().windows->SCREEN_WIDTH, Engine::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject);
-    sceneWindowSize.x = Engine::GetInstance().windows->SCREEN_WIDTH;
-    sceneWindowSize.y = Engine::GetInstance().windows->SCREEN_HEIGHT;
+    CreateFBO(App::GetInstance().windows->SCREEN_WIDTH, App::GetInstance().windows->SCREEN_HEIGHT, frameBufferObject);
+    sceneWindowSize.x = App::GetInstance().windows->SCREEN_WIDTH;
+    sceneWindowSize.y = App::GetInstance().windows->SCREEN_HEIGHT;
 
-    projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(Engine::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(Engine::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
+    projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(App::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(App::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
 
     return true;
 }
 
 bool Render::Update() {
     // UPDATE
-    Camera& camera= *Engine::GetInstance().camera;
+    Camera& camera= *App::GetInstance().camera;
     // View Matrix
     //direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     //direction.y = sin(glm::radians(pitch));
@@ -186,7 +186,7 @@ bool Render::Update() {
     glm::mat4 modelViewProj = projectionMatrix * viewMatrix * modelMatrix;
 
     //// Perform Rotation
-    //rotation += SPEED * Engine::GetInstance().dt;
+    //rotation += SPEED * App::GetInstance().dt;
     //
     // Clear screen color
     glClearColor(0.1f, 0.2f, 0.2f, 1.0f);
@@ -229,12 +229,12 @@ bool Render::Update() {
     glStencilMask(0xFF);
     glUniform1f(isOutlineLocation, 0.0f);
 
-    for (auto gameObject : Engine::GetInstance().scene->GetGameObjects()) {
+    for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
         auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
-        transform->rotation += SPEED * Engine::GetInstance().dt;
+        transform->rotation += SPEED * App::GetInstance().dt;
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -242,7 +242,7 @@ bool Render::Update() {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, material->id);
 
-        glBindVertexArray(mesh->VAO);
+        glBindVertexArray(mesh->m_VAO);
         glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
 
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -253,7 +253,7 @@ bool Render::Update() {
     glStencilMask(0x00);
     glUniform1f(isOutlineLocation, 1.0f);
 
-    for (auto gameObject : Engine::GetInstance().scene->GetGameObjects()) {
+    for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
         auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
@@ -267,7 +267,7 @@ bool Render::Update() {
         glm::mat4 mvp = projectionMatrix * viewMatrix * model;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
         
-        glBindVertexArray(mesh->VAO);
+        glBindVertexArray(mesh->m_VAO);
         glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
     }
 
@@ -340,24 +340,24 @@ MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     MeshComponent mesh;
     mesh.n_index = indexCount;
 
-    glGenVertexArrays(1, &mesh.VAO);
+    glGenVertexArrays(1, &mesh.m_VAO);
 
-    glGenBuffers(1, &mesh.VBO);
+    glGenBuffers(1, &mesh.m_VBO);
 
-    glGenBuffers(1, &mesh.EBO);
+    glGenBuffers(1, &mesh.m_EBO);
 
     // Bind VAO and VBO
-    glBindVertexArray(mesh.VAO);
+    glBindVertexArray(mesh.m_VAO);
 
     // Link GL_ARRAY_BUFFER to vertices data
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.m_VBO);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
         
     glBufferData(GL_ARRAY_BUFFER, vertexBytes, vertices, GL_STATIC_DRAW);
 
 
     // Link GL_ELEMENT_ARRAY_BUFFER to indices data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.m_EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(int), indices, GL_STATIC_DRAW);

@@ -1,5 +1,5 @@
 #include "Input.h"
-#include "../../Editor/Engine.h"
+#include "../../Editor/App.h"
 #include "../../Editor/Log.h"
 #include "Render.h"
 #include <iostream>
@@ -13,8 +13,8 @@ Input::~Input() {
 
 bool Input::PreUpdate() {
 
-    Camera& camera = *Engine::GetInstance().camera;
-	float deltaTime = Engine::GetInstance().dt;
+    Camera& camera = *App::GetInstance().camera;
+	float deltaTime = App::GetInstance().dt;
     const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
     while (SDL_PollEvent(&event))

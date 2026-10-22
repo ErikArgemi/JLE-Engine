@@ -1,5 +1,5 @@
-#include "EditorWindows.h"
-#include "../Engine.h"
+#include "Editor.h"
+#include "../App.h"
 #include "../Log.h"
 #include "../../Engine/Modules/Render.h"
 #include "../../Engine/Modules/Windows.h"
@@ -31,15 +31,29 @@
 #include <dxgi1_4.h> //<----- needed to see VRAM values
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
 
-EditorWindows::EditorWindows() : Module() {
-    name = "EditorWindows";
+Editor::Editor() : Module() {
+    name = "Editor";
 }
 
-EditorWindows::~EditorWindows() {
+Editor::~Editor() {
 
 }
 
-bool EditorWindows::Awake() {
+bool Editor::Awake() {
+    SDL_Window* window = App::GetInstance().windows->window;
+    SDL_GLContext glContext = App::GetInstance().render->GetGLContext();
+
+    // IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    LOG("ImGui created context");
+    // Setup Platform/Renderer backends
+    ImGui_ImplSDL3_InitForOpenGL(window, glContext);
+    ImGui_ImplOpenGL3_Init();
+
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
     JSON_FileReader fileReader;
@@ -48,8 +62,8 @@ bool EditorWindows::Awake() {
     return true;
 }
 
-bool EditorWindows::PreUpdate() {
-    SDL_Event* event = &Engine::GetInstance().input->event;
+bool Editor::PreUpdate() {
+    SDL_Event* event = &App::GetInstance().input->event;
     if (event->type == SDL_EVENT_QUIT)
     {
         return false;
@@ -70,19 +84,19 @@ bool EditorWindows::PreUpdate() {
     if (event->type == SDL_EVENT_WINDOW_RESIZED)
     {
         int w, h;
-        SDL_GetWindowSize(Engine::GetInstance().windows->window, &w, &h);
+        SDL_GetWindowSize(App::GetInstance().windows->window, &w, &h);
         ResizeWindows(ImVec2(w, h));
     }
     return true;
 }
 
-bool EditorWindows::PostUpdate() {
+bool Editor::PostUpdate() {
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
-    SDL_Window* window = Engine::GetInstance().windows->window;
+    SDL_Window* window = App::GetInstance().windows->window;
     const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
     if (gizmoActive)
     {
@@ -93,14 +107,14 @@ bool EditorWindows::PostUpdate() {
     AddWindow("Scene");
     ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
     ImVec2 newSceneWindowSize = ImGui::GetContentRegionAvail();
-    Engine::GetInstance().render->shouldRefreshSceneWindow = (newSceneWindowSize.x != Engine::GetInstance().render->sceneWindowSize.x || newSceneWindowSize.y != Engine::GetInstance().render->sceneWindowSize.y);
-    Engine::GetInstance().render->sceneWindowSize = newSceneWindowSize;
-    ImGui::Image(Engine::GetInstance().render->frameBufferObject.RENDER_TO_TEXTURE_ID, newSceneWindowSize, ImVec2(0, 1), ImVec2(1, 0));
+    App::GetInstance().render->shouldRefreshSceneWindow = (newSceneWindowSize.x != App::GetInstance().render->sceneWindowSize.x || newSceneWindowSize.y != App::GetInstance().render->sceneWindowSize.y);
+    App::GetInstance().render->sceneWindowSize = newSceneWindowSize;
+    ImGui::Image(App::GetInstance().render->frameBufferObject.RENDER_TO_TEXTURE_ID, newSceneWindowSize, ImVec2(0, 1), ImVec2(1, 0));
 
     glDisable(GL_DEPTH_TEST);
     ImGuizmo::SetRect(cursorScreenPos.x, cursorScreenPos.y, newSceneWindowSize.x, newSceneWindowSize.y);
     ImGuizmo::SetDrawlist();
-    ImGuizmo::Manipulate(glm::value_ptr(Engine::GetInstance().render->viewMatrix), glm::value_ptr(Engine::GetInstance().render->projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(Engine::GetInstance().render->modelMatrix));
+    ImGuizmo::Manipulate(glm::value_ptr(App::GetInstance().render->viewMatrix), glm::value_ptr(App::GetInstance().render->projectionMatrix), ImGuizmo::TRANSLATE, ImGuizmo::WORLD, glm::value_ptr(App::GetInstance().render->modelMatrix));
     glEnable(GL_DEPTH_TEST);
     ImGui::End();
 
@@ -186,15 +200,15 @@ bool EditorWindows::PostUpdate() {
             ImGui::Text("JLE-Engine");
             ImGui::Text("UPC CITM");
 
-            int max_fps_int = Engine::GetInstance().max_fps;
+            int max_fps_int = App::GetInstance().max_fps;
             ImGui::SliderInt("Max FPS", &max_fps_int, 0, 120, ImGuiSliderFlags(ImGuiSliderFlags_None));
-            Engine::GetInstance().max_fps = max_fps_int;
+            App::GetInstance().max_fps = max_fps_int;
 
             char title[30];
-            sprintf_s(title, 30, "Framerate %.f", Engine::GetInstance().fps_log[Engine::GetInstance().fps_log.size() - 1]);
-            ImGui::PlotHistogram("##framerate", &Engine::GetInstance().fps_log[0], Engine::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
-            sprintf_s(title, 30, "Milliseconds %.f", Engine::GetInstance().ms_log[Engine::GetInstance().ms_log.size() - 1]);
-            ImGui::PlotHistogram("##milliseconds", &Engine::GetInstance().ms_log[0], Engine::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
+            sprintf_s(title, 30, "Framerate %.f", App::GetInstance().fps_log[App::GetInstance().fps_log.size() - 1]);
+            ImGui::PlotHistogram("##framerate", &App::GetInstance().fps_log[0], App::GetInstance().fps_log.size(), 0, title, 0.0f, 120.0f, ImVec2(310, 100));
+            sprintf_s(title, 30, "Milliseconds %.f", App::GetInstance().ms_log[App::GetInstance().ms_log.size() - 1]);
+            ImGui::PlotHistogram("##milliseconds", &App::GetInstance().ms_log[0], App::GetInstance().ms_log.size(), 0, title, 0.0f, 40.0f, ImVec2(310, 100));
         }
         if (ImGui::CollapsingHeader("Window"))
         {
@@ -207,7 +221,7 @@ bool EditorWindows::PostUpdate() {
                 glViewport(0, 0, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);
             }
 
-            ImGui::Text("Refresh rate: %i", (int)Engine::GetInstance().fps);
+            ImGui::Text("Refresh rate: %i", (int)App::GetInstance().fps);
 
             if (ImGui::Checkbox("Fullscreen", &fullscreen)) {
                 SDL_SetWindowFullscreen(window, fullscreen);
@@ -280,7 +294,7 @@ bool EditorWindows::PostUpdate() {
         }
         ImGui::End();
 
-        Engine::GetInstance().log.DrawConsole();
+        App::GetInstance().log.DrawConsole();
     }
     // Dark block for brightness
     float opacity = 1.0f - brightness;
@@ -297,14 +311,22 @@ bool EditorWindows::PostUpdate() {
     return true;
 }
 
-void EditorWindows::AddWindow(std::string newWindow) {
+bool Editor::CleanUp() {
+    // Deinit ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
+    ImGui::DestroyContext();
+    return true;
+}
+
+void Editor::AddWindow(std::string newWindow) {
     for (const auto& window : windows) {
         if (window == newWindow) return;
     }
     windows.emplace_back(newWindow);
 }
 
-void EditorWindows::ResizeWindows(ImVec2 windowSize) {
+void Editor::ResizeWindows(ImVec2 windowSize) {
     currentWindowSize = windowSize;
     for (auto& window : windows) {
         RescaleWindow(window);
@@ -313,7 +335,7 @@ void EditorWindows::ResizeWindows(ImVec2 windowSize) {
 }
 
 //privates
-void EditorWindows::RescaleWindow(std::string window) {
+void Editor::RescaleWindow(std::string window) {
     ImGuiWindow* win = ImGui::FindWindowByName(window.c_str());
     if (!win) return;
 
@@ -327,7 +349,7 @@ void EditorWindows::RescaleWindow(std::string window) {
     ImGui::SetWindowSize(window.c_str(), newSize, ImGuiCond_Always);
 }
 
-std::string EditorWindows::GetCapsFromCpu(const cpu_features::X86Features& features) {
+std::string Editor::GetCapsFromCpu(const cpu_features::X86Features& features) {
     std::string listOfFeatures = "";
     if (features.sse) { listOfFeatures += "SSE, "; }
     if (features.sse2) { listOfFeatures += "SSE2, "; }

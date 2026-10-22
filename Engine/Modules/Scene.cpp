@@ -4,7 +4,7 @@
 #include "../../Engine/Components/MeshComponent.h"
 #include "../../Engine/Components/TransformComponent.h"
 #include "../../Engine/Components/MaterialComponent.h"
-#include "../../Editor/Engine.h"
+#include "../../Editor/App.h"
 #include "../../Engine/Modules/Render.h"
 
 #include "../Primitives/Cube.h"
@@ -44,7 +44,7 @@ bool Scene::Start() {
 	mesh->SetData(Engine::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index));
 	transform->position = { 0,0,0 };
 	material->LoadTexture(cube.texturePath);
-	
+
 	return true;
 }
 
