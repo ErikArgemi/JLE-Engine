@@ -231,7 +231,7 @@ bool Render::Update() {
 
     for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
-        auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
+        auto* meshComponent = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
         transform->rotation += SPEED * App::GetInstance().dt;
@@ -242,8 +242,8 @@ bool Render::Update() {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, material->id);
 
-        glBindVertexArray(mesh->m_VAO);
-        glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(meshComponent->mesh.m_VAO);
+        glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -255,7 +255,7 @@ bool Render::Update() {
 
     for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
-        auto* mesh = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
+        auto* meshComponent = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
         //same but bigger
@@ -267,8 +267,8 @@ bool Render::Update() {
         glm::mat4 mvp = projectionMatrix * viewMatrix * model;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
         
-        glBindVertexArray(mesh->m_VAO);
-        glDrawElements(GL_TRIANGLES, mesh->n_index, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(meshComponent->mesh.m_VAO);
+        glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
     }
 
     glBindVertexArray(0);
@@ -337,27 +337,27 @@ void Render::CreateFBO(int width, int height, FrameBufferObject& frameBufferObje
 
 MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indices, GLsizei indexCount)
 {
-    MeshComponent mesh;
-    mesh.n_index = indexCount;
+    MeshComponent meshComponent;
+    meshComponent.n_index = indexCount;
 
-    glGenVertexArrays(1, &mesh.m_VAO);
+    glGenVertexArrays(1, &meshComponent.mesh.m_VAO);
 
-    glGenBuffers(1, &mesh.m_VBO);
+    glGenBuffers(1, &meshComponent.mesh.m_VBO);
 
-    glGenBuffers(1, &mesh.m_EBO);
+    glGenBuffers(1, &meshComponent.mesh.m_EBO);
 
     // Bind VAO and VBO
-    glBindVertexArray(mesh.m_VAO);
+    glBindVertexArray(meshComponent.mesh.m_VAO);
 
     // Link GL_ARRAY_BUFFER to vertices data
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.m_VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, meshComponent.mesh.m_VBO);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
         
     glBufferData(GL_ARRAY_BUFFER, vertexBytes, vertices, GL_STATIC_DRAW);
 
 
     // Link GL_ELEMENT_ARRAY_BUFFER to indices data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.m_EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, meshComponent.mesh.m_EBO);
     //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(int), indices, GL_STATIC_DRAW);
@@ -377,5 +377,5 @@ MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     glBindVertexArray(0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    return mesh;
+    return meshComponent;
 }

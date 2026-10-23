@@ -13,6 +13,8 @@ public:
 	void Update();
 	void Disable() { active = false; }
 
+	void CleanUp() override {}
+
 	glm::mat4 modelMat;
 
 	glm::vec3 position{ 0.0f };
