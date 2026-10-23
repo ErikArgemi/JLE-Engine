@@ -13,6 +13,8 @@ public:
 	void Update() {}
 	void Disable() { active = false; }
 
+	void CleanUp() override {}
+
 	void LoadTexture(const char* path);
 
 	ILint width = 1;

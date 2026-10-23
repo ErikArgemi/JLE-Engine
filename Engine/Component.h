@@ -20,6 +20,8 @@ public:
 	virtual void Update() = 0;
 	virtual void Disable() = 0;
 
+	virtual void CleanUp() = 0;
+
 	ComponentType type = ComponentType::NONE;
 	bool active = true;
 	GameObject* owner = nullptr;
