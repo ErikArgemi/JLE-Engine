@@ -287,30 +287,16 @@ bool Editor::PostUpdate() {
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
         if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
-            std::unique_ptr<GameObject> newGameObject = std::make_unique<GameObject>();
-            newGameObject->CreateComponents({ ComponentType::MATERIAL, ComponentType::MESH, ComponentType::TRANSFORM });
-
-            auto* meshComponent = static_cast<MeshComponent*>(newGameObject->GetComponent(ComponentType::MESH));
-            auto* transformComponent = static_cast<TransformComponent*>(newGameObject->GetComponent(ComponentType::TRANSFORM));
-            auto* materialComponent = static_cast<MaterialComponent*>(newGameObject->GetComponent(ComponentType::MATERIAL));
-
-            transformComponent->position = { 0,0,0 };
-
-            Icosahedron icosahedron;
-            meshComponent->SetData(App::GetInstance().render->CreateMesh(icosahedron.vertex.data(), icosahedron.vertex.size() * sizeof(float), icosahedron.index.data(), icosahedron.num_index));
-
-            materialComponent->LoadTexture(icosahedron.texturePath);
-
-            App::GetInstance().scene->AddGameObject(std::move(newGameObject));
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Icosahedron(), { 0,0,0 }));
             LOG("Icosahdron created.\n");
         }
         if (ImGui::Button("Cube")) {
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cube(), { 0,0,0 }));
             LOG("Cube created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CUBE);
         }
         if (ImGui::Button("Pyramid")) {
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Pyramid(), { 0,0,0 }));
             LOG("Pyramid created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::PYRAMID);
         }
         if (ImGui::Button("Cylinder")) {
             LOG("Cylinder created.\n");

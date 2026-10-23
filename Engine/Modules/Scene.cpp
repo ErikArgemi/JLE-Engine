@@ -36,6 +36,21 @@ void Scene::AddGameObject(std::unique_ptr<GameObject> gameObject)
 	rootGameObject->children.emplace_back(std::move(gameObject));
 }
 
+std::unique_ptr<GameObject> Scene::CreatePrimitive(Primitive& primitive, glm::vec3 position) {
+	auto newGameObject = std::make_unique<GameObject>();
+	newGameObject->CreateComponents({ ComponentType::TRANSFORM, ComponentType::MESH, ComponentType::MATERIAL });
+
+	auto* transform = static_cast<TransformComponent*>(newGameObject->GetComponent(ComponentType::TRANSFORM));
+	auto* mesh = static_cast<MeshComponent*>(newGameObject->GetComponent(ComponentType::MESH));
+	auto* material = static_cast<MaterialComponent*>(newGameObject->GetComponent(ComponentType::MATERIAL));
+
+	transform->position = position;
+
+	mesh->mesh.LoadPrimitive(primitive.vertex, primitive.index); //function to make the mesh of primitives. This is because they are not leaded from the FBX so they need to have their VAO binded.
+	material->LoadTexture(primitive.texturePath); // same with textures, as they come in the FBX for the normal GameObjects
+	return newGameObject;
+}
+
 bool Scene::Awake() {
 	//parse scene jsons to load GameObjects
 	return true;

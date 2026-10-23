@@ -2,6 +2,7 @@
 #include "Primitive.h"
 
 class Pyramid : public Primitive {
+public:
 	Pyramid() {
 		vertex = {
 			//  Position                        Color

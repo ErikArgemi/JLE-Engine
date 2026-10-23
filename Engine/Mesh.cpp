@@ -72,42 +72,38 @@ bool Mesh::LoadMesh(const std::string& filename) {
 	return ret;
 }
 
-void Mesh::LoadPrimitiveTexture(const char* path) {
-	if (path == nullptr) return CreateDefaultTexture();
+void Mesh::LoadPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices) {
+	Clear();
 
-	ILuint img_ID = 0;
-	ilGenImages(1, &img_ID);
-	ilBindImage(img_ID);
+	glGenVertexArrays(1, &m_VAO);
+	glGenBuffers(1, &m_VBO);
+	glGenBuffers(1, &m_EBO);
 
-	if (!ilLoadImage(path)) {
-		LOG("TextureLoader: Couldn't load the image with path '%s'.", path);
-		std::cout << "Could not load texture: " << path << " | Working directory: " << std::filesystem::current_path() << std::endl;
-		ilDeleteImages(1, &img_ID);
-		CreateDefaultTexture();
-		return;
-	}
+	glBindVertexArray(m_VAO);
 
-	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-	ILint img_width = ilGetInteger(IL_IMAGE_WIDTH);
-	ILint img_height = ilGetInteger(IL_IMAGE_HEIGHT);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(int), indices.data(), GL_STATIC_DRAW);
 
-	GLuint tex_ID;
-	glGenTextures(1, &tex_ID);
-	glBindTexture(GL_TEXTURE_2D, tex_ID);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData());
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	ilDeleteImages(1, &img_ID);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	width = img_width;
-	height = img_height;
-	id = tex_ID;
+	MeshEntry entry;
+	entry.numIndices = (unsigned int)indices.size();
+	entry.baseVertex = 0;
+	entry.baseIndex = 0;
+	entry.materialIndex = 0;
+	m_Meshes.assign(1, entry);
 }
 
 bool Mesh::InitFromScene(const aiScene* pScene, const std::string& filename) {
@@ -249,15 +245,13 @@ void Mesh::PopulateBuffers() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices[0]) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
 }
 
-void Mesh::Render() { //TODO: make a distintion on what to do depending on the texture: Primitives don't have the txture loaded from the fbx, and this method doesn't render the texture. think about this.
+void Mesh::Render() {
 	glBindVertexArray(m_VAO);
 
 	for (unsigned int i = 0; i < m_Meshes.size(); i++) {
 		unsigned int materialIndex = m_Meshes[i].materialIndex;
 
-		assert(materialIndex < m_Textures.size());
-
-		if (m_Textures[materialIndex]) {
+		if (materialIndex < m_Textures.size() && m_Textures[materialIndex]) {
 			m_Textures[materialIndex]->Bind(COLOR_TEXTURE_UNIT);
 		}
 
