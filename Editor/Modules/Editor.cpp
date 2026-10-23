@@ -36,6 +36,9 @@
 #include "../Engine/Primitives/Cube.h"
 #include "../Engine/Primitives/Icosahedron.h"
 #include "../Engine/Primitives/Pyramid.h"
+#include "../Engine/Primitives/Cylinder.h"
+#include "../Engine/Primitives/Tetrahedron.h"
+#include "../Engine/Primitives/Sphere.h"
 
 //Scene
 #include "../Engine/Modules/Scene.h"
@@ -298,13 +301,17 @@ bool Editor::PostUpdate() {
             App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Pyramid(), { 0,0,0 }));
             LOG("Pyramid created.\n");
         }
-        if (ImGui::Button("Cylinder")) {
-            LOG("Cylinder created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::CYLINDER);
-        }
         if (ImGui::Button("Sphere")) {
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Sphere(), { 0,0,0 }));
             LOG("Sphere created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::SPHERE);
+        }
+        if (ImGui::Button("Cylinder")) {
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cylinder(), { 0,0,0 }));
+            LOG("Cylinder created.\n");
+        }
+        if (ImGui::Button("Tetrahedron")) {
+            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Tetrahedron(), { 0,0,0 }));
+            LOG("Tetrahedron created.\n");
         }
         ImGui::End();
 
