@@ -46,5 +46,6 @@ public:
 			11,9,10,
 			11,10,6
 		};
+		texturePath = "Data/PrimitiveTextures/checkerboard.dds";
 	}
 };

@@ -32,6 +32,14 @@
 #include "../Engine/Components/MeshComponent.h"
 #include "../Engine/Components/TransformComponent.h"
 
+//Primitives
+#include "../Engine/Primitives/Cube.h"
+#include "../Engine/Primitives/Icosahedron.h"
+#include "../Engine/Primitives/Pyramid.h"
+
+//Scene
+#include "../Engine/Modules/Scene.h"
+
 //Additional C++ Headers
 #include <vector>
 #include <dxgi1_4.h> //<----- needed to see VRAM values
@@ -279,8 +287,22 @@ bool Editor::PostUpdate() {
         ImGui::Begin("Add primitives", nullptr, flags);
         AddWindow("Add primitives");
         if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
+            std::unique_ptr<GameObject> newGameObject = std::make_unique<GameObject>();
+            newGameObject->CreateComponents({ ComponentType::MATERIAL, ComponentType::MESH, ComponentType::TRANSFORM });
+
+            auto* meshComponent = static_cast<MeshComponent*>(newGameObject->GetComponent(ComponentType::MESH));
+            auto* transformComponent = static_cast<TransformComponent*>(newGameObject->GetComponent(ComponentType::TRANSFORM));
+            auto* materialComponent = static_cast<MaterialComponent*>(newGameObject->GetComponent(ComponentType::MATERIAL));
+
+            transformComponent->position = { 0,0,0 };
+
+            Icosahedron icosahedron;
+            meshComponent->SetData(App::GetInstance().render->CreateMesh(icosahedron.vertex.data(), icosahedron.vertex.size() * sizeof(float), icosahedron.index.data(), icosahedron.num_index));
+
+            materialComponent->LoadTexture(icosahedron.texturePath);
+
+            App::GetInstance().scene->AddGameObject(std::move(newGameObject));
             LOG("Icosahdron created.\n");
-            //Engine::GetInstance().render->GetPrimitiveManager()->CreatePrimitiveEntity(PrimitiveType::ICOSAHEDRON);
         }
         if (ImGui::Button("Cube")) {
             LOG("Cube created.\n");
