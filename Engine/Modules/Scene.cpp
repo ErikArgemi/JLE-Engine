@@ -51,7 +51,7 @@ bool Scene::Start() {
 	auto* materialComponent = static_cast<MaterialComponent*>(rootGameObject->GetComponent(ComponentType::MATERIAL));
 
 	meshComponent->mesh.LoadMesh("Data/BakerHouse.fbx");
-	/*meshComponent->SetData(*meshComponent);*/
+	meshComponent->SetData(*meshComponent);
 	transformComponent->position = { 0,0,0 };
 	materialComponent->LoadTexture("Data/Baker_house.png");
 

@@ -26,6 +26,12 @@
 
 #include "ImGuizmo.h"
 
+//GameObject
+#include "../Engine/GameObject.h"
+#include "../Engine/Components/MaterialComponent.h"
+#include "../Engine/Components/MeshComponent.h"
+#include "../Engine/Components/TransformComponent.h"
+
 //Additional C++ Headers
 #include <vector>
 #include <dxgi1_4.h> //<----- needed to see VRAM values

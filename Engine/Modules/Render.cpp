@@ -239,44 +239,47 @@ bool Render::Update() {
         glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
 
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, material->id);
+        /*glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, material->id);*/
 
-        glBindVertexArray(meshComponent->mesh.m_VAO);
-        glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
+        meshComponent->mesh.Render();
+
+        /*glBindVertexArray(meshComponent->mesh.m_VAO);
+        glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);*/
+
 
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     // lines
-    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
-    glStencilMask(0x00);
-    glUniform1f(isOutlineLocation, 1.0f);
+    //glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    //glStencilMask(0x00);
+    //glUniform1f(isOutlineLocation, 1.0f);
 
-    for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
-        auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
-        auto* meshComponent = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
-        auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
+    //for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
+    //    auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
+    //    auto* meshComponent = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
+    //    auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
 
-        //same but bigger
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, transform->position);
-        model = glm::rotate(model, glm::radians(transform->rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, transform->scale*1.1f);
+    //    //same but bigger
+    //    glm::mat4 model = glm::mat4(1.0f);
+    //    model = glm::translate(model, transform->position);
+    //    model = glm::rotate(model, glm::radians(transform->rotation), glm::vec3(0.0f, 1.0f, 0.0f));
+    //    model = glm::scale(model, transform->scale*1.1f);
 
-        glm::mat4 mvp = projectionMatrix * viewMatrix * model;
-        glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
-        
-        glBindVertexArray(meshComponent->mesh.m_VAO);
-        glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
-    }
+    //    glm::mat4 mvp = projectionMatrix * viewMatrix * model;
+    //    glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
+    //    
+    //    glBindVertexArray(meshComponent->mesh.m_VAO);
+    //    glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
+    //}
 
-    glBindVertexArray(0);
+    //glBindVertexArray(0);
 
-    // Restore previous state
-    glStencilMask(0xFF);
-    glEnable(GL_DEPTH_TEST);
-    glDisable(GL_STENCIL_TEST);
+    //// Restore previous state
+    //glStencilMask(0xFF);
+    //glEnable(GL_DEPTH_TEST);
+    //glDisable(GL_STENCIL_TEST);
 
     // Unbind frame buffer, back to default
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

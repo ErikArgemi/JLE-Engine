@@ -192,22 +192,22 @@ bool Mesh::InitMaterials(const aiScene* pScene, const std::string& filename) {
 
 void Mesh::PopulateBuffers() {
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[POS_VB]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Positions[0]) * m_Positions.size(), &m_Positions[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(POSITION_LOCATION);
-	glVertexAttribPointer(POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Positions[0]) * m_Positions.size(), m_Positions.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glDisableVertexAttribArray(1);
+	glVertexAttrib3f(1, 1.0f, 1.0f, 1.0f);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[TEXCOORD_VB]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_TextCoords[0]) * m_TextCoords.size(), &m_TextCoords[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(TEX_COORD_LOCATION);
-	glVertexAttribPointer(TEX_COORD_LOCATION, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(m_TextCoords[0]) * m_TextCoords.size(), m_TextCoords.data(), GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[NORMAL_VB]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(m_Normals[0]) * m_Normals.size(), &m_Normals[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(NORMAL_LOCATION);
-	glVertexAttribPointer(NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_buffers[INDEX_BUFFER]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices[0]) * m_Indices.size(), &m_Indices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices[0]) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
 }
 
 void Mesh::Render() {
