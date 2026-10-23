@@ -7,6 +7,10 @@
 
 #include "Texture.h"
 
+//struct MeshData {
+//
+//};
+
 // I'll keep these structs here for now, but i'll move it to another header after i gather some data
 struct Vector3f {
 	union {

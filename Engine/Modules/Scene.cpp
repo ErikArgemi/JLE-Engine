@@ -42,18 +42,18 @@ bool Scene::Awake() {
 }
 
 bool Scene::Start() {
-	Cube cube;
 
 	rootGameObject = std::make_unique<GameObject>();
 	rootGameObject->CreateComponents({ ComponentType::MESH, ComponentType::TRANSFORM, ComponentType::MATERIAL });
 
-	auto* mesh = static_cast<MeshComponent*>(rootGameObject->GetComponent(ComponentType::MESH));
-	auto* transform = static_cast<TransformComponent*>(rootGameObject->GetComponent(ComponentType::TRANSFORM));
-	auto* material = static_cast<MaterialComponent*>(rootGameObject->GetComponent(ComponentType::MATERIAL));
+	auto* meshComponent = static_cast<MeshComponent*>(rootGameObject->GetComponent(ComponentType::MESH));
+	auto* transformComponent = static_cast<TransformComponent*>(rootGameObject->GetComponent(ComponentType::TRANSFORM));
+	auto* materialComponent = static_cast<MaterialComponent*>(rootGameObject->GetComponent(ComponentType::MATERIAL));
 
-	mesh->SetData(App::GetInstance().render->CreateMesh(cube.vertex.data(), cube.vertex.size() * sizeof(float), cube.index.data(), cube.num_index));
-	transform->position = { 0,0,0 };
-	material->LoadTexture(cube.texturePath);
+	meshComponent->mesh.LoadMesh("Data/BakerHouse.fbx");
+	/*meshComponent->SetData(*meshComponent);*/
+	transformComponent->position = { 0,0,0 };
+	materialComponent->LoadTexture("Data/Baker_house.png");
 
 	return true;
 }
