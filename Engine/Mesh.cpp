@@ -45,6 +45,11 @@ bool Mesh::LoadMesh(const std::string& filename) {
 	Clear();
 
 	glGenVertexArrays(1, &m_VAO);
+
+	glGenBuffers(1, &m_VBO);
+
+	glGenBuffers(1, &m_EBO);
+
 	glBindVertexArray(m_VAO);
 
 	glGenBuffers(ARRAY_SIZE_IN_ELEMENTS(m_buffers), m_buffers);
