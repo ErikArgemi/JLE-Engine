@@ -4,8 +4,13 @@
 
 class MeshComponent : public Component { //TODO: Add the assimp for loading meshes
 public:
-	MeshComponent() { type = ComponentType::MESH; }
-	MeshComponent(GameObject* owner) { this->owner = owner; type = ComponentType::MESH; }
+	MeshComponent(bool isPrimitive) { type = ComponentType::MESH; mesh.isPrimitive = isPrimitive; }
+	MeshComponent(GameObject* owner, bool isPrimitive) {
+		this->owner = owner; 
+		type = ComponentType::MESH; 
+		mesh.isPrimitive = isPrimitive;
+	}
+
 	~MeshComponent() { }
 
 	void Enable() { active = true; }

@@ -57,6 +57,7 @@ bool Mesh::LoadMesh(const std::string& filename) {
 	bool ret = false;
 	Assimp::Importer importer;
 
+	//search for texture
 	const aiScene* pScene = importer.ReadFile(filename.c_str(), ASSIMP_LOAD_FLAGS);
 
 	if (pScene) {
@@ -69,6 +70,44 @@ bool Mesh::LoadMesh(const std::string& filename) {
 	glBindVertexArray(0);
 
 	return ret;
+}
+
+void Mesh::LoadPrimitiveTexture(const char* path) {
+	if (path == nullptr) return CreateDefaultTexture();
+
+	ILuint img_ID = 0;
+	ilGenImages(1, &img_ID);
+	ilBindImage(img_ID);
+
+	if (!ilLoadImage(path)) {
+		LOG("TextureLoader: Couldn't load the image with path '%s'.", path);
+		std::cout << "Could not load texture: " << path << " | Working directory: " << std::filesystem::current_path() << std::endl;
+		ilDeleteImages(1, &img_ID);
+		CreateDefaultTexture();
+		return;
+	}
+
+	ilConvertImage(IL_RGBA, IL_UNSIGNED_BYTE);
+
+	ILint img_width = ilGetInteger(IL_IMAGE_WIDTH);
+	ILint img_height = ilGetInteger(IL_IMAGE_HEIGHT);
+
+	GLuint tex_ID;
+	glGenTextures(1, &tex_ID);
+	glBindTexture(GL_TEXTURE_2D, tex_ID);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, ilGetInteger(IL_IMAGE_WIDTH), ilGetInteger(IL_IMAGE_HEIGHT), 0, GL_RGBA, GL_UNSIGNED_BYTE, ilGetData());
+
+	ilDeleteImages(1, &img_ID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	width = img_width;
+	height = img_height;
+	id = tex_ID;
 }
 
 bool Mesh::InitFromScene(const aiScene* pScene, const std::string& filename) {
@@ -210,7 +249,7 @@ void Mesh::PopulateBuffers() {
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_Indices[0]) * m_Indices.size(), m_Indices.data(), GL_STATIC_DRAW);
 }
 
-void Mesh::Render() {
+void Mesh::Render() { //TODO: make a distintion on what to do depending on the texture: Primitives don't have the txture loaded from the fbx, and this method doesn't render the texture. think about this.
 	glBindVertexArray(m_VAO);
 
 	for (unsigned int i = 0; i < m_Meshes.size(); i++) {

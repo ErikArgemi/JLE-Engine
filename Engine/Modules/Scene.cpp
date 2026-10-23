@@ -6,7 +6,7 @@
 #include "../../Engine/Components/TransformComponent.h"
 #include "../../Engine/Components/MaterialComponent.h"
 #include "../../Editor/App.h"
-#include "../../Engine/Modules/Render.h"
+#include "Render.h"
 
 #include "../Primitives/Cube.h"
 

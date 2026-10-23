@@ -44,6 +44,8 @@ public:
 
 	bool LoadMesh(const std::string& filename);
 
+	void LoadPrimitiveTexture(const char* path);
+
 	void Render(); // i believe this has to be in render module
 
 	//WorldTrans& GetWorldTransform(){ return m_worldTransform; }
@@ -71,6 +73,8 @@ public:
 	GLuint m_VAO = 0;
 	GLuint m_VBO = 0;
 	GLuint m_EBO = 0;
+
+	bool isPrimitive = false;
 
 private:
 #define INVALID_MATERIAL 0xFFFFFFFF
