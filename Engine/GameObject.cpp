@@ -64,6 +64,17 @@ void GameObject::Update() {
 	}
 }
 
+glm::vec3 GameObject::GetPosition(){
+
+	auto* transform = GetComponent(ComponentType::TRANSFORM);
+
+	if (transform) {
+		return transform->position;
+	}
+
+	return glm::vec3(0.0f);
+}
+
 void GameObject::GetAllGameObjects(std::vector<GameObject*>& vec) {
 	if (children.size() != 0) {
 		vec.push_back(this);

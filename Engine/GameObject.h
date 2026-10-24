@@ -10,6 +10,7 @@ public:
 	~GameObject();
 
 	void CreateComponents(const std::vector<ComponentType>& newComponents);
+	glm::vec3 GetPosition();
 
 	void Update();
 	

@@ -2,6 +2,7 @@
 #include "../../Editor/App.h"
 #include "../../Editor/Log.h"
 #include "Render.h"
+#include "Scene.h"
 #include <iostream>
 
 Input::Input() : Module() {
@@ -14,6 +15,7 @@ Input::~Input() {
 bool Input::PreUpdate() {
 
     Camera& camera = *App::GetInstance().camera;
+    Scene& scene = *App::GetInstance().scene;
 	float deltaTime = App::GetInstance().dt;
     const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
@@ -73,6 +75,10 @@ bool Input::PreUpdate() {
 
         if (keyboard[SDL_SCANCODE_E]) {
             camera.position += camera.y_axis * speed;
+        }
+
+        if (keyboard[SDL_SCANCODE_F]) {
+			scene.GetGameObjects();
         }
 
     }
