@@ -21,8 +21,12 @@ public:
 
 	void AddGameObject(std::unique_ptr<GameObject> gameObject);
 
-	std::unique_ptr<GameObject> CreatePrimitive(Primitive& primitive, glm::vec3 position);
+	GameObject* GetSelectedGameObject() { return selectedGameObject; }
+	void SetSelectedGameObject(GameObject* newSelectedGameObject) { selectedGameObject = newSelectedGameObject; }
+
+	std::unique_ptr<GameObject> CreatePrimitive(Primitive& primitive, glm::vec3 position, std::string name = "Primitive");
 
 private:
 	std::unique_ptr<GameObject> rootGameObject;
+	GameObject* selectedGameObject = nullptr;
 };

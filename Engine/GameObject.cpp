@@ -4,6 +4,9 @@
 #include "../Engine/Components/MeshComponent.h"
 #include "../Engine/Components/TransformComponent.h"
 
+// ImGui
+#include "imgui.h"
+
 GameObject::GameObject() {}
 
 GameObject::~GameObject() {}
