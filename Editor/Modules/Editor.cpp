@@ -77,33 +77,30 @@ bool Editor::Awake() {
     JSON_FileReader fileReader;
     editorSettings = fileReader.GetEditorSettings(); //get editor settings before updating
 
+    if (SDL_EventEnabled(SDL_EVENT_DROP_FILE))
+        LOG("SDL_EVENT_DROP_FILE is enabled");
+    else LOG("SDL_EVENT_DROP_FILE is not enabled");
+
     return true;
 }
 
 bool Editor::PreUpdate() {
-    SDL_Event* event = &App::GetInstance().input->event;
-    if (event->type == SDL_EVENT_QUIT)
-    {
-        return false;
-    }
-
-    if (event->type == SDL_EVENT_MOUSE_BUTTON_UP
-        && event->button.button == SDL_BUTTON_RIGHT)
-    {
-        printf("L Mouse down.");
-    }
-
-    if ((event->type == SDL_EVENT_MOUSE_BUTTON_DOWN
-        && event->button.button == SDL_BUTTON_RIGHT))
-    {
-        printf("R Mouse down.");
-    }
-
-    if (event->type == SDL_EVENT_WINDOW_RESIZED)
-    {
-        int w, h;
-        SDL_GetWindowSize(App::GetInstance().windows->window, &w, &h);
-        ResizeWindows(ImVec2(w, h));
+    const std::vector<SDL_Event> events = App::GetInstance().input->GetEvents();
+    std::string dropFileDir;
+    for (const auto& event : events) {
+        switch (event.type) {
+        case SDL_EVENT_WINDOW_RESIZED:
+            int w, h;
+            SDL_GetWindowSize(App::GetInstance().windows->window, &w, &h);
+            ResizeWindows(ImVec2(w, h));
+            break;
+        case SDL_EVENT_DROP_FILE:
+            dropFileDir = event.drop.data;
+            LOG(dropFileDir); 
+            break;
+        default:
+            break;
+        }
     }
     return true;
 }

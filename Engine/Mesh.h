@@ -1,3 +1,4 @@
+#pragma once
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
@@ -7,11 +8,8 @@
 
 #include "Texture.h"
 
-//struct MeshData {
-//
-//};
+#define INVALID_MATERIAL 0xFFFFFFFF
 
-// I'll keep these structs here for now, but i'll move it to another header after i gather some data
 struct Vector3f {
 	union {
 		struct {
@@ -36,7 +34,18 @@ struct Vector2f {
 	Vector2f() : Vector2f(0, 0) {}
 	Vector2f(float x, float y) : x(x), y(y) {}
 };
-
+struct MeshEntry {
+	MeshEntry() {
+		numIndices = 0;
+		baseVertex = 0;
+		baseIndex = 0;
+		materialIndex = INVALID_MATERIAL;
+	}
+	unsigned int numIndices;
+	unsigned int baseVertex;
+	unsigned int baseIndex;
+	unsigned int materialIndex;
+};
 class Mesh {
 public:
 	Mesh() {};
@@ -53,29 +62,10 @@ public:
 	bool ChangeTexture(unsigned int materialIndex, const std::string& fileName);
 
 	void Clear();
-private:
-
-	bool InitFromScene(const aiScene* pScene, const std::string& filename);
-
-	void CountVerticesAndIndices(const aiScene* pScene, unsigned int& numVertices, unsigned int& numIndices);
-
-	void ReserveSpace(unsigned int numVertices, unsigned int numIndices);
-
-	void InitAllMeshes(const aiScene* pScene);
-
-	void InitSingleMesh(const aiMesh* paiMesh);
-
-	bool InitMaterials(const aiScene* pScene, const std::string& filename);
-
-	void PopulateBuffers(); // i believe this has to be in render module
-
 public:
 	GLuint m_VAO = 0;
 	GLuint m_VBO = 0;
 	GLuint m_EBO = 0;
-
-private:
-#define INVALID_MATERIAL 0xFFFFFFFF
 
 	enum Buffer_Type {
 		INDEX_BUFFER = 0,
@@ -90,19 +80,6 @@ private:
 	//WorldTrans m_worldTransform;
 	
 	GLuint m_buffers[NUM_BUFFERS] = { 0 };
-
-	struct MeshEntry {
-		MeshEntry() {
-			numIndices = 0;
-			baseVertex = 0;
-			baseIndex = 0;
-			materialIndex = INVALID_MATERIAL;
-		}
-		unsigned int numIndices;
-		unsigned int baseVertex;
-		unsigned int baseIndex;
-		unsigned int materialIndex;
-	};
 
 	std::vector<MeshEntry> m_Meshes;
 	std::vector<Texture*> m_Textures;

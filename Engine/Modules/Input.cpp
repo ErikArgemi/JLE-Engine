@@ -24,6 +24,7 @@ bool Input::PreUpdate() {
 
     while (SDL_PollEvent(&event))
     {
+        currentEvents.push_back(event);
         ImGui_ImplSDL3_ProcessEvent(&event);
 
         //Camera look
@@ -94,5 +95,10 @@ bool Input::PreUpdate() {
         camera.position = transform->position;
     }
 
+    return true;
+}
+
+bool Input::PostUpdate() {
+    currentEvents.clear();
     return true;
 }

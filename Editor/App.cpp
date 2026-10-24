@@ -6,6 +6,7 @@
 #include "Log.h"
 //Editor modules include
 #include "Modules/Editor.h"
+#include "Modules/ModelLoader.h"
 
 //Modules includes
 #include "../Engine/Modules/Windows.h"
@@ -19,6 +20,7 @@ App::App() {
 
 	//Editor Modules
 	editor = std::make_shared<Editor>();
+	modelLoader = std::make_shared<ModelLoader>();
 
 	//Modules
 	windows = std::make_shared<Windows>();
@@ -38,7 +40,7 @@ App::App() {
 		//Render always last
 	AddModule(std::static_pointer_cast<Module>(render));
 	AddModule(std::static_pointer_cast<Module>(editor));
-
+	AddModule(std::static_pointer_cast<Module>(modelLoader));
 
 }
 

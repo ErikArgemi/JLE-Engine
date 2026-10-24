@@ -8,7 +8,7 @@
 
 // Editor Modules
 class Editor;
-
+class ModelLoader;
 // Modules
 class Render;
 class Windows;
@@ -82,6 +82,7 @@ public:
 
 	//Editor Modules
 	std::shared_ptr<Editor> editor;
+	std::shared_ptr<ModelLoader> modelLoader;
 
 	//Modules
 	std::shared_ptr<Render> render;
@@ -101,20 +102,4 @@ public:
 	std::vector<float> fps_log;
 	std::vector<float> ms_log;
 private:
-
-	//add the variable of the json reader from general configuration here
-	//below there's an example code using xml it prob won't work with nlohmann
-	/*void LoadConfig()
-	{
-		pugi::xml_parse_result result = configFile.load_file("config.xml");
-		if (result)
-		{
-			LOG("config.xml parsed without errors");
-		}
-		else
-		{
-			LOG("Error loading config.xml: %s", result.description());
-		}
-
-	}*/
 };

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 // OpenGL
 #include <glad/glad.h>
@@ -28,13 +29,20 @@ public:
 	// Called each loop iteration
 	bool PreUpdate();
 
+	// Called each loop iteration after the main update 
+	bool PostUpdate();
+
+	// Get the events fromt this loop
+	const std::vector<SDL_Event>& GetEvents() const { return currentEvents; }
 private:
 public:
+	
+	
+private:
+	std::vector<SDL_Event> currentEvents;
 	SDL_Event event;
 	// SDL KEYS
 	int numKeys;
 	float movementSpeed = 5.0f;
 	float speedBoost = movementSpeed * 2.0f;
-private:
-	
 };
