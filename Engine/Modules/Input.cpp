@@ -3,6 +3,8 @@
 #include "../../Editor/Log.h"
 #include "Render.h"
 #include "Scene.h"
+#include "../GameObject.h"
+#include "../Components/TransformComponent.h"
 #include <iostream>
 
 Input::Input() : Module() {
@@ -78,7 +80,7 @@ bool Input::PreUpdate() {
         }
 
         if (keyboard[SDL_SCANCODE_F]) {
-			scene.GetGameObjects();
+            camera.position = static_cast<TransformComponent*>(scene.GetSelectedGameObject()->GetComponent(ComponentType::TRANSFORM))->position;
         }
 
     }

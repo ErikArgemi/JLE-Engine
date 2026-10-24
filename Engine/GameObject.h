@@ -3,6 +3,11 @@
 #include "../Engine/Component.h"
 #include <vector>
 
+// GLM
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 class GameObject {
 public:
 	GameObject();

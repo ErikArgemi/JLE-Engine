@@ -69,7 +69,7 @@ void GameObject::Update() {
 
 glm::vec3 GameObject::GetPosition(){
 
-	auto* transform = GetComponent(ComponentType::TRANSFORM);
+	auto* transform = static_cast<TransformComponent*>(GetComponent(ComponentType::TRANSFORM));
 
 	if (transform) {
 		return transform->position;
