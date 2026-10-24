@@ -318,39 +318,6 @@ bool Editor::PostUpdate() {
         }
         ImGui::End();
 
-		//object list window
-        ImGui::Begin("Object List");
-
-        auto scene = App::GetInstance().scene;
-
-        if (scene)
-        {
-            std::vector<GameObject*> gameObjects = scene->GetGameObjects();
-
-            for (size_t i = 0; i < gameObjects.size(); i++)
-            {
-                GameObject* object = gameObjects[i];
-
-                if (!object)
-                    continue;
-                ImGui::PushID(object);
-                std::string label = object->name;
-
-                bool isSelected =
-                    (scene->GetSelectedGameObject() == object);
-
-                if (ImGui::Selectable(label.c_str(), isSelected))
-                {
-                    scene->SetSelectedGameObject(object);
-                }
-
-                ImGui::PopID();
-            }
-        }
-
-        ImGui::End();
-
-
         App::GetInstance().log.DrawConsole();
     }
     // Dark block for brightness
