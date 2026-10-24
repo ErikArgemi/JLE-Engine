@@ -5,6 +5,7 @@
 #include "Scene.h"
 #include "../GameObject.h"
 #include "../Components/TransformComponent.h"
+#include "../Component.h"
 #include <iostream>
 
 Input::Input() : Module() {
@@ -79,10 +80,18 @@ bool Input::PreUpdate() {
             camera.position += camera.y_axis * speed;
         }
 
-        if (keyboard[SDL_SCANCODE_F]) {
-            camera.position = static_cast<TransformComponent*>(scene.GetSelectedGameObject()->GetComponent(ComponentType::TRANSFORM))->position;
-        }
+    }
 
+    if (keyboard[SDL_SCANCODE_F]) {
+        if (scene.GetSelectedGameObject() == nullptr){
+			return true;
+        }
+        TransformComponent* transform = static_cast<TransformComponent*>(scene.GetSelectedGameObject()->GetComponent(ComponentType::TRANSFORM));
+
+        if (transform == nullptr) {
+            return true;
+        }
+        camera.position = transform->position;
     }
 
     return true;
