@@ -285,33 +285,34 @@ bool Editor::PostUpdate() {
             ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
 
         }
-        ImGui::End();
-
-        ImGui::Begin("Add primitives", nullptr, flags);
-        AddWindow("Add primitives");
-        if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Icosahedron(), { 0,0,0 }));
-            LOG("Icosahdron created.\n");
+        if (ImGui::CollapsingHeader("Primitives")) {
+            if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Icosahedron(), { 0,0,0 }, "Icosahedron"));
+                LOG("Icosahdron created.\n");
+            }
+            if (ImGui::Button("Cube")) {
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cube(), { 0,0,0 }, "Cube"));
+                LOG("Cube created.\n");
+            }
+            if (ImGui::Button("Pyramid")) {
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Pyramid(), { 0,0,0 }, "Pyramid"));
+                LOG("Pyramid created.\n");
+            }
+            if (ImGui::Button("Sphere")) {
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Sphere(), { 0,0,0 }, "Sphere"));
+                LOG("Sphere created.\n");
+            }
+            if (ImGui::Button("Cylinder")) {
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cylinder(), { 0,0,0 }, "Cylinder"));
+                LOG("Cylinder created.\n");
+            }
+            if (ImGui::Button("Tetrahedron")) {
+                App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Tetrahedron(), { 0,0,0 }, "Tetrahedron"));
+                LOG("Tetrahedron created.\n");
+            }
         }
-        if (ImGui::Button("Cube")) {
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cube(), { 0,0,0 }));
-            LOG("Cube created.\n");
-        }
-        if (ImGui::Button("Pyramid")) {
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Pyramid(), { 0,0,0 }));
-            LOG("Pyramid created.\n");
-        }
-        if (ImGui::Button("Sphere")) {
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Sphere(), { 0,0,0 }));
-            LOG("Sphere created.\n");
-        }
-        if (ImGui::Button("Cylinder")) {
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Cylinder(), { 0,0,0 }));
-            LOG("Cylinder created.\n");
-        }
-        if (ImGui::Button("Tetrahedron")) {
-            App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Tetrahedron(), { 0,0,0 }));
-            LOG("Tetrahedron created.\n");
+        if (ImGui::CollapsingHeader("Hierarchy")) {
+            ShowGameObjectHierarchy(App::GetInstance().scene->GetRootGameObject());
         }
         ImGui::End();
 
@@ -399,4 +400,28 @@ std::string Editor::GetCapsFromCpu(const cpu_features::X86Features& features) {
     listOfFeatures.pop_back();
     listOfFeatures.pop_back();
     return listOfFeatures;
+}
+
+void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
+{
+    ImGui::PushID(gameObject);
+
+    if (!gameObject->HasChildren()) {
+        if (ImGui::Selectable(gameObject->name.c_str(), gameObject == App::GetInstance().scene->GetSelectedGameObject())) {
+            App::GetInstance().scene->SetSelectedGameObject(gameObject);
+        }
+    }
+    else {
+        if (ImGui::CollapsingHeader(gameObject->name.c_str())) {
+            if (ImGui::IsItemClicked()) {
+                App::GetInstance().scene->SetSelectedGameObject(gameObject);
+            }
+
+            for (auto& child : gameObject->children) {
+                ShowGameObjectHierarchy(child.get());
+            }
+        }
+    }
+
+    ImGui::PopID();
 }

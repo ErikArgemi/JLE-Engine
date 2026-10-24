@@ -13,6 +13,8 @@
 
 #include "../../Engine/settings.h"
 
+class GameObject;
+
 class Editor : public Module {
 public:
     Editor();
@@ -43,6 +45,9 @@ private:
 
     //checks individually each and every feature avalailable from the cpu and returns a string of all of them
     std::string GetCapsFromCpu(const cpu_features::X86Features& features);
+
+    //for showing in the Hierarchy
+    void ShowGameObjectHierarchy(GameObject* node);
 
 public:
     //SDL_Window* window = NULL;

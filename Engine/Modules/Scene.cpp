@@ -36,8 +36,9 @@ void Scene::AddGameObject(std::unique_ptr<GameObject> gameObject)
 	rootGameObject->children.emplace_back(std::move(gameObject));
 }
 
-std::unique_ptr<GameObject> Scene::CreatePrimitive(Primitive& primitive, glm::vec3 position) {
+std::unique_ptr<GameObject> Scene::CreatePrimitive(Primitive& primitive, glm::vec3 position, std::string name) {
 	auto newGameObject = std::make_unique<GameObject>();
+	newGameObject->name = name;
 	newGameObject->CreateComponents({ ComponentType::TRANSFORM, ComponentType::MESH, ComponentType::MATERIAL });
 
 	auto* transform = static_cast<TransformComponent*>(newGameObject->GetComponent(ComponentType::TRANSFORM));

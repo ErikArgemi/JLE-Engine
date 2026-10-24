@@ -17,7 +17,9 @@ public:
 	Component* GetComponent(ComponentType type);
 	void GetAllGameObjects(std::vector<GameObject*>& vec); //call only with the rootGameObject
 
-	std::string name = "default";
+	bool HasChildren() { return !children.empty(); }
+
+	std::string name = "GameObject";
 	bool active = true;
 
 	std::vector<std::unique_ptr<Component>> components;
