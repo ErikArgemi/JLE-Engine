@@ -452,6 +452,10 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
             fileName.extension() == ".dds") {
 
         auto target = App::GetInstance().scene->GetSelectedGameObject();
+        if (!target) {
+            LOG("No Target to update texture");
+            return;
+        }
         auto* meshComponent = static_cast<MeshComponent*>(target->GetComponent(ComponentType::MESH));
         if (!meshComponent) { 
             LOG("No texture to update"); 
