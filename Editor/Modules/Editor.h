@@ -49,15 +49,17 @@ private:
     //for showing in the Hierarchy
     void ShowGameObjectHierarchy(GameObject* node);
 
-public:
-    //SDL_Window* window = NULL;
+    //Process dropfile
+    void ProcessDropFile(const std::string fileFullPath);
 
+public:
     // Window Resolution
     const int SCREEN_WIDTH = 1920;
     const int SCREEN_HEIGHT = 1080;
 
     //ImGui flags
     ImGuiWindowFlags flags;
+
 private:
     std::vector<std::string> windows;
     ImVec2 currentWindowSize;

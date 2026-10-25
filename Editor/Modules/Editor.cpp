@@ -7,6 +7,7 @@
 #include "../../Engine/Modules/JSON_FileReader.h"
 #include "../../Engine/PrimitiveManager.h"
 #include "../Engine/GameObject.h"
+#include "ModelLoader.h"
 
 #include <iostream>
 #include <memory>
@@ -48,6 +49,7 @@
 #include <vector>
 #include <dxgi1_4.h> //<----- needed to see VRAM values
 #include <cpuinfo_x86.h> //<----- needed to check the caps of the cpu
+#include <filesystem>
 
 Editor::Editor() : Module() {
     name = "Editor";
@@ -96,7 +98,9 @@ bool Editor::PreUpdate() {
             break;
         case SDL_EVENT_DROP_FILE:
             dropFileDir = event.drop.data;
-            LOG(dropFileDir); 
+            LOG("Recieved path: " + dropFileDir);
+            ProcessDropFile(dropFileDir);
+            dropFileDir.clear();
             break;
         default:
             break;
@@ -423,4 +427,39 @@ void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
     }
 
     ImGui::PopID();
+}
+
+void Editor::ProcessDropFile(const std::string fileFullPath) {
+    std::filesystem::path fileName = fileFullPath;
+    if (fileName.extension() == ".fbx" || 
+        fileName.extension() == ".obj") {
+
+        LOG("Loading 3D Model: "+ fileName.filename().string());
+        auto newGameObject = std::make_unique<GameObject>();
+        newGameObject->name = fileName.filename().string().substr(0, fileName.filename().string().size() - fileName.extension().string().size());
+        newGameObject->CreateComponents({ ComponentType::MESH, ComponentType::TRANSFORM, ComponentType::MATERIAL });
+
+        auto* meshComponent = static_cast<MeshComponent*>(newGameObject->GetComponent(ComponentType::MESH));
+        auto* transformComponent = static_cast<TransformComponent*>(newGameObject->GetComponent(ComponentType::TRANSFORM));
+        auto* materialComponent = static_cast<MaterialComponent*>(newGameObject->GetComponent(ComponentType::MATERIAL));
+
+        meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh(fileFullPath);
+        meshComponent->SetData(*meshComponent);
+        transformComponent->position = { 0,0,0 };
+    }
+    else if (fileName.extension() == ".png" || 
+            fileName.extension() == ".dds") {
+
+        auto target = App::GetInstance().scene->GetSelectedGameObject();
+        auto* meshComponent = static_cast<MeshComponent*>(target->GetComponent(ComponentType::MESH));
+        if (!meshComponent) { 
+            LOG("No texture to update"); 
+        }
+        else {
+            meshComponent->mesh.ChangeTexture(0, fileFullPath);
+        }
+    }
+    else {
+        LOG("Unsupported file format");
+    }
 }

@@ -4,9 +4,14 @@
 class Mesh;
 class ModelLoader : public Module {
 public:
+	ModelLoader();
+
+	~ModelLoader();
+
 	Mesh LoadMesh(const std::string& filename);
 
 	Mesh LoadPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices);
+
 private:
 	bool InitFromScene(Mesh& mesh, const aiScene* pScene, const std::string& filename);
 

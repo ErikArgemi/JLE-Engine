@@ -51,11 +51,7 @@ public:
 	Mesh() {};
 	~Mesh();
 
-	bool LoadMesh(const std::string& filename);
-
-	void LoadPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices);
-
-	void Render(); // i believe this has to be in render module
+	void Render();
 
 	//WorldTrans& GetWorldTransform(){ return m_worldTransform; }
 

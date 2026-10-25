@@ -4,14 +4,24 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include <iostream>
+#include <filesystem>
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "../Log.h"
 
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices)
+
+ModelLoader::ModelLoader() : Module() {
+	name = "ModelLoader";
+}
+
+ModelLoader::~ModelLoader() {
+
+}
 
 Mesh ModelLoader::LoadMesh(const std::string& filename) {
 	Mesh newMesh;
@@ -151,19 +161,8 @@ void ModelLoader::InitSingleMesh(Mesh& mesh, const aiMesh* paiMesh) {
 
 bool ModelLoader::InitMaterials(Mesh& mesh, const aiScene* pScene, const std::string& filename) {
 	//Extract the directory part from the file name
-	std::string::size_type slashIndex = filename.find_last_of("/");
-	std::string dir;
-
-	if (slashIndex == std::string::npos) {
-		dir = ".";
-	}
-	else if (slashIndex == 0) {
-		dir = "/";
-	}
-	else {
-		dir = filename.substr(0, slashIndex);
-	}
-
+	std::filesystem::path filePath = filename;
+	std::filesystem::path fileDir = filePath.parent_path();
 	bool ret = true;
 
 	//Init materials
@@ -176,20 +175,27 @@ bool ModelLoader::InitMaterials(Mesh& mesh, const aiScene* pScene, const std::st
 			aiString path;
 			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
 				std::string p(path.C_Str());
-				if (p.substr(0, 2) == ".\\") {
-					p = p.substr(2, p.size() - 2);
+				if (p.empty()) {
+					LOG("No Textures path in this model");
+					return false;
 				}
-				std::string fullPath = dir + "/" + p;
+				std::replace(p.begin(),	p.end(), '\\', '/');
+				std::filesystem::path dirTextPath = p;
+				// Resolve relative paths against the FBX directory.
+				if (dirTextPath.is_relative())
+				{
+					dirTextPath = fileDir / dirTextPath;
+				}
 				//Load texture
-				mesh.m_Textures[i] = new Texture(fullPath.c_str());
+				mesh.m_Textures[i] = new Texture(dirTextPath.string().c_str());
 				if (!mesh.m_Textures[i]->Load()) {
-					std::cerr << "Error loading texture: " << fullPath << std::endl;
+					std::cerr << "Error loading texture: " << dirTextPath.string() << std::endl;
 					delete mesh.m_Textures[i];
 					mesh.m_Textures[i] = NULL;
 					ret = false;
 				}
 				else {
-					std::cerr << "Loaded texture: " << fullPath << std::endl;
+					std::cerr << "Loaded texture: " << dirTextPath.string() << std::endl;
 				}
 			}
 		}
