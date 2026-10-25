@@ -446,6 +446,7 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
         meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh(fileFullPath);
         meshComponent->SetData(*meshComponent);
         transformComponent->position = { 0,0,0 };
+        App::GetInstance().scene->AddGameObject(std::move(newGameObject));
     }
     else if (fileName.extension() == ".png" || 
             fileName.extension() == ".dds") {
