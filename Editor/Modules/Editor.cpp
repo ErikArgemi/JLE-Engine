@@ -446,6 +446,9 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
         meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh(fileFullPath);
         meshComponent->SetData(*meshComponent);
         transformComponent->position = { 0,0,0 };
+        if (meshComponent->mesh.m_Textures[0] == NULL) {
+            meshComponent->mesh.ChangeTexture(0, "Data/PrimitiveTextures/checkerboard.dds");
+        }
         App::GetInstance().scene->AddGameObject(std::move(newGameObject));
     }
     else if (fileName.extension() == ".png" || 
