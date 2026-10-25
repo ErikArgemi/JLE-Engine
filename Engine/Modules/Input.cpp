@@ -35,6 +35,11 @@ bool Input::PreUpdate() {
             //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
             camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
         }
+
+        if (event.type == SDL_EVENT_MOUSE_WHEEL)
+        {
+            camera.position += camera.direction * event.wheel.y * 2.0f;
+        }
     }
     
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
