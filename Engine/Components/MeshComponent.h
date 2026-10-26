@@ -25,8 +25,7 @@ public:
 	bool showVertex = false;
 	bool showTriangles = false;
 	bool showFace = false;
-
-	float normalsLength = 0.2f;
+	bool showCheckers = false;
 
 	//Loading Meshes and textures
 	Mesh mesh;

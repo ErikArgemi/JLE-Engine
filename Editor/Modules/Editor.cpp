@@ -378,6 +378,7 @@ bool Editor::PostUpdate() {
                     ImGui::Checkbox("Show Vertex",&meshComponent->showVertex);
                     ImGui::Checkbox("Show Triangle",&meshComponent->showTriangles);
                     ImGui::Checkbox("Show Face",&meshComponent->showFace);
+                    ImGui::Checkbox("Show Chechers", &meshComponent->showCheckers);
                 }
                 else{
                     ImGui::Text("No mesh");
