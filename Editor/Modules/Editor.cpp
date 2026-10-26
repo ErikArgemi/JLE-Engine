@@ -422,7 +422,12 @@ void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
         }
     }
     else {
-        if (ImGui::CollapsingHeader(gameObject->name.c_str())) {
+        ImGuiTreeNodeFlags selected = ImGuiTreeNodeFlags_None;
+        if (gameObject == App::GetInstance().scene->GetSelectedGameObject()) {
+            selected = ImGuiTreeNodeFlags_Selected;
+        }
+
+        if (ImGui::TreeNodeEx(gameObject->name.c_str(), selected)) {
             if (ImGui::IsItemClicked()) {
                 App::GetInstance().scene->SetSelectedGameObject(gameObject);
             }
@@ -430,6 +435,8 @@ void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
             for (auto& child : gameObject->children) {
                 ShowGameObjectHierarchy(child.get());
             }
+
+            ImGui::TreePop();
         }
     }
 
