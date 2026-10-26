@@ -43,6 +43,4 @@ private:
 	SDL_Event event;
 	// SDL KEYS
 	int numKeys;
-	float movementSpeed = 5.0f;
-	float speedBoost = movementSpeed * 2.0f;
 };
