@@ -25,6 +25,7 @@
 #include "ImGuizmo.h"
 
 class MeshComponent;
+class Grid;
 
 struct FrameBufferObject
 {
@@ -198,4 +199,6 @@ private:
     RenderSettings renderSettings;
 
     bool seeEdges = false;
+
+    std::unique_ptr<Grid> grid = nullptr;
 };

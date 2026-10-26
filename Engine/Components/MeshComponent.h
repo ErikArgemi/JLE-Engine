@@ -21,6 +21,12 @@ public:
 	void SetData(const MeshComponent& meshComponent);
 
 	GLsizei n_index = 0;
+
+	bool showVertex = false;
+	bool showTriangles = false;
+	bool showFace = false;
+	bool showCheckers = false;
+
 	//Loading Meshes and textures
 	Mesh mesh;
 };

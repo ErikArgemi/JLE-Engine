@@ -23,6 +23,9 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/MaterialComponent.h"
 
+//Grid
+#include "../Grid/Grid.h"
+
 //TODO: Create .frag and .vert files to save the fragment and shader code
 // Setup VS and PS in GLSL
 const char* vertexShaderSource = "\n"
@@ -163,6 +166,8 @@ bool Render::Awake() {
 
     projectionMatrix = glm::perspective(glm::radians(FOV), static_cast<float>(App::GetInstance().windows->SCREEN_WIDTH) / static_cast<float>(App::GetInstance().windows->SCREEN_HEIGHT), NEAR_PLANE, FAR_PLANE);
 
+    grid = std::make_unique<Grid>();
+
     return true;
 }
 
@@ -234,13 +239,16 @@ bool Render::Update() {
     glUniform1f(isOutlineLocation, 0.0f);
     
 
+    //draw grid
+    grid->Render();
+
     for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
         auto* meshComponent = static_cast<MeshComponent*>(gameObject->GetComponent(ComponentType::MESH));
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
         if (!transform || !meshComponent) continue; // core Components that need to exist. We can change this.
 
-        transform->rotation += SPEED * App::GetInstance().dt;
+        transform->rotation.y += SPEED * App::GetInstance().dt;
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));
@@ -394,17 +402,4 @@ MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     return meshComponent;
-}
-
-void Render::RenderGrid() {
-    /*std::vector<float> vertex;
-    int const unit = 1;
-    for (size_t i = 0; i < 50; ++i) {
-        vertex.emplace_back(i/50);
-        vertex.emplace_back(0);
-        vertex.emplace_back();
-    }
-
-
-    auto meshComponent = CreateMesh();*/
 }
