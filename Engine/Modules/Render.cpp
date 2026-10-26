@@ -2,7 +2,7 @@
 #include "../../Editor/App.h"
 #include "../../Editor/Log.h"
 #include "Windows.h"
-#include "JSON_FileReader.h"
+#include "../FileReader.h"
 #include "Scene.h"
 
 #include <iostream>
@@ -86,8 +86,8 @@ bool Render::Awake() {
 	gladLoadGL();
 
 	// Used for mapping NDC coordinates (-1.0f to 1.0f) to pixel coordinates (e.g. 1920x1080)
-    JSON_FileReader fileReader;
-    renderSettings = fileReader.GetRenderSettings();
+    
+    renderSettings = FileReader::GetRenderSettings();
 	glViewport(0, 0, renderSettings.windowsSizeX, renderSettings.windowsSizeY);
 
     // Create & compile vertex and fragment shaders
@@ -389,4 +389,17 @@ MeshComponent Render::CreateMesh(float* vertices, Uint32 vertexBytes, int* indic
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     return meshComponent;
+}
+
+void Render::RenderGrid() {
+    /*std::vector<float> vertex;
+    int const unit = 1;
+    for (size_t i = 0; i < 50; ++i) {
+        vertex.emplace_back(i/50);
+        vertex.emplace_back(0);
+        vertex.emplace_back();
+    }
+
+
+    auto meshComponent = CreateMesh();*/
 }
