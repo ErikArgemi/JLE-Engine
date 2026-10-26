@@ -86,6 +86,11 @@ bool Editor::Awake() {
 }
 
 bool Editor::PreUpdate() {
+    if (!fileToLoad3D.empty()) {
+        ProcessDropFile(fileToLoad3D);
+        fileToLoad3D.clear();
+    }
+
     const std::vector<SDL_Event> events = App::GetInstance().input->GetEvents();
     std::string dropFileDir;
     for (const auto& event : events) {
@@ -146,6 +151,9 @@ bool Editor::PostUpdate() {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("Exit")) {
                     exit(0);
+                }
+                if (ImGui::MenuItem("Import 3D")) {
+                    FileExplorerFor3D();
                 }
                 ImGui::EndMenu();
             }
@@ -445,6 +453,9 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
         meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh(fileFullPath);
         meshComponent->SetData(*meshComponent);
         transformComponent->position = { 0,0,0 };
+        if (meshComponent->mesh.m_Textures[0] == NULL) {
+            meshComponent->mesh.ChangeTexture(0, "Data/PrimitiveTextures/checkerboard.dds");
+        }
         App::GetInstance().scene->AddGameObject(std::move(newGameObject));
     }
     else if (fileName.extension() == ".png" || 
@@ -466,4 +477,23 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
     else {
         LOG("Unsupported file format");
     }
+}
+
+void Editor::FileExplorerFor3D() {
+    std::string selectedPath;
+    const SDL_DialogFileFilter filters[] = {
+        { "3D Models", "fbx;obj" }
+    };
+
+    SDL_ShowOpenFileDialog([](void* userdata, const char* const* filelist, int filter) {
+        if (!filelist) {
+            LOG("An error occured: %s", SDL_GetError());
+            return;
+        }
+        std::string path = filelist[0];
+        LOG("Loaded file path: " + path);
+        App::GetInstance().editor->Set3DFileToLoad(path);
+        },
+        nullptr, nullptr, filters, 1, nullptr, false
+    );
 }

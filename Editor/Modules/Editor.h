@@ -39,6 +39,11 @@ public:
     //Called when ALL the windows are in need of a resize
     void ResizeWindows(ImVec2 windowSize);
 
+    //Open File Explorer to import models
+    void FileExplorerFor3D();
+
+    //For Loading
+    void Set3DFileToLoad(std::string name) { fileToLoad3D = name; }
 private:
     //Called to rescale a window
     void RescaleWindow(std::string window);
@@ -61,6 +66,7 @@ public:
     ImGuiWindowFlags flags;
 
 private:
+    std::string fileToLoad3D;
     std::vector<std::string> windows;
     ImVec2 currentWindowSize;
     ImVec2 prevWindowsSize{ 1920, 1080 };

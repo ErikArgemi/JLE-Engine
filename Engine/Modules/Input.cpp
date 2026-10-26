@@ -28,12 +28,16 @@ bool Input::PreUpdate() {
         ImGui_ImplSDL3_ProcessEvent(&event);
 
         //Camera look
-        if (event.type == SDL_EVENT_MOUSE_MOTION && mouse & SDL_BUTTON_RMASK)
-        {
+        if (event.type == SDL_EVENT_MOUSE_MOTION && mouse & SDL_BUTTON_RMASK){
             camera.yaw += event.motion.xrel * camera.sensitivity;
             camera.pitch -= event.motion.yrel * camera.sensitivity;
             //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
             camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
+        }
+
+        //Camera scroll zoom?
+        if (event.type == SDL_EVENT_MOUSE_WHEEL){
+            camera.position += camera.direction * event.wheel.y * 2.0f;
         }
     }
     
@@ -42,11 +46,11 @@ bool Input::PreUpdate() {
     if (mouse & SDL_BUTTON_RMASK) {
         glm::vec3 forward = camera.direction; //gets the forward direction of the camera
 
-        float speed = movementSpeed * deltaTime;
+        float speed = camera.movementSpeed * deltaTime;
 
         //Movment speed boost when Lshift is held
         if (keyboard[SDL_SCANCODE_LSHIFT]) {
-            speed = (movementSpeed + speedBoost) * deltaTime;
+            speed = speed * 2;
         }
 
         if (glm::length(forward) > 0.0f) {
