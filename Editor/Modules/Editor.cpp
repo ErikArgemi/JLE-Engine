@@ -360,11 +360,34 @@ bool Editor::PostUpdate() {
             ImGui::Text("Y: %f", transform->scale.y);
             ImGui::Text("Z: %f", transform->scale.z);
             ImGui::Text("");
+
+            // Mesh information
+            if (ImGui::CollapsingHeader("MESH", ImGuiTreeNodeFlags_DefaultOpen)){
+                auto* meshComponent = static_cast<MeshComponent*>(selectedObject->GetComponent(ComponentType::MESH));
+                if (meshComponent){
+                    Mesh& mesh = meshComponent->mesh;
+
+                    ImGui::Text("Vertices: %i", mesh.m_Positions.size());
+                    ImGui::Text("Normals: %i", mesh.m_Normals.size());
+                    ImGui::Text("Indices: %i", mesh.m_Indices.size());
+                    ImGui::Text("Submeshes: %i", mesh.m_Meshes.size());
+                    ImGui::Text("Textures: %i", mesh.m_Textures.size());
+
+                    ImGui::Text("");
+
+                    ImGui::Checkbox("Show Vertex",&meshComponent->showVertex);
+                    ImGui::Checkbox("Show Triangle",&meshComponent->showTriangles);
+                    ImGui::Checkbox("Show Face",&meshComponent->showFace);
+                }
+                else{
+                    ImGui::Text("No mesh");
+                }
+            }
+
         }
         else{
             ImGui::Text("No object selected.");
         }
-
         ImGui::End();
 
         App::GetInstance().log.DrawConsole();

@@ -22,3 +22,6 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 * \[F]: focus on selected object.
 * \[Alt]+\[Left Mouse Button] to orbit around the selected object.
 
+
+## Extras:
+* \Added dragbars to the inspector window that transforms selected objects.
