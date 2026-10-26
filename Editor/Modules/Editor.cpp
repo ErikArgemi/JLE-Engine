@@ -4,7 +4,7 @@
 #include "../../Engine/Modules/Render.h"
 #include "../../Engine/Modules/Windows.h"
 #include "../../Engine/Modules/Input.h"
-#include "../../Engine/Modules/JSON_FileReader.h"
+#include "../../Engine/FileReader.h"
 #include "../../Engine/PrimitiveManager.h"
 #include "../Engine/GameObject.h"
 #include "ModelLoader.h"
@@ -76,8 +76,7 @@ bool Editor::Awake() {
 
     flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
-    JSON_FileReader fileReader;
-    editorSettings = fileReader.GetEditorSettings(); //get editor settings before updating
+    editorSettings = FileReader::GetEditorSettings(); //get editor settings before updating
 
     if (SDL_EventEnabled(SDL_EVENT_DROP_FILE))
         LOG("SDL_EVENT_DROP_FILE is enabled");
