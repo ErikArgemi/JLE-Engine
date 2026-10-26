@@ -491,6 +491,9 @@ void Editor::FileExplorerFor3D() {
             LOG("An error occured: %s", SDL_GetError());
             return;
         }
+        if (filelist[0] == NULL) {
+            return;
+        }
         std::string path = filelist[0];
         LOG("Loaded file path: " + path);
         App::GetInstance().editor->Set3DFileToLoad(path);
