@@ -2,7 +2,7 @@
 #include "../../Editor/App.h"
 #include "../../Editor/Log.h"
 #include "Render.h"
-#include "JSON_FileReader.h"
+#include "../FileReader.h"
 #include "../PrimitiveManager.h"
 
 #include <iostream>
@@ -57,8 +57,11 @@ bool Windows::Awake() {
         return false;
     }
 
+    SDL_SetWindowFullscreen(window, FileReader::GetWindowSettings().fullScreen);
+
     return true;
 }
+
 bool Windows::CleanUp() {
     SDL_DestroyWindow(window);
     return true;

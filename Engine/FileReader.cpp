@@ -1,6 +1,6 @@
-#include "JSON_FileReader.h"
+#include "FileReader.h"
 
-json JSON_FileReader::GetFile(const char* path) {
+json FileReader::GetFile(const char* path) {
 	std::ifstream file(path);
 	json to_json;
 	file >> to_json;
@@ -12,7 +12,7 @@ json JSON_FileReader::GetFile(const char* path) {
 	return to_json;
 }
 
-RenderSettings JSON_FileReader::GetRenderSettings()
+RenderSettings FileReader::GetRenderSettings()
 {
 	json file = GetFile("Editor/configFile/render_settings.json");
 
@@ -22,11 +22,19 @@ RenderSettings JSON_FileReader::GetRenderSettings()
 	return RenderSettings(x, y);
 }
 
-EditorSettings JSON_FileReader::GetEditorSettings()
+EditorSettings FileReader::GetEditorSettings()
 {
 	json file = GetFile("Editor/configFile/editor_settings.json");
 
 	bool active = file["isImGuiActive"];
 
 	return EditorSettings(active);
+}
+
+WindowSettings FileReader::GetWindowSettings() {
+	json file = GetFile("Editor/configFile/window_settings.json");
+
+	bool fullScreen = file["fullScreen"];
+
+	return WindowSettings(fullScreen);
 }
