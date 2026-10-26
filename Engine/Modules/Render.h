@@ -65,6 +65,8 @@ public:
 
     void RenderGrid();
 
+    void ToggleEdges() { seeEdges = !seeEdges; }
+
 public:
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f);
 
@@ -194,4 +196,6 @@ private:
     bool isRunning = true;
 
     RenderSettings renderSettings;
+
+    bool seeEdges = false;
 };

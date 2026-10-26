@@ -224,10 +224,15 @@ bool Render::Update() {
 
     glUseProgram(shaderProgram);
 
+    if (seeEdges) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
     glStencilFunc(GL_ALWAYS, 1, 0xFF);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
     glStencilMask(0xFF);
     glUniform1f(isOutlineLocation, 0.0f);
+    
 
     for (auto gameObject : App::GetInstance().scene->GetGameObjects()) {
         auto* transform = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM));
