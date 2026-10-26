@@ -243,7 +243,7 @@ bool Render::Update() {
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
         if (!transform || !meshComponent) continue; // core Components that need to exist. We can change this.
 
-        transform->rotation += SPEED * App::GetInstance().dt;
+        transform->rotation.y += SPEED * App::GetInstance().dt;
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));

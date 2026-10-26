@@ -326,6 +326,47 @@ bool Editor::PostUpdate() {
         }
         ImGui::End();
 
+		//Inspector window
+        ImGui::Begin("Inspector");
+
+		//need the scene to get the currently selected gameobject
+        auto scene = App::GetInstance().scene;
+        GameObject* selectedObject = scene->GetSelectedGameObject();
+
+        if (selectedObject != nullptr){
+            ImGui::Text("Name: %s", selectedObject->name.c_str());
+            auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
+
+            ImGui::Text("TRAMSFORM");
+            ImGui::Text("");
+            //Position
+            ImGui::Text("Position");    
+            ImGui::DragFloat3("P", &transform->position.x, 0.1f); //DO NOT REMOVE THE STRING IN ANY OF THESE DRAGFLOAT3
+            ImGui::Text("X: %f", transform->position.x);
+            ImGui::Text("Y: %f", transform->position.y);
+            ImGui::Text("Z: %f", transform->position.z);
+            ImGui::Text("");
+            //Rotation
+            ImGui::Text("Rotation");
+            ImGui::DragFloat3("R", &transform->rotation.x, 0.1f);
+            ImGui::Text("X: %f", transform->rotation.x);
+            ImGui::Text("Y: %f", transform->rotation.y);
+            ImGui::Text("Z: %f", transform->rotation.z);
+            ImGui::Text("");
+            //Scale
+            ImGui::Text("Scale");
+            ImGui::DragFloat3("S", &transform->scale.x, 0.1f);
+            ImGui::Text("X: %f", transform->scale.x);
+            ImGui::Text("Y: %f", transform->scale.y);
+            ImGui::Text("Z: %f", transform->scale.z);
+            ImGui::Text("");
+        }
+        else{
+            ImGui::Text("No object selected.");
+        }
+
+        ImGui::End();
+
         App::GetInstance().log.DrawConsole();
     }
     // Dark block for brightness
