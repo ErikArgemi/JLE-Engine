@@ -25,6 +25,7 @@
 #include "ImGuizmo.h"
 
 class MeshComponent;
+class Grid;
 
 struct FrameBufferObject
 {
@@ -62,8 +63,6 @@ public:
     SDL_GLContext GetGLContext() const {
         return glContext;
     }
-
-    void RenderGrid();
 
 public:
     glm::vec3 position = glm::vec3(0.0f, 0.0f, 5.0f);
@@ -194,4 +193,6 @@ private:
     bool isRunning = true;
 
     RenderSettings renderSettings;
+
+    std::unique_ptr<Grid> grid = nullptr;
 };
