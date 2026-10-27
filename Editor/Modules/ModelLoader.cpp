@@ -90,7 +90,6 @@ Mesh ModelLoader::LoadPrimitive(const std::vector<float>& vertices, const std::v
 }
 bool ModelLoader::InitFromScene(Mesh& mesh, const aiScene* pScene, const std::string& filename) {
 	mesh.m_Meshes.resize(pScene->mNumMeshes);
-	mesh.m_Textures.resize(pScene->mNumMaterials);
 
 	unsigned int numVertices = 0;
 	unsigned int numIndices = 0;
@@ -101,9 +100,6 @@ bool ModelLoader::InitFromScene(Mesh& mesh, const aiScene* pScene, const std::st
 
 	InitAllMeshes(mesh, pScene);
 
-	if (!InitMaterials(mesh, pScene, filename)) {
-		return false;
-	}
 	PopulateBuffers(mesh);
 
 	return true;
@@ -157,50 +153,6 @@ void ModelLoader::InitSingleMesh(Mesh& mesh, const aiMesh* paiMesh) {
 		mesh.m_Indices.push_back(face.mIndices[1]);
 		mesh.m_Indices.push_back(face.mIndices[2]);
 	}
-}
-
-bool ModelLoader::InitMaterials(Mesh& mesh, const aiScene* pScene, const std::string& filename) {
-	//Extract the directory part from the file name
-	std::filesystem::path filePath = filename;
-	std::filesystem::path fileDir = filePath.parent_path();
-	bool ret = true;
-
-	//Init materials
-	for (unsigned int i = 0; i < pScene->mNumMaterials; i++) {
-		const aiMaterial* pMaterial = pScene->mMaterials[i];
-
-		mesh.m_Textures[i] = NULL;
-
-		if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
-			aiString path;
-			if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-				std::string p(path.C_Str());
-				if (p.empty()) {
-					LOG("No Textures path in this model");
-					return false;
-				}
-				std::replace(p.begin(),	p.end(), '\\', '/');
-				std::filesystem::path dirTextPath = p;
-				// Resolve relative paths against the FBX directory.
-				if (dirTextPath.is_relative())
-				{
-					dirTextPath = fileDir / dirTextPath;
-				}
-				//Load texture
-				mesh.m_Textures[i] = new Texture(dirTextPath.string().c_str());
-				if (!mesh.m_Textures[i]->Load()) {
-					std::cerr << "Error loading texture: " << dirTextPath.string() << std::endl;
-					delete mesh.m_Textures[i];
-					mesh.m_Textures[i] = NULL;
-					ret = false;
-				}
-				else {
-					std::cerr << "Loaded texture: " << dirTextPath.string() << std::endl;
-				}
-			}
-		}
-	}
-	return ret;
 }
 
 void ModelLoader::PopulateBuffers(Mesh& mesh) {

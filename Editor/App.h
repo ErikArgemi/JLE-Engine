@@ -9,6 +9,8 @@
 // Editor Modules
 class Editor;
 class ModelLoader;
+class TextureLoader;
+
 // Modules
 class Render;
 class Windows;
@@ -83,6 +85,7 @@ public:
 	//Editor Modules
 	std::shared_ptr<Editor> editor;
 	std::shared_ptr<ModelLoader> modelLoader;
+	std::shared_ptr<TextureLoader> textureLoader;
 
 	//Modules
 	std::shared_ptr<Render> render;

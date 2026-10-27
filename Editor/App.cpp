@@ -7,6 +7,7 @@
 //Editor modules include
 #include "Modules/Editor.h"
 #include "Modules/ModelLoader.h"
+#include "Modules/TextureLoader.h"
 
 //Modules includes
 #include "../Engine/Modules/Windows.h"
@@ -21,6 +22,7 @@ App::App() {
 	//Editor Modules
 	editor = std::make_shared<Editor>();
 	modelLoader = std::make_shared<ModelLoader>();
+	textureLoader = std::make_shared<TextureLoader>();
 
 	//Modules
 	windows = std::make_shared<Windows>();
@@ -41,6 +43,7 @@ App::App() {
 	AddModule(std::static_pointer_cast<Module>(render));
 	AddModule(std::static_pointer_cast<Module>(editor));
 	AddModule(std::static_pointer_cast<Module>(modelLoader));
+	AddModule(std::static_pointer_cast<Module>(textureLoader));
 
 }
 

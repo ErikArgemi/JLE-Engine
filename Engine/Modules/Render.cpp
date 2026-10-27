@@ -72,7 +72,7 @@ Render::~Render() {
 
 bool Render::Awake() {
     //Initialize DevIL
-    ilInit();
+    //ilInit();
 	SDL_Window* window = App::GetInstance().windows->window;
 	// OpenGL is context based and thread local
 		// Link OpenGL context to SDL, after this you can load OpenGL functions and start rendering
@@ -263,7 +263,7 @@ bool Render::Update() {
         /*glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, material->id);*/
 
-        meshComponent->mesh.Render();
+        gameObject->Render();
 
         /*glBindVertexArray(meshComponent->mesh.m_VAO);
         glDrawElements(GL_TRIANGLES, meshComponent->n_index, GL_UNSIGNED_INT, 0);*/
@@ -320,7 +320,7 @@ bool Render::CleanUp() {
     SDL_Quit();
 
     //Quit DevIL
-    ilShutDown();
+    //ilShutDown();
     
     return true;
 }

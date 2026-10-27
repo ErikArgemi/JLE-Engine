@@ -6,8 +6,6 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 
-#include "Texture.h"
-
 #define INVALID_MATERIAL 0xFFFFFFFF
 
 struct Vector3f {
@@ -51,11 +49,7 @@ public:
 	Mesh() {};
 	~Mesh();
 
-	void Render();
-
 	//WorldTrans& GetWorldTransform(){ return m_worldTransform; }
-
-	bool ChangeTexture(unsigned int materialIndex, const std::string& fileName);
 
 	void Clear();
 public:
@@ -78,7 +72,6 @@ public:
 	GLuint m_buffers[NUM_BUFFERS] = { 0 };
 
 	std::vector<MeshEntry> m_Meshes;
-	std::vector<Texture*> m_Textures;
 
 	std::vector<Vector3f> m_Positions;
 	std::vector<Vector3f> m_Normals;

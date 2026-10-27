@@ -19,6 +19,7 @@ public:
 
 	void Update();
 	
+	void Render();
 public:
 	Component* GetComponent(ComponentType type);
 	void GetAllGameObjects(std::vector<GameObject*>& vec); //call only with the rootGameObject

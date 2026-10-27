@@ -2,6 +2,9 @@
 #include "../../Engine/Module.h"
 #include "../../Engine/Mesh.h"
 class Mesh;
+/// <summary>
+/// Also known as Assimp loader
+/// </summary>
 class ModelLoader : public Module {
 public:
 	ModelLoader();
@@ -22,8 +25,6 @@ private:
 	void InitAllMeshes(Mesh& mesh, const aiScene* pScene);
 
 	void InitSingleMesh(Mesh& mesh, const aiMesh* paiMesh);
-
-	bool InitMaterials(Mesh& mesh, const aiScene* pScene, const std::string& filename);
 
 	void PopulateBuffers(Mesh& mesh);
 };

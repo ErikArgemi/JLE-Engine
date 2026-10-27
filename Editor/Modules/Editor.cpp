@@ -8,6 +8,7 @@
 #include "../../Engine/PrimitiveManager.h"
 #include "../Engine/GameObject.h"
 #include "ModelLoader.h"
+#include "TextureLoader.h"
 
 #include <iostream>
 #include <memory>
@@ -371,7 +372,7 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Normals: %i", mesh.m_Normals.size());
                     ImGui::Text("Indices: %i", mesh.m_Indices.size());
                     ImGui::Text("Submeshes: %i", mesh.m_Meshes.size());
-                    ImGui::Text("Textures: %i", mesh.m_Textures.size());
+                    //ImGui::Text("Textures: %i", mesh.m_Textures.size());
 
                     ImGui::Text("");
 
@@ -525,8 +526,9 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
         meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh(fileFullPath);
         meshComponent->SetData(*meshComponent);
         transformComponent->position = { 0,0,0 };
-        if (meshComponent->mesh.m_Textures[0] == NULL) {
-            meshComponent->mesh.ChangeTexture(0, "Data/PrimitiveTextures/checkerboard.dds");
+        materialComponent->m_Textures = App::GetInstance().textureLoader->InitMaterials(fileFullPath, materialComponent->hasTexture);
+        if (!materialComponent->hasTexture) {
+            App::GetInstance().textureLoader->ChangeTexture(materialComponent->m_Textures, 0, "Data/PrimitiveTextures/checkerboard.dds", materialComponent->hasTexture);
         }
         App::GetInstance().scene->AddGameObject(std::move(newGameObject));
     }
@@ -538,12 +540,12 @@ void Editor::ProcessDropFile(const std::string fileFullPath) {
             LOG("No Target to update texture");
             return;
         }
-        auto* meshComponent = static_cast<MeshComponent*>(target->GetComponent(ComponentType::MESH));
-        if (!meshComponent) { 
+        auto* materialComponent = static_cast<MaterialComponent*>(target->GetComponent(ComponentType::MATERIAL));
+        if (!materialComponent) {
             LOG("No texture to update"); 
         }
         else {
-            meshComponent->mesh.ChangeTexture(0, fileFullPath);
+            App::GetInstance().textureLoader->ChangeTexture(materialComponent->m_Textures, 0, fileFullPath, materialComponent->hasTexture);
         }
     }
     else {

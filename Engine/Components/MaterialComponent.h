@@ -2,6 +2,8 @@
 #include "../Component.h"
 #include <glad/glad.h>
 #include "IL/il.h"
+#include "../Texture.h"
+#include <vector>
 
 class MaterialComponent : public Component {
 public:
@@ -13,14 +15,14 @@ public:
 	void Update() {}
 	void Disable() { active = false; }
 
-	void CleanUp() override {}
-
-	void LoadTexture(const char* path);
+	void CleanUp() override;
 
 	ILint width = 1;
 	ILint height = 1;
 	GLuint id = 0;
-	
+
+	bool hasTexture = false;
+	std::vector<Texture*>  m_Textures;
 private:
 	void CreateDefaultTexture();
 };

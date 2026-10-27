@@ -7,6 +7,7 @@
 #include "../../Engine/Components/MaterialComponent.h"
 #include "../../Editor/App.h"
 #include "../../Editor/Modules/ModelLoader.h"
+#include "../../Editor/Modules/TextureLoader.h"
 #include "Render.h"
 
 #include "../Primitives/Cube.h"
@@ -49,7 +50,7 @@ std::unique_ptr<GameObject> Scene::CreatePrimitive(Primitive& primitive, glm::ve
 	transform->position = position;
 
 	mesh->mesh = App::GetInstance().modelLoader->LoadPrimitive(primitive.vertex, primitive.index); //function to make the mesh of primitives. This is because they are not leaded from the FBX so they need to have their VAO binded.
-	material->LoadTexture(primitive.texturePath); // same with textures, as they come in the FBX for the normal GameObjects
+	App::GetInstance().textureLoader->ChangeTexture(material->m_Textures, 0, primitive.texturePath, material->hasTexture);// same with textures, as they come in the FBX for the normal GameObjects
 	return newGameObject;
 }
 
@@ -70,7 +71,7 @@ bool Scene::Start() {
 	meshComponent->mesh = App::GetInstance().modelLoader->LoadMesh("Data/BakerHouse.fbx");
 	meshComponent->SetData(*meshComponent);
 	transformComponent->position = { 0,0,0 };
-	materialComponent->LoadTexture("Data/Baker_house.png");
+	materialComponent->m_Textures = App::GetInstance().textureLoader->InitMaterials("Data/BakerHouse.fbx", materialComponent->hasTexture);
 
 	return true;
 }
