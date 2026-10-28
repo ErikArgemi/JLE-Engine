@@ -1,6 +1,7 @@
 #include "Editor.h"
 #include "../App.h"
 #include "../Log.h"
+#include "../../Engine/Modules/Camera.h"
 #include "../../Engine/Modules/Render.h"
 #include "../../Engine/Modules/Windows.h"
 #include "../../Engine/Modules/Input.h"
@@ -337,25 +338,27 @@ bool Editor::PostUpdate() {
                 ImGui::Text("Name: %s", selectedObject->name.c_str());
                 auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
 
+                ImGui::SliderFloat("Transform Slider Sensutivity", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
                 ImGui::Text("TRAMSFORM");
                 ImGui::Text("");
                 //Position
                 ImGui::Text("Position");
-                ImGui::DragFloat3("P", &transform->position.x, 0.1f); //DO NOT REMOVE THE STRING IN ANY OF THESE DRAGFLOAT3
+                ImGui::DragFloat3("P", &transform->position.x, transformIncrements); //DO NOT REMOVE THE STRING IN ANY OF THESE DRAGFLOAT3
                 ImGui::Text("X: %f", transform->position.x);
                 ImGui::Text("Y: %f", transform->position.y);
                 ImGui::Text("Z: %f", transform->position.z);
                 ImGui::Text("");
                 //Rotation
                 ImGui::Text("Rotation");
-                ImGui::DragFloat3("R", &transform->rotation.x, 0.1f);
+                ImGui::DragFloat3("R", &transform->rotation.x, transformIncrements);
                 ImGui::Text("X: %f", transform->rotation.x);
                 ImGui::Text("Y: %f", transform->rotation.y);
                 ImGui::Text("Z: %f", transform->rotation.z);
                 ImGui::Text("");
                 //Scale
                 ImGui::Text("Scale");
-                ImGui::DragFloat3("S", &transform->scale.x, 0.1f);
+                ImGui::DragFloat3("S", &transform->scale.x, transformIncrements);
                 ImGui::Text("X: %f", transform->scale.x);
                 ImGui::Text("Y: %f", transform->scale.y);
                 ImGui::Text("Z: %f", transform->scale.z);
@@ -481,6 +484,10 @@ std::string Editor::GetCapsFromCpu(const cpu_features::X86Features& features) {
 void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
 {
     ImGui::PushID(gameObject);
+
+    App::GetInstance().scene->SetSelectedGameObject(gameObject);
+
+    App::GetInstance().camera->orbitCentre = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM))->position;
 
     if (!gameObject->HasChildren()) {
         if (ImGui::Selectable(gameObject->name.c_str(), gameObject == App::GetInstance().scene->GetSelectedGameObject())) {
