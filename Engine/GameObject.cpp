@@ -138,7 +138,6 @@ void GameObject::RenderWireframe() { //TOO: Make it work when also rendering the
 			materialComponent->m_Textures[materialIndex]->Bind(COLOR_TEXTURE_UNIT);
 		}
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glDrawElementsBaseVertex(GL_TRIANGLES,
 			meshComponent->mesh.m_Meshes[i].numIndices,
@@ -146,8 +145,6 @@ void GameObject::RenderWireframe() { //TOO: Make it work when also rendering the
 			(void*)(sizeof(unsigned int) * meshComponent->mesh.m_Meshes[i].baseIndex),
 			meshComponent->mesh.m_Meshes[i].baseVertex
 		);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
