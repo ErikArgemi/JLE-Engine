@@ -238,6 +238,12 @@ bool Render::Update() {
     glStencilMask(0xFF);
     glUniform1f(isOutlineLocation, 0.0f);
     
+    //TODO: Think. Does each "object" (GameObject and grid) need to manage its own mvp?
+    //grids matrix
+    glm::mat4 gridModel = glm::mat4(1.0f);
+    glm::mat4 gridMVP = projectionMatrix * viewMatrix * gridModel;
+
+    glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(gridMVP));
 
     //draw grid
     grid->Render();
@@ -248,7 +254,7 @@ bool Render::Update() {
         auto* material = static_cast<MaterialComponent*>(gameObject->GetComponent(ComponentType::MATERIAL));
         if (!transform || !meshComponent) continue; // core Components that need to exist. We can change this.
 
-        transform->rotation.y += SPEED * App::GetInstance().dt;
+        /*transform->rotation.y += SPEED * App::GetInstance().dt;*/
 
         glm::mat4 mvp = projectionMatrix * viewMatrix * transform->modelMat;
         glUniformMatrix4fv(modelViewProjLocation, 1, GL_FALSE, glm::value_ptr(mvp));

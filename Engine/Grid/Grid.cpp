@@ -59,6 +59,8 @@ void Grid::Init() {
 void Grid::Render() {
     glBindVertexArray(meshComponent->mesh.m_VAO);
     glDrawElements(GL_LINES, meshComponent->n_index, GL_UNSIGNED_INT, 0);
+
+    glBindVertexArray(0);
 }
 
 void Grid::Clean() {

@@ -328,67 +328,67 @@ bool Editor::PostUpdate() {
         ImGui::End();
 
 		//Inspector window
-        ImGui::Begin("Inspector");
+        if (ImGui::Begin("Inspector")) {
 
-		//need the scene to get the currently selected gameobject
-        auto scene = App::GetInstance().scene;
-        GameObject* selectedObject = scene->GetSelectedGameObject();
+            //need the scene to get the currently selected gameobject
+            GameObject* selectedObject = App::GetInstance().scene->GetSelectedGameObject();
 
-        if (selectedObject != nullptr){
-            ImGui::Text("Name: %s", selectedObject->name.c_str());
-            auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
+            if (selectedObject != nullptr) {
+                ImGui::Text("Name: %s", selectedObject->name.c_str());
+                auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
 
-            ImGui::Text("TRAMSFORM");
-            ImGui::Text("");
-            //Position
-            ImGui::Text("Position");    
-            ImGui::DragFloat3("P", &transform->position.x, 0.1f); //DO NOT REMOVE THE STRING IN ANY OF THESE DRAGFLOAT3
-            ImGui::Text("X: %f", transform->position.x);
-            ImGui::Text("Y: %f", transform->position.y);
-            ImGui::Text("Z: %f", transform->position.z);
-            ImGui::Text("");
-            //Rotation
-            ImGui::Text("Rotation");
-            ImGui::DragFloat3("R", &transform->rotation.x, 0.1f);
-            ImGui::Text("X: %f", transform->rotation.x);
-            ImGui::Text("Y: %f", transform->rotation.y);
-            ImGui::Text("Z: %f", transform->rotation.z);
-            ImGui::Text("");
-            //Scale
-            ImGui::Text("Scale");
-            ImGui::DragFloat3("S", &transform->scale.x, 0.1f);
-            ImGui::Text("X: %f", transform->scale.x);
-            ImGui::Text("Y: %f", transform->scale.y);
-            ImGui::Text("Z: %f", transform->scale.z);
-            ImGui::Text("");
+                ImGui::Text("TRAMSFORM");
+                ImGui::Text("");
+                //Position
+                ImGui::Text("Position");
+                ImGui::DragFloat3("P", &transform->position.x, 0.1f); //DO NOT REMOVE THE STRING IN ANY OF THESE DRAGFLOAT3
+                ImGui::Text("X: %f", transform->position.x);
+                ImGui::Text("Y: %f", transform->position.y);
+                ImGui::Text("Z: %f", transform->position.z);
+                ImGui::Text("");
+                //Rotation
+                ImGui::Text("Rotation");
+                ImGui::DragFloat3("R", &transform->rotation.x, 0.1f);
+                ImGui::Text("X: %f", transform->rotation.x);
+                ImGui::Text("Y: %f", transform->rotation.y);
+                ImGui::Text("Z: %f", transform->rotation.z);
+                ImGui::Text("");
+                //Scale
+                ImGui::Text("Scale");
+                ImGui::DragFloat3("S", &transform->scale.x, 0.1f);
+                ImGui::Text("X: %f", transform->scale.x);
+                ImGui::Text("Y: %f", transform->scale.y);
+                ImGui::Text("Z: %f", transform->scale.z);
+                ImGui::Text("");
 
-            // Mesh information
-            if (ImGui::CollapsingHeader("MESH", ImGuiTreeNodeFlags_DefaultOpen)){
-                auto* meshComponent = static_cast<MeshComponent*>(selectedObject->GetComponent(ComponentType::MESH));
-                if (meshComponent){
-                    Mesh& mesh = meshComponent->mesh;
+                // Mesh information
+                if (ImGui::CollapsingHeader("MESH", ImGuiTreeNodeFlags_DefaultOpen)) {
+                    auto* meshComponent = static_cast<MeshComponent*>(selectedObject->GetComponent(ComponentType::MESH));
+                    if (meshComponent) {
+                        Mesh& mesh = meshComponent->mesh;
 
-                    ImGui::Text("Vertices: %i", mesh.m_Positions.size());
-                    ImGui::Text("Normals: %i", mesh.m_Normals.size());
-                    ImGui::Text("Indices: %i", mesh.m_Indices.size());
-                    ImGui::Text("Submeshes: %i", mesh.m_Meshes.size());
-                    //ImGui::Text("Textures: %i", mesh.m_Textures.size());
+                        ImGui::Text("Vertices: %i", mesh.m_Positions.size());
+                        ImGui::Text("Normals: %i", mesh.m_Normals.size());
+                        ImGui::Text("Indices: %i", mesh.m_Indices.size());
+                        ImGui::Text("Submeshes: %i", mesh.m_Meshes.size());
+                        //ImGui::Text("Textures: %i", mesh.m_Textures.size());
 
-                    ImGui::Text("");
+                        ImGui::Text("");
 
-                    ImGui::Checkbox("Show Vertex",&meshComponent->showVertex);
-                    ImGui::Checkbox("Show Triangle",&meshComponent->showTriangles);
-                    ImGui::Checkbox("Show Face",&meshComponent->showFace);
-                    ImGui::Checkbox("Show Chechers", &meshComponent->showCheckers);
+                        ImGui::Checkbox("Show Vertex", &meshComponent->showVertex);
+                        ImGui::Checkbox("Show Triangle", &meshComponent->showTriangles);
+                        ImGui::Checkbox("Show Face", &meshComponent->showFace);
+                        ImGui::Checkbox("Show Chechers", &meshComponent->showCheckers);
+                    }
+                    else {
+                        ImGui::Text("No mesh");
+                    }
                 }
-                else{
-                    ImGui::Text("No mesh");
-                }
+
             }
-
-        }
-        else{
-            ImGui::Text("No object selected.");
+            else {
+                ImGui::Text("No object selected.");
+            }
         }
         ImGui::End();
 
