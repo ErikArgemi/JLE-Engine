@@ -95,6 +95,8 @@ private:
 
     float brightness = 1.0f;
 
+    float transformIncrements = 0.1f;
+
     //EditorSettings
     EditorSettings editorSettings;
 };
