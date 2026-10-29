@@ -153,9 +153,6 @@ bool Editor::PostUpdate() {
     }
 
     if (editorSettings.ImGuiActive) {
-        if (showDebugLog) {
-            ImGui::ShowDebugLogWindow();
-        }
         if (showConsole) {
             App::GetInstance().log.DrawConsole();
         }
@@ -183,9 +180,6 @@ bool Editor::PostUpdate() {
                 }
                 if (ImGui::MenuItem("Console")) {
                     showConsole = !showConsole;
-                }
-                if (ImGui::MenuItem("Debug Log")) {
-                    showDebugLog = !showDebugLog;
                 }
                 ImGui::EndMenu();
             }
@@ -272,7 +266,6 @@ bool Editor::PostUpdate() {
             {
                 ImGui::SliderFloat("Brightness", &brightness, 0.1, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
-                //Windows size TODO: Keep proportions
                 static int currentSize = 1;
                 if (ImGui::Combo("Window sizes", &currentSize, windowSizes, GLM_COUNTOF(windowSizes))) {
                     SDL_SetWindowSize(window, windowSizesValues[currentSize].x, windowSizesValues[currentSize].y);

@@ -99,7 +99,6 @@ private:
     bool showScene = true;
     bool showInspector = true;
     bool showConsole = true;
-    bool showDebugLog = true;
 
     float brightness = 1.0f;
 
