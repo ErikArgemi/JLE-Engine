@@ -318,8 +318,17 @@ bool Editor::PostUpdate() {
                 ImGui::Text("VRAM reserved: %.2f %s", (reservedVRAM > 1024) ? (float)reservedVRAM / 1024 : (float)reservedVRAM, (reservedVRAM > 1024) ? "Gb" : "Mb");
 
             }
+            if (ImGui::CollapsingHeader("Camera")) {
+                Camera& camera = *App::GetInstance().camera;
+                ImGui::SliderFloat("Movement Speed", &camera.movementSpeed, 0.1, 15.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                ImGui::SliderFloat("Mouse Sensitivity", &camera.sensitivity, 0.1, 2.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                if (ImGui::Button("Reset To Default Values")) {
+                    camera.movementSpeed = 5.0f;
+                    camera.sensitivity = 0.5f;
+                }
+            }
             if (ImGui::CollapsingHeader("Primitives")) {
-                if (ImGui::Button("Icosahedron")) { //TODO: Change it to AddGameObject(...) and get rid of all Primitive related files.
+                if (ImGui::Button("Icosahedron")) {
                     App::GetInstance().scene->AddGameObject(App::GetInstance().scene->CreatePrimitive(Icosahedron(), { 0,0,0 }, "Icosahedron"));
                     LOG("Icosahdron created.\n");
                 }
@@ -361,7 +370,7 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Name: %s", selectedObject->name.c_str());
                     auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
 
-                    ImGui::SliderFloat("Transform Slider Sensutivity", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                    ImGui::SliderFloat("Transform Sensitivity", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
                     ImGui::Text("TRAMSFORM");
                     ImGui::Text("");

@@ -44,7 +44,7 @@ public:
 
 	glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
 
-	const float sensitivity = 0.5f;
+	float sensitivity = 0.5f;
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
