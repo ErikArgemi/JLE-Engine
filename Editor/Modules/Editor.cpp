@@ -375,7 +375,7 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Name: %s", selectedObject->name.c_str());
                     auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
 
-                    ImGui::SliderFloat("Transform Sensitivity", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                    ImGui::SliderFloat("Transform Increments", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
                     ImGui::Text("TRAMSFORM");
                     ImGui::Text("");
@@ -400,6 +400,11 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Y: %f", transform->scale.y);
                     ImGui::Text("Z: %f", transform->scale.z);
                     ImGui::Text("");
+                    if (ImGui::Button("RESET TO DEFAULT")) {
+						transform->position = glm::vec3(0.0f);
+                        transform->rotation = glm::vec3(0.0f);
+                        transform->scale = glm::vec3(1.0f);
+                    }
 
                     // Mesh information
                     if (ImGui::CollapsingHeader("MESH", ImGuiTreeNodeFlags_DefaultOpen)) {
