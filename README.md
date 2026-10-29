@@ -12,6 +12,8 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 
 ## Controls:
 
+#### Camera Controls:
+
 *(MOUSE MUST BE HOVERING ON THE SCENE SCREEN)*
 
 * Keep \[Right Mouse Button] pressed to enable FPS-like movement:
@@ -26,7 +28,12 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 
 
 
+* \[X]: Quit
+
+
+
 ## Extras:
 
 * Added dragbars to the inspector window that transforms selected objects.
+* Added Camera sliders in the Configuration Window that allows adjusting of movement speed and sensitivity.
 
