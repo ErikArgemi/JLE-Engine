@@ -518,8 +518,6 @@ void Editor::ShowGameObjectHierarchy(GameObject* gameObject)
 {
     ImGui::PushID(gameObject);
 
-    App::GetInstance().scene->SetSelectedGameObject(gameObject);
-
     App::GetInstance().camera->orbitCentre = static_cast<TransformComponent*>(gameObject->GetComponent(ComponentType::TRANSFORM))->position;
 
     if (!gameObject->HasChildren()) {
