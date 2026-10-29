@@ -324,9 +324,12 @@ bool Editor::PostUpdate() {
                 Camera& camera = *App::GetInstance().camera;
                 ImGui::SliderFloat("Movement Speed", &camera.movementSpeed, 0.1, 15.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
                 ImGui::SliderFloat("Mouse Sensitivity", &camera.sensitivity, 0.1, 2.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                ImGui::SliderFloat("Panning Sensitivity", &camera.panningSensitivity, 0.01, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
                 if (ImGui::Button("Reset To Default Values")) {
                     camera.movementSpeed = 5.0f;
                     camera.sensitivity = 0.5f;
+                    camera.panningSensitivity = 0.1f;
                 }
             }
             if (ImGui::CollapsingHeader("Primitives")) {

@@ -43,8 +43,7 @@ public:
 	glm::mat4 modelMatrix = 1.0f;
 
 	glm::vec3 direction = glm::vec3(0.0f, 0.0f, 1.0f);
-
-	float sensitivity = 0.5f;
+	
 	float yaw = -90.0f;
 	float pitch = 0.0f;
 
@@ -52,6 +51,8 @@ public:
 	float radPitch = glm::radians(pitch);
 	float rotation = 0.0f;
 
+	float sensitivity = 0.5f;
+	float panningSensitivity = 0.1f;
 	float movementSpeed = 5.0f;
 
 	//Vars for the camera orbit controls

@@ -25,6 +25,7 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 * \[Scroll]: zoom in and out.
 * \[F]: focus on selected object.
 * \[Alt] + \[Left Mouse Button]: to orbit around the selected object.
+* \[Middle Mouse Button]: to pan the camera.
 
 #### Other Controls:
 
@@ -36,4 +37,5 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 
 * Added dragbars to the inspector window that transforms selected objects.
 * Added Camera sliders in the Configuration Window that allows adjusting of movement speed and sensitivity.
+* Added panning to the camera with middle mouse button.
 
