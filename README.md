@@ -12,15 +12,17 @@ This is a game engine made for our Videogame engine course for 3D videogames.
 
 ## Controls:
 
+*(MOUSE MUST BE HOVERING ON THE SCENE SCREEN)*
+
 * Keep \[Right Mouse Button] pressed to enable FPS-like movement:
 
   * \[WASD]: forward, left, down, and right movement.
   * Move \[Mouse] to look around.
   * \[QE]: to move up and down respectively.
   * \[Shift]: speed boost.
-* \[Scroll] + \[Right Mouse Button]: zoom in and out.
+* \[Scroll]: zoom in and out.
 * \[F]: focus on selected object.
-* \[Alt] + \[Right Mouse Button]: to orbit around the selected object.
+* \[Alt] + \[Left Mouse Button]: to orbit around the selected object.
 
 
 

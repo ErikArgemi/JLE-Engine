@@ -28,27 +28,32 @@ bool Input::PreUpdate() {
         ImGui_ImplSDL3_ProcessEvent(&event);
 
         //Camera look
-        if (event.type == SDL_EVENT_MOUSE_MOTION && mouse & SDL_BUTTON_RMASK){
-            if (SDL_GetModState() & SDL_KMOD_ALT) { 
+        if (event.type == SDL_EVENT_MOUSE_MOTION && isHoveringScene){
+            if (SDL_GetModState() & SDL_KMOD_ALT && mouse & SDL_BUTTON_LMASK) {
                 if (!camera.isOrbiting) {
                     camera.isOrbiting = true;
                     camera.obitDistasnce = -glm::distance(camera.position, camera.orbitCentre);
                 }
+                camera.yaw += event.motion.xrel * camera.sensitivity;
+                camera.pitch -= event.motion.yrel * camera.sensitivity;
+                //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
+                camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
+                //clamps orbit distance to prevent the user from going way past the object
+                camera.obitDistasnce = glm::clamp(camera.obitDistasnce, -150.0f, -1.0f);
             }
             else{
                 camera.isOrbiting = false;
             }
-
-            camera.yaw += event.motion.xrel * camera.sensitivity;
-            camera.pitch -= event.motion.yrel * camera.sensitivity;
-            //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
-            camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
-            //clamps orbit distance to prevent the user from going way past the object
-            camera.obitDistasnce = glm::clamp(camera.obitDistasnce, -150.0f, -1.0f);
+            if (mouse & SDL_BUTTON_RMASK) {
+                camera.yaw += event.motion.xrel * camera.sensitivity;
+                camera.pitch -= event.motion.yrel * camera.sensitivity;
+                //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
+                camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
+            }
         }
 
         //Camera scroll zoom?
-        if (event.type == SDL_EVENT_MOUSE_WHEEL && mouse & SDL_BUTTON_RMASK){
+        if (event.type == SDL_EVENT_MOUSE_WHEEL && isHoveringScene){
             if (camera.isOrbiting) {
                 camera.obitDistasnce += event.wheel.y * 2.0f;
             }
@@ -60,7 +65,7 @@ bool Input::PreUpdate() {
     
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
 
-    if (mouse & SDL_BUTTON_RMASK) {
+    if (mouse & SDL_BUTTON_RMASK && isHoveringScene) {
         glm::vec3 forward = camera.direction; //gets the forward direction of the camera
 
         float speed = camera.movementSpeed * deltaTime;
@@ -105,7 +110,7 @@ bool Input::PreUpdate() {
     }
 
     //Focus on selected object when F is pressed
-    if (keyboard[SDL_SCANCODE_F]&& !(scene.GetSelectedGameObject() == nullptr)) {
+    if (keyboard[SDL_SCANCODE_F]&& !(scene.GetSelectedGameObject() == nullptr) && isHoveringScene) {
         camera.position = static_cast<TransformComponent*>(scene.GetSelectedGameObject()->GetComponent(ComponentType::TRANSFORM))->position;
     }
 

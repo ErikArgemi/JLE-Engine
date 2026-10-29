@@ -136,6 +136,7 @@ bool Editor::PostUpdate() {
         flags |= ImGuiWindowFlags_NoMove;
     }
     if (showScene) {
+        
         ImGui::Begin("Scene", nullptr, flags);
         AddWindow("Scene");
         ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
@@ -143,7 +144,7 @@ bool Editor::PostUpdate() {
         App::GetInstance().render->shouldRefreshSceneWindow = (newSceneWindowSize.x != App::GetInstance().render->sceneWindowSize.x || newSceneWindowSize.y != App::GetInstance().render->sceneWindowSize.y);
         App::GetInstance().render->sceneWindowSize = newSceneWindowSize;
         ImGui::Image(App::GetInstance().render->frameBufferObject.RENDER_TO_TEXTURE_ID, newSceneWindowSize, ImVec2(0, 1), ImVec2(1, 0));
-
+        App::GetInstance().input->isHoveringScene = ImGui::IsWindowHovered(0);
         glDisable(GL_DEPTH_TEST);
         ImGuizmo::SetRect(cursorScreenPos.x, cursorScreenPos.y, newSceneWindowSize.x, newSceneWindowSize.y);
         ImGuizmo::SetDrawlist();
