@@ -44,6 +44,20 @@ struct MeshEntry {
 	unsigned int baseIndex;
 	unsigned int materialIndex;
 };
+#define FACE_NORMAL_LENGTH 1
+
+struct FaceNormal {
+	glm::vec3 normal;
+	glm::vec3 position;
+	float length;
+
+	FaceNormal(const glm::vec3& normal, const glm::vec3& position, const float& length) {
+		this->normal = normal;
+		this->position = position;
+		this->length = length;
+	}
+};
+
 class Mesh {
 public:
 	Mesh() {};
@@ -73,8 +87,13 @@ public:
 
 	std::vector<MeshEntry> m_Meshes;
 
-	std::vector<Vector3f> m_Positions;
-	std::vector<Vector3f> m_Normals;
-	std::vector<Vector2f> m_TextCoords;
+	std::vector<glm::vec3> m_Positions; //vertex positions
+	std::vector<glm::vec3> m_Normals; //vertex normals
+	std::vector<Vector2f> m_TextCoords; //UVs 
 	std::vector<unsigned int> m_Indices;
+
+	std::vector<FaceNormal> triangleNormals;
+
+private:
+	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };

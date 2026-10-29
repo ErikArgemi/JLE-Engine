@@ -152,3 +152,37 @@ void GameObject::RenderWireframe() { //TOO: Make it work when also rendering the
 	glDepthFunc(GL_LESS);
 	glBindVertexArray(0);
 }
+
+GameObject::FaceNormal GameObject::GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C) { //TODO: move the FaceNormal code to mesh and load the FaceNormal vector after creating the mesh
+	//calculate normal
+	glm::vec3 vector1 = B - A;
+	glm::vec3 vector2 = C - A;
+
+	glm::vec3 normal = glm::cross(vector1, vector2);
+	glm::vec3 normal = glm::normalize(normal);
+
+	//calculate incenter
+	float a = glm::distance(B, C);
+	float b = glm::distance(A, C);
+	float c = glm::distance(A, B);
+
+	if (a + b + c == 0.0f) return FaceNormal({ 0,0,0 }, { 0,0,0 }, 1);
+
+	glm::vec3 position = (a * A + b * B + c * C) / a + b + c;
+
+	return FaceNormal(normal, position, 1);
+}
+
+void GameObject::DisplayNormalsPerTriangle()
+{
+	auto* meshComponent = static_cast<MeshComponent*>(GetComponent(ComponentType::MESH));
+	if (!meshComponent) return;
+
+	std::vector<FaceNormal> triangleNormals;
+
+	const auto vertices = meshComponent->mesh.m_Positions;
+	for (size_t i = 0; i < vertices.size(); ++i) {
+		if (i > vertices.size()) break;
+		triangleNormals.emplace_back(GetNormal(vertices[i], vertices[i+1], vertices[i+2]));
+	}
+}

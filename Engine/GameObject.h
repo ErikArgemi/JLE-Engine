@@ -21,6 +21,7 @@ public:
 	
 	void Render();
 	void RenderWireframe();
+	void DisplayNormalsPerTriangle();
 
 public:
 	Component* GetComponent(ComponentType type);
@@ -38,4 +39,5 @@ public:
 
 private:
 	Component& CreateComponent(ComponentType type);
+	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };
