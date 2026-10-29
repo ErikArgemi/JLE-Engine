@@ -18,10 +18,13 @@ This is a game engine made for our Videogame engine course for 3D videogames.
   * Move \[Mouse] to look around.
   * \[QE]: to move up and down respectively.
   * \[Shift]: speed boost.
-* \[Scroll] + [Right Mouse Button]: zoom in and out.
+* \[Scroll] + \[Right Mouse Button]: zoom in and out.
 * \[F]: focus on selected object.
-* \[Alt] + [Right Mouse Button] to orbit around the selected object.
+* \[Alt] + \[Right Mouse Button]: to orbit around the selected object.
+
 
 
 ## Extras:
-* \Added dragbars to the inspector window that transforms selected objects.
+
+* Added dragbars to the inspector window that transforms selected objects.
+
