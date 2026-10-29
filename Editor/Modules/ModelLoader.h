@@ -31,6 +31,6 @@ private:
 
 private:
 	//FaceNormal
-	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 	void LoadFaceNormals(Mesh& mesh);
+	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };

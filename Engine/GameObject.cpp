@@ -153,7 +153,15 @@ void GameObject::RenderWireframe() { //TOO: Make it work when also rendering the
 	glBindVertexArray(0);
 }
 
-void GameObject::DisplayNormalsPerTriangle()
+void GameObject::RenderNormalsPerTriangle()
 {
-	//TODO
+	auto* meshComponent = static_cast<MeshComponent*>(GetComponent(ComponentType::MESH));
+	if (!meshComponent) return;
+
+	Mesh& mesh = meshComponent->mesh;
+	if (mesh.m_NormalsVAO == 0 || mesh.m_triangleNormals.size() == 0) return;
+
+	glBindVertexArray(mesh.m_NormalsVAO);
+	glDrawArrays(GL_LINES, 0, mesh.m_triangleNormals.size());
+	glBindVertexArray(0);
 }

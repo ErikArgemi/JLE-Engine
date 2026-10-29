@@ -36,3 +36,27 @@ void Mesh::Clear() {
 		m_VAO = 0;
 	}
 }
+
+void Mesh::PopulateNormalsBuffers() {
+	if (m_triangleNormals.empty()) return;
+
+	std::vector<glm::vec3> vertices;
+	for (const auto& triangleNormal : m_triangleNormals) {
+		vertices.emplace_back(triangleNormal.position);
+		vertices.emplace_back(triangleNormal.position + triangleNormal.normal * triangleNormal.length);
+	}
+
+	if (m_NormalsVAO == 0) {
+		glGenVertexArrays(1, &m_NormalsVAO);
+		glGenBuffers(1, &m_NormalsVBO);
+	}
+
+	glBindVertexArray(m_NormalsVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_NormalsVBO);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+
+	glBindVertexArray(0);
+}

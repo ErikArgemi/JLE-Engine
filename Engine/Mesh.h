@@ -95,5 +95,12 @@ public:
 	std::vector<Vector2f> m_TextCoords; //UVs 
 	std::vector<unsigned int> m_Indices;
 
-	std::vector<FaceNormal> triangleNormals;
+
+	//triangle normals
+	std::vector<FaceNormal> m_triangleNormals;
+
+	GLuint m_NormalsVAO = 0;
+	GLuint m_NormalsVBO = 0;
+
+	void PopulateNormalsBuffers();
 };

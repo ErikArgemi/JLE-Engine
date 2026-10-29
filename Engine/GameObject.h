@@ -21,7 +21,7 @@ public:
 	
 	void Render();
 	void RenderWireframe();
-	void DisplayNormalsPerTriangle();
+	void RenderNormalsPerTriangle();
 
 public:
 	Component* GetComponent(ComponentType type);

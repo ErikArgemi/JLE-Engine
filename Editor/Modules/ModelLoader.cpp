@@ -52,6 +52,10 @@ Mesh ModelLoader::LoadMesh(const std::string& filename) {
 	}
 	glBindVertexArray(0);
 
+	//triangle/face normals
+	LoadFaceNormals(newMesh);
+	newMesh.PopulateNormalsBuffers();
+
 	return newMesh;
 }
 Mesh ModelLoader::LoadPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices) {
@@ -191,17 +195,29 @@ FaceNormal ModelLoader::GetNormal(const glm::vec3& A, const glm::vec3 B, const g
 
 	if (a + b + c == 0.0f) return FaceNormal({ 0,0,0 }, { 0,0,0 }, 1);
 
-	glm::vec3 position = (a * A + b * B + c * C) / a + b + c;
+	glm::vec3 position = (a * A + b * B + c * C) / (a + b + c);
 
 	return FaceNormal(normal, position, 1);
 }
 
 void ModelLoader::LoadFaceNormals(Mesh& mesh)
 {
+	mesh.m_triangleNormals.clear();
 
 	const auto& vertices = mesh.m_Positions;
-	for (size_t i = 0; i < vertices.size(); ++i) {
-		if (i > vertices.size()) break;
-		mesh.triangleNormals.emplace_back(GetNormal(vertices[i], vertices[i + 1], vertices[i + 2]));
+	for (const MeshEntry& mesh : mesh.m_Meshes) {
+		for (size_t i = 0; i + 2 < mesh.numIndices; i += 3) {
+			unsigned int index = mesh.baseIndex + i;
+
+			unsigned int i1 = mesh.baseVertex + mesh.m_Indices[index];
+			unsigned int i2 = mesh.baseVertex + mesh.m_Indices[index + 1];
+			unsigned int i3 = mesh.baseVertex + mesh.m_Indices[index + 2];
+
+			if (i1 >= vertices.size() || i2 >= vertices.size() || i3 >= vertices.size()) {
+				continue;
+			}
+
+			mesh.m_triangleNormals.emplace_back(GetNormal(vertices[i1], vertices[i2], vertices[i3]));
+		}
 	}
 }
