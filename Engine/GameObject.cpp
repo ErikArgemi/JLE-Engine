@@ -94,6 +94,7 @@ void GameObject::GetAllGameObjects(std::vector<GameObject*>& vec) {
 }
 
 void GameObject::Render() {
+
 	auto* meshComponent = static_cast<MeshComponent*>(GetComponent(ComponentType::MESH));
 	if (!meshComponent) return;
 	auto* materialComponent = static_cast<MaterialComponent*>(GetComponent(ComponentType::MATERIAL));
@@ -114,7 +115,40 @@ void GameObject::Render() {
 			(void*)(sizeof(unsigned int) * meshComponent->mesh.m_Meshes[i].baseIndex),
 			meshComponent->mesh.m_Meshes[i].baseVertex
 		);
+
 	}
+
 	glBindVertexArray(0);
-	
+}
+
+void GameObject::RenderWireframe() { //TOO: Make it work when also rendering the mesh
+	auto* meshComponent = static_cast<MeshComponent*>(GetComponent(ComponentType::MESH));
+	if (!meshComponent) return;
+	auto* materialComponent = static_cast<MaterialComponent*>(GetComponent(ComponentType::MATERIAL));
+	if (!materialComponent) return;
+
+	glBindVertexArray(meshComponent->mesh.m_VAO);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	for (unsigned int i = 0; i < meshComponent->mesh.m_Meshes.size(); i++) {
+		unsigned int materialIndex = meshComponent->mesh.m_Meshes[i].materialIndex;
+
+		if (materialIndex < materialComponent->m_Textures.size() && materialComponent->m_Textures[materialIndex]) {
+			materialComponent->m_Textures[materialIndex]->Bind(COLOR_TEXTURE_UNIT);
+		}
+
+
+		glDrawElementsBaseVertex(GL_TRIANGLES,
+			meshComponent->mesh.m_Meshes[i].numIndices,
+			GL_UNSIGNED_INT,
+			(void*)(sizeof(unsigned int) * meshComponent->mesh.m_Meshes[i].baseIndex),
+			meshComponent->mesh.m_Meshes[i].baseVertex
+		);
+	}
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glDepthFunc(GL_LESS);
+	glBindVertexArray(0);
 }
