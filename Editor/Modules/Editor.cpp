@@ -76,8 +76,10 @@ bool Editor::Awake() {
     ImGui_ImplSDL3_InitForOpenGL(window, glContext);
     ImGui_ImplOpenGL3_Init();
 
-    flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
-
+    flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;// | ImGuiConfigFlags_DockingEnable;
+    
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+   
     editorSettings = FileReader::GetEditorSettings(); //get editor settings before updating
 
     if (SDL_EventEnabled(SDL_EVENT_DROP_FILE))
@@ -92,7 +94,10 @@ bool Editor::PreUpdate() {
         ProcessDropFile(fileToLoad3D);
         fileToLoad3D.clear();
     }
-
+    const bool* keyboard = SDL_GetKeyboardState(nullptr);
+    if (keyboard[SDL_SCANCODE_X]) {
+        return false;
+    }
     const std::vector<SDL_Event> events = App::GetInstance().input->GetEvents();
     std::string dropFileDir;
     for (const auto& event : events) {
@@ -121,6 +126,9 @@ bool Editor::PostUpdate() {
     ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
+
+    ImGui::DockSpaceOverViewport();
+
     SDL_Window* window = App::GetInstance().windows->window;
     const bool gizmoActive = ImGuizmo::IsOver() || ImGuizmo::IsUsing();
     if (gizmoActive)
@@ -144,8 +152,8 @@ bool Editor::PostUpdate() {
     ImGui::End();
 
     if (editorSettings.ImGuiActive) {
-        ImGui::ShowDemoWindow();
-        ImGui::ShowDebugLogWindow();
+        //ImGui::ShowDemoWindow();
+        //ImGui::ShowDebugLogWindow();
 
         // Header Menu Bar
         static bool showAbout = false;
@@ -330,7 +338,7 @@ bool Editor::PostUpdate() {
 
 		//Inspector window
         if (ImGui::Begin("Inspector")) {
-
+            AddWindow("Inspector");
             //need the scene to get the currently selected gameobject
             GameObject* selectedObject = App::GetInstance().scene->GetSelectedGameObject();
 
@@ -396,6 +404,7 @@ bool Editor::PostUpdate() {
         ImGui::End();
 
         App::GetInstance().log.DrawConsole();
+        AddWindow("Console");
     }
     // Dark block for brightness
     float opacity = 1.0f - brightness;
