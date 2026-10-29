@@ -6,6 +6,9 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 
+//GLM
+#include "glm/glm.hpp"
+
 #define INVALID_MATERIAL 0xFFFFFFFF
 
 struct Vector3f {
@@ -93,7 +96,4 @@ public:
 	std::vector<unsigned int> m_Indices;
 
 	std::vector<FaceNormal> triangleNormals;
-
-private:
-	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };

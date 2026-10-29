@@ -39,5 +39,4 @@ public:
 
 private:
 	Component& CreateComponent(ComponentType type);
-	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };

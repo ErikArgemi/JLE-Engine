@@ -140,8 +140,8 @@ void ModelLoader::InitSingleMesh(Mesh& mesh, const aiMesh* paiMesh) {
 		const aiVector3D& pNormal = paiMesh->mNormals[i];
 		const aiVector3D& pTextCoord = paiMesh->HasTextureCoords(0) ? paiMesh->mTextureCoords[0][i] : Zero3D;
 
-		mesh.m_Positions.push_back(Vector3f(pPos.x, pPos.y, pPos.z));
-		mesh.m_Normals.push_back(Vector3f(pNormal.x, pNormal.y, pNormal.z));
+		mesh.m_Positions.push_back({ pPos.x, pPos.y, pPos.z });
+		mesh.m_Normals.push_back({ pNormal.x, pNormal.y, pNormal.z });
 		mesh.m_TextCoords.push_back(Vector2f(pTextCoord.x, pTextCoord.y));
 	}
 
@@ -173,4 +173,35 @@ void ModelLoader::PopulateBuffers(Mesh& mesh) {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh.m_buffers[mesh.Buffer_Type::INDEX_BUFFER]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(mesh.m_Indices[0]) * mesh.m_Indices.size(), mesh.m_Indices.data(), GL_STATIC_DRAW);
+}
+
+
+FaceNormal ModelLoader::GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C) { //TODO: move the FaceNormal code to mesh and load the FaceNormal vector after creating the mesh
+	//calculate normal
+	glm::vec3 vector1 = B - A;
+	glm::vec3 vector2 = C - A;
+
+	glm::vec3 normal = glm::cross(vector1, vector2);
+	normal = glm::normalize(normal);
+
+	//calculate incenter
+	float a = glm::distance(B, C);
+	float b = glm::distance(A, C);
+	float c = glm::distance(A, B);
+
+	if (a + b + c == 0.0f) return FaceNormal({ 0,0,0 }, { 0,0,0 }, 1);
+
+	glm::vec3 position = (a * A + b * B + c * C) / a + b + c;
+
+	return FaceNormal(normal, position, 1);
+}
+
+void ModelLoader::LoadFaceNormals(Mesh& mesh)
+{
+
+	const auto& vertices = mesh.m_Positions;
+	for (size_t i = 0; i < vertices.size(); ++i) {
+		if (i > vertices.size()) break;
+		mesh.triangleNormals.emplace_back(GetNormal(vertices[i], vertices[i + 1], vertices[i + 2]));
+	}
 }
