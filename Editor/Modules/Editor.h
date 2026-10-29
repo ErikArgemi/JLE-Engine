@@ -93,7 +93,16 @@ private:
     bool resizable = false;
     bool borderless = false;
 
+    //View Show Windows
+    bool showAbout = false;
+    bool showConfig = true;
+    bool showScene = true;
+    bool showInspector = true;
+    bool showConsole = true;
+
     float brightness = 1.0f;
+
+    float transformIncrements = 0.1f;
 
     //EditorSettings
     EditorSettings editorSettings;

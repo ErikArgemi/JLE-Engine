@@ -36,8 +36,7 @@ public:
 	const std::vector<SDL_Event>& GetEvents() const { return currentEvents; }
 private:
 public:
-	
-	
+	bool isHoveringScene = false;
 private:
 	std::vector<SDL_Event> currentEvents;
 	SDL_Event event;
