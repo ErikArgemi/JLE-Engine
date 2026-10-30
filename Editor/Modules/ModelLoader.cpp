@@ -90,6 +90,12 @@ Mesh ModelLoader::LoadPrimitive(const std::vector<float>& vertices, const std::v
 	entry.baseIndex = 0;
 	entry.materialIndex = 0;
 	newMesh.m_Meshes.assign(1, entry);
+
+	//primitive vertices <-> mesh positions
+	for (size_t i = 0; i + 7 < vertices.size(); i += 8) {
+		newMesh.m_Positions.emplace_back(vertices[i], vertices[i + 1], vertices[i + 2]);
+	}
+
 	return newMesh;
 }
 bool ModelLoader::InitFromScene(Mesh& mesh, const aiScene* pScene, const std::string& filename) {

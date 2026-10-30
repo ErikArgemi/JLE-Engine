@@ -162,6 +162,6 @@ void GameObject::RenderNormalsPerTriangle()
 	if (mesh.m_NormalsVAO == 0 || mesh.m_triangleNormals.size() == 0) return;
 
 	glBindVertexArray(mesh.m_NormalsVAO);
-	glDrawArrays(GL_LINES, 0, mesh.m_triangleNormals.size());
+	glDrawArrays(GL_LINES, 0, mesh.m_triangleNormals.size() * 2);
 	glBindVertexArray(0);
 }

@@ -52,13 +52,13 @@ std::unique_ptr<GameObject> Scene::CreatePrimitive(Primitive& primitive, glm::ve
 	meshComponent->mesh = App::GetInstance().modelLoader->LoadPrimitive(primitive.vertex, primitive.index); //function tdwadsao make the mesh of primitives. This is because they are not leaded from the FBX so they need to have their VAO binded.
 	App::GetInstance().textureLoader->ChangeTexture(materialComponent->m_Textures, 0, primitive.texturePath, materialComponent->hasTexture);// same with textures, as they come in the FBX for the normal GameObjects
 	
+	//add indices
 	meshComponent->mesh.m_Indices.clear();
 	for (const auto& index : primitive.index) {
 		meshComponent->mesh.m_Indices.emplace_back((unsigned int)index);
 	}
 
-	ModelLoader modelLoader;
-	modelLoader.LoadFaceNormals(meshComponent->mesh);
+	App::GetInstance().modelLoader->LoadFaceNormals(meshComponent->mesh);
 	
 	meshComponent->mesh.PopulateNormalsBuffers();
 	
