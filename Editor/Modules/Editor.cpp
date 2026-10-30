@@ -324,9 +324,12 @@ bool Editor::PostUpdate() {
                 Camera& camera = *App::GetInstance().camera;
                 ImGui::SliderFloat("Movement Speed", &camera.movementSpeed, 0.1, 15.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
                 ImGui::SliderFloat("Mouse Sensitivity", &camera.sensitivity, 0.1, 2.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                ImGui::SliderFloat("Panning Sensitivity", &camera.panningSensitivity, 0.01, 1.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+
                 if (ImGui::Button("Reset To Default Values")) {
                     camera.movementSpeed = 5.0f;
                     camera.sensitivity = 0.5f;
+                    camera.panningSensitivity = 0.1f;
                 }
             }
             if (ImGui::CollapsingHeader("Primitives")) {
@@ -372,7 +375,7 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Name: %s", selectedObject->name.c_str());
                     auto* transform = static_cast<TransformComponent*>(selectedObject->GetComponent(ComponentType::TRANSFORM));
 
-                    ImGui::SliderFloat("Transform Sensitivity", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
+                    ImGui::SliderFloat("Transform Increments", &transformIncrements, 0.1, 5.0, ImGuiSliderFlags(ImGuiSliderFlags_None));
 
                     ImGui::Text("TRAMSFORM");
                     ImGui::Text("");
@@ -397,6 +400,11 @@ bool Editor::PostUpdate() {
                     ImGui::Text("Y: %f", transform->scale.y);
                     ImGui::Text("Z: %f", transform->scale.z);
                     ImGui::Text("");
+                    if (ImGui::Button("RESET TO DEFAULT")) {
+						transform->position = glm::vec3(0.0f);
+                        transform->rotation = glm::vec3(0.0f);
+                        transform->scale = glm::vec3(1.0f);
+                    }
 
                     // Mesh information
                     if (ImGui::CollapsingHeader("MESH", ImGuiTreeNodeFlags_DefaultOpen)) {

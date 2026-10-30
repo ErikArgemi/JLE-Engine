@@ -22,6 +22,10 @@ bool Input::PreUpdate() {
 	float deltaTime = App::GetInstance().dt;
     const Uint32 mouse = SDL_GetMouseState(nullptr, nullptr);
 
+    glm::vec3 forward = glm::normalize(camera.direction);
+    glm::vec3 right = glm::normalize(glm::cross(forward, camera.y_axis));
+    glm::vec3 up = glm::normalize(glm::cross(right, forward));
+
     while (SDL_PollEvent(&event))
     {
         currentEvents.push_back(event);
@@ -50,9 +54,13 @@ bool Input::PreUpdate() {
                 //clamps camera to prevent the user from looking so far up or down the pitch the camera turns upside down
                 camera.pitch = glm::clamp(camera.pitch, -89.0f, 89.0f);
             }
+            if (mouse & SDL_BUTTON_MMASK) {
+                camera.position += right*event.motion.xrel * camera.panningSensitivity;
+                camera.position -= up*event.motion.yrel * camera.panningSensitivity;
+            }
         }
 
-        //Camera scroll zoom?
+        //Camera scroll zoom
         if (event.type == SDL_EVENT_MOUSE_WHEEL && isHoveringScene){
             if (camera.isOrbiting) {
                 camera.obitDistasnce += event.wheel.y * 2.0f;
@@ -66,21 +74,12 @@ bool Input::PreUpdate() {
     const bool* keyboard = SDL_GetKeyboardState(nullptr);
 
     if (mouse & SDL_BUTTON_RMASK && isHoveringScene) {
-        glm::vec3 forward = camera.direction; //gets the forward direction of the camera
-
         float speed = camera.movementSpeed * deltaTime;
 
         //Movment speed boost when Lshift is held
         if (keyboard[SDL_SCANCODE_LSHIFT]) {
             speed = speed * 2;
         }
-
-        if (glm::length(forward) > 0.0f) {
-            forward = glm::normalize(forward);
-        }
-
-        //gets the perpendicular vector to the forward direction, which is the right direction of the camera
-        glm::vec3 right = glm::normalize(glm::cross(forward, camera.y_axis));
 
         //Camera movement
         if (keyboard[SDL_SCANCODE_W]) {
