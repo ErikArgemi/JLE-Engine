@@ -205,13 +205,13 @@ void ModelLoader::LoadFaceNormals(Mesh& mesh)
 	mesh.m_triangleNormals.clear();
 
 	const auto& vertices = mesh.m_Positions;
-	for (const MeshEntry& mesh : mesh.m_Meshes) {
-		for (size_t i = 0; i + 2 < mesh.numIndices; i += 3) {
-			unsigned int index = mesh.baseIndex + i;
+	for (const MeshEntry& meshEntry : mesh.m_Meshes) {
+		for (size_t i = 0; i + 2 < meshEntry.numIndices; i += 3) {
+			unsigned int index = meshEntry.baseIndex + i;
 
-			unsigned int i1 = mesh.baseVertex + mesh.m_Indices[index];
-			unsigned int i2 = mesh.baseVertex + mesh.m_Indices[index + 1];
-			unsigned int i3 = mesh.baseVertex + mesh.m_Indices[index + 2];
+			unsigned int i1 = meshEntry.baseVertex + mesh.m_Indices[index];
+			unsigned int i2 = meshEntry.baseVertex + mesh.m_Indices[index + 1];
+			unsigned int i3 = meshEntry.baseVertex + mesh.m_Indices[index + 2];
 
 			if (i1 >= vertices.size() || i2 >= vertices.size() || i3 >= vertices.size()) {
 				continue;

@@ -16,6 +16,8 @@ public:
 
 	Mesh LoadPrimitive(const std::vector<float>& vertices, const std::vector<int>& indices);
 
+	void LoadFaceNormals(Mesh& mesh);
+
 private:
 	bool InitFromScene(Mesh& mesh, const aiScene* pScene, const std::string& filename);
 
@@ -31,6 +33,5 @@ private:
 
 private:
 	//FaceNormal
-	void LoadFaceNormals(Mesh& mesh);
 	FaceNormal GetNormal(const glm::vec3& A, const glm::vec3 B, const glm::vec3 C);
 };

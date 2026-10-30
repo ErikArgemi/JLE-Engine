@@ -412,9 +412,9 @@ bool Editor::PostUpdate() {
 
                             ImGui::Text("");
 
-                            ImGui::Checkbox("Show Vertex", &meshComponent->showVertex);
+                            ImGui::Checkbox("Show Vertex Normals", &meshComponent->showVertex);
                             ImGui::Checkbox("Show Triangle", &meshComponent->showTriangles);
-                            ImGui::Checkbox("Show Face", &meshComponent->showFace);
+                            ImGui::Checkbox("Show Face Normals", &meshComponent->showFace);
                             ImGui::Checkbox("Show Chechers", &meshComponent->showCheckers);
                         }
                         else {
