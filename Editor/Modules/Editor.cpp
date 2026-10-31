@@ -421,12 +421,20 @@ bool Editor::PostUpdate() {
                             ImGui::Text("");
 
                             ImGui::Checkbox("Show Vertex Normals", &meshComponent->showVertexNormals);
-                            ImGui::Checkbox("Show Triangle", &meshComponent->showTriangles);
                             ImGui::Checkbox("Show Face Normals", &meshComponent->showFaceNormals);
-                            ImGui::Checkbox("Show Chechers", &meshComponent->showCheckers);
                         }
                         else {
                             ImGui::Text("No mesh");
+                        }
+                    }
+
+                    if (ImGui::CollapsingHeader("MATERIAL", ImGuiTreeNodeFlags_DefaultOpen)) {
+                        auto* materialComponent = static_cast<MeshComponent*>(selectedObject->GetComponent(ComponentType::MESH));
+                        if (materialComponent) {
+
+                        }
+                        else {
+                            ImGui::Text("No material");
                         }
                     }
 
